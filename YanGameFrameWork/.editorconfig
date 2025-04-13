@@ -1,0 +1,79 @@
+# 表示这是最顶层的配置文件，EditorConfig 插件会从这里开始读取配置
+root = true
+
+# 所有文件的基本设置
+[*]
+charset = utf-8  # 设置文件字符集为 UTF-8
+end_of_line = lf  # 设置换行符为 LF（Unix 风格）
+indent_style = space  # 设置缩进风格为空格
+indent_size = 4  # 设置缩进大小为4个空格
+insert_final_newline = true  # 文件末尾自动插入新行
+trim_trailing_whitespace = true  # 自动删除行尾空白
+
+# C#文件的特定设置
+[*.cs]
+
+
+
+# usings排序时System.*优先
+dotnet_sort_system_directives_first = true
+
+# 所有大括号前都换行（Allman 风格）
+csharp_new_line_before_open_brace = all
+
+# 私有字段命名规范
+dotnet_naming_rule.private_fields_should_have_prefix.severity = warning  # 不符合规范的私有字段命名将触发警告
+dotnet_naming_rule.private_fields_should_have_prefix.symbols = private_fields  # 应用于符号：私有字段
+dotnet_naming_rule.private_fields_should_have_prefix.style = private_prefix_style  # 应用的样式：私有字段样式
+
+# 定义私有字段
+dotnet_naming_symbols.private_fields.applicable_kinds = field  # 适用于字段
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private  # 适用于私有访问级别
+
+# 私有字段样式（下划线前缀+小驼峰）
+dotnet_naming_style.private_prefix_style.required_prefix = _  # 要求前缀为下划线
+dotnet_naming_style.private_prefix_style.capitalization = camel_case  # 小驼峰命名
+
+# 公共成员命名规范
+dotnet_naming_rule.public_members_must_be_capitalized.severity = warning  # 不符合规范的公共成员命名将触发警告
+dotnet_naming_rule.public_members_must_be_capitalized.symbols = public_properties_methods  # 应用于符号：公共属性和方法
+dotnet_naming_rule.public_members_must_be_capitalized.style = pascal_case_style  # 应用的样式：大驼峰命名
+
+# 定义公共属性和方法
+dotnet_naming_symbols.public_properties_methods.applicable_kinds = property, method  # 适用于属性和方法
+dotnet_naming_symbols.public_properties_methods.applicable_accessibilities = public  # 适用于公共访问级别
+
+# 公共属性和方法样式（大驼峰）
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case  # 大驼峰命名
+
+# 空格规则
+csharp_space_after_keywords_in_control_flow_statements = true  # 控制流语句关键字后加空格
+csharp_space_between_method_declaration_parameter_list_parentheses = false  # 方法声明参数列表括号间不加空格
+
+# 代码风格设置
+csharp_prefer_braces = true:warning  # 总是使用大括号，不符合将触发警告
+csharp_preserve_single_line_statements = false  # 不保留单行语句
+csharp_preserve_single_line_blocks = true  # 保留单行块
+
+# using 指令设置
+dotnet_sort_system_directives_first = true  # 系统 using 指令优先排序
+dotnet_separate_import_directive_groups = false  # 不分组导入指令
+
+# 文档注释要求
+dotnet_diagnostic.CS1591.severity = warning  # 缺少文档注释将触发警告
+
+
+
+
+
+# 推荐使用is
+csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
+# 推荐使用as
+csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
+# 防御判断相关
+csharp_style_throw_expression = true:suggestion
+csharp_style_conditional_delegate_call = true:suggestion
+
+
+# if语句倾向使用大括号
+csharp_prefer_braces = true:suggestion
