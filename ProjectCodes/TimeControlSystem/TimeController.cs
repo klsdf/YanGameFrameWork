@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using YanGameFrameWork.CoreCodes;
 using UnityEngine;
-using Sirenix.OdinInspector;
+// using Sirenix.OdinInspector;
 
 /// <summary>
 /// 基础命令接口
@@ -247,7 +247,7 @@ public class TimeController : Singleton<TimeController>
         _executor.StopAllCommands();
     }
 
-    [Button("测试")]
+    // [Button("测试")]
     public void Test()
     {
         // 测试延时执行

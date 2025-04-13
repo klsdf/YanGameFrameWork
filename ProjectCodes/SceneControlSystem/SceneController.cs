@@ -58,7 +58,7 @@ namespace YanGameFrameWork.SceneControlSystem
 
         public void MoveToStartScene()
         {
-            MoveToScene<SceneOuterMenu>();
+            // MoveToScene<SceneOuterMenu>();
         }
 
 

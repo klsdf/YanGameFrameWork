@@ -10,7 +10,7 @@
 using YanGameFrameWork.CoreCodes;
 using System.Collections.Generic;
 using UnityEngine;
-using Sirenix.OdinInspector;
+// using Sirenix.OdinInspector;
 using System;
 using System.Collections;
 namespace YanGameFrameWork.AchievementSystem
@@ -58,12 +58,12 @@ namespace YanGameFrameWork.AchievementSystem
 
 
 
-        [Button("测试")]
-        public void TestAchievement()
-        {
-            UpdateOrUnlockAchievement("梦的开始");
-            UpdateOrUnlockAchievement("靓仔，要来点拼好饭吗？", 10);
-        }
+        // [Button("测试")]
+        // public void TestAchievement()
+        // {
+        //     UpdateOrUnlockAchievement("梦的开始");
+        //     UpdateOrUnlockAchievement("靓仔，要来点拼好饭吗？", 10);
+        // }
 
         void Start()
         {

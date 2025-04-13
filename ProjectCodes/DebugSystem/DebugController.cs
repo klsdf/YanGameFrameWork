@@ -6,37 +6,40 @@
  ****************************************************************************/
 using YanGameFrameWork.CoreCodes;
 using UnityEngine;
-
-public class DebugController : Singleton<DebugController>
+namespace YanGameFrameWork.DebugSystem
 {
-    /// <summary>
-    /// 打印日志
-    /// </summary>
-    /// <param name="tag">类名，需要用nameof</param>
-    /// <param name="message">消息</param>
-    public void Log(string tag, string message)
-    {
-        Debug.Log($"[<color=green><b>✔️ {tag}</b></color>] {message}");
-    }
 
-    /// <summary>
-    /// 打印警告
-    /// </summary>
-    /// <param name="tag">类名，需要用nameof</param>
-    /// <param name="message">消息</param>
-    public void LogWarning(string tag, string message)
+    public class DebugController : Singleton<DebugController>
     {
-        Debug.LogWarning($"[<color=yellow><b>⚠️ {tag}</b></color>] {message}");
-    }
+        /// <summary>
+        /// 打印日志
+        /// </summary>
+        /// <param name="tag">类名，需要用nameof</param>
+        /// <param name="message">消息</param>
+        public void Log(string tag, string message)
+        {
+            Debug.Log($"[<color=green><b>✔️ {tag}</b></color>] {message}");
+        }
 
-    /// <summary>
-    /// 打印错误
-    /// </summary>
-    /// <param name="tag">类名，需要用nameof</param>
-    /// <param name="message">消息</param>
-    public void LogError(string tag, string message)
-    {
-        Debug.LogError($"[<color=red><b>❌ {tag}</b></color>] {message}");
-    }
+        /// <summary>
+        /// 打印警告
+        /// </summary>
+        /// <param name="tag">类名，需要用nameof</param>
+        /// <param name="message">消息</param>
+        public void LogWarning(string tag, string message)
+        {
+            Debug.LogWarning($"[<color=yellow><b>⚠️ {tag}</b></color>] {message}");
+        }
 
+        /// <summary>
+        /// 打印错误
+        /// </summary>
+        /// <param name="tag">类名，需要用nameof</param>
+        /// <param name="message">消息</param>
+        public void LogError(string tag, string message)
+        {
+            Debug.LogError($"[<color=red><b>❌ {tag}</b></color>] {message}");
+        }
+
+    }
 }
