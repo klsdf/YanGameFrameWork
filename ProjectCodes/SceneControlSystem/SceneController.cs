@@ -20,6 +20,9 @@ namespace YanGameFrameWork.SceneControlSystem
         [SerializeField]
         public List<SceneObjBase> sceneObjList = new List<SceneObjBase>();
 
+
+        public SceneObjBase StartScene;
+
         private SceneObjBase _activeScene;
         public SceneObjBase ActiveScene
         {
@@ -29,7 +32,6 @@ namespace YanGameFrameWork.SceneControlSystem
             }
         }
 
-        // public SceneObjBase startScene;
 
 
         void Start()
@@ -58,7 +60,7 @@ namespace YanGameFrameWork.SceneControlSystem
 
         public void MoveToStartScene()
         {
-            // MoveToScene<SceneOuterMenu>();
+            MoveToScene(StartScene);
         }
 
 
@@ -82,6 +84,17 @@ namespace YanGameFrameWork.SceneControlSystem
                     ActiveScene?.OnEnter();
                 }
             }
+        }
+
+        /// <summary>
+        /// 移动到指定场景
+        /// </summary>
+        /// <param name="sceneObj">一个继承了SceneObjBase的类</param>
+        public void MoveToScene(SceneObjBase sceneObj)
+        {
+            ActiveScene?.OnExit();
+            _activeScene = sceneObj;
+            ActiveScene?.OnEnter();
         }
 
 

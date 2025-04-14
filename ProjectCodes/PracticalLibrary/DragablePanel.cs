@@ -76,7 +76,6 @@ namespace YanGameFrameWork.PracticalLibrary
                 _rectTransform.anchoredPosition = _initialPosition;
             }
             onDragEnd?.Invoke();  // 触发拖动结束事件
-            Debug.Log("OnDragEnd");
             // 可以在这里添加其他逻辑，比如限制拖动范围或其他行为
         }
     }
