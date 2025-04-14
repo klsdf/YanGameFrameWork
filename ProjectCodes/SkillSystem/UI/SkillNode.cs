@@ -52,20 +52,20 @@ public class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        // SkillPromptPop skillPromptPop = YanGF.UI.PushElement<SkillPromptPop>() as SkillPromptPop;
-        // skillPromptPop.ShowSkillPrompt(nodeData);
+        SkillPromptPop skillPromptPop = YanGF.UI.PushElement<SkillPromptPop>() as SkillPromptPop;
+        skillPromptPop.ShowSkillPrompt(nodeData);
 
-        // // 获取 SkillNode 的 RectTransform
-        // RectTransform skillNodeRect = GetComponent<RectTransform>();
-        // // 获取 SkillPromptPop 的 RectTransform
-        // RectTransform skillPromptRect = skillPromptPop.GetComponent<RectTransform>();
+        // 获取 SkillNode 的 RectTransform
+        RectTransform skillNodeRect = GetComponent<RectTransform>();
+        // 获取 SkillPromptPop 的 RectTransform
+        RectTransform skillPromptRect = skillPromptPop.GetComponent<RectTransform>();
 
-        // // 计算新位置
-        // Vector3 newPosition = skillNodeRect.position;
-        // newPosition.y += skillNodeRect.rect.height + skillPromptRect.rect.height + 100;
+        // 计算新位置
+        Vector3 newPosition = skillNodeRect.position;
+        newPosition.y += skillNodeRect.rect.height + skillPromptRect.rect.height + 100;
 
-        // // 设置 SkillPromptPop 的位置
-        // skillPromptRect.position = newPosition;
+        // 设置 SkillPromptPop 的位置
+        skillPromptRect.position = newPosition;
     }
 
     public void OnPointerExit(PointerEventData eventData)

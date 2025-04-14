@@ -17,7 +17,7 @@ namespace YanGameFrameWork.AchievementSystem
 {
     public class AchievementSystem : Singleton<AchievementSystem>
     {
-        public AchievementUI achievementUI;
+        public AchievementUIItem achievementUI;
         private Dictionary<string, AchievementBase> _achievements = new Dictionary<string, AchievementBase>();
         private Queue<AchievementBase> _achievementQueue = new Queue<AchievementBase>();
         private bool _isDisplaying = false;
@@ -159,7 +159,7 @@ namespace YanGameFrameWork.AchievementSystem
 
         private void ShowAchievementUI(AchievementBase achievement)
         {
-            Instantiate(achievementUI).GetComponent<AchievementUI>().Init(achievement.title, achievement.description);
+            Instantiate(achievementUI).GetComponent<AchievementUIItem>().Init(achievement.title, achievement.description);
             OnAchievementUnlocked?.Invoke(achievement);
         }
 
