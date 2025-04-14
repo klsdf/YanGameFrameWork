@@ -38,6 +38,13 @@ public class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     }
 
 
+    public void InitInScene(SkillNodeData nodeData)
+    {
+        nameText.text = nodeData.Name;
+        gameObject.name = nodeData.Name;
+    }
+
+
 
     public void UpdateDisplay()
     {

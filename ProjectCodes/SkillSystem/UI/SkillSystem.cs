@@ -127,11 +127,12 @@ public abstract class SkillSystem : MonoBehaviour
     [Button("生成场景的对象")]
     public void CreateSkillNodesToScene()
     {
-        Debug.Log("生成场景的对象");
+
         List<SkillNodeData> rootSkillList = CreateInitData();
         List<SkillNodeData> flattenedSkillTree = FlattenSkillTree(rootSkillList[0]);
         ClearRepeatSkillNodes(flattenedSkillTree);
         CreateSkillNodes(flattenedSkillTree);
+        YanGF.Debug.Log(nameof(SkillSystem), "成功生成场景的对象");
     }
 
 
@@ -175,7 +176,8 @@ public abstract class SkillSystem : MonoBehaviour
                 continue;
             }
             SkillNode skillButton = PrefabUtility.InstantiatePrefab(skillButtonPrefab, container.transform) as SkillNode;
-            skillButton.Init(skillNodeData);
+            skillButton.InitInScene(skillNodeData);
+
             // 设置随机位置
             float randomX = UnityEngine.Random.Range(-400f, 400f);
             float randomY = UnityEngine.Random.Range(-300f, 300f);

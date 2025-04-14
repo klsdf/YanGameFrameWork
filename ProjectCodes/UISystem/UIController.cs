@@ -216,7 +216,13 @@ namespace YanGameFrameWork.UISystem
         {
             foreach (UIPanelBase panel in _registerPanels)
             {
+                if (panel == null)
+                {
+                    YanGF.Debug.LogWarning(nameof(UIController), $"{panel.name}面板为空");
+                    continue;
+                }
                 panel.OnExit();
+
             }
         }
 
