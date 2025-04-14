@@ -11,6 +11,10 @@ namespace YanGameFrameWork.DebugSystem
 
     public class DebugController : Singleton<DebugController>
     {
+
+        public bool enable = true;
+
+
         /// <summary>
         /// 打印日志
         /// </summary>
@@ -18,6 +22,10 @@ namespace YanGameFrameWork.DebugSystem
         /// <param name="message">消息</param>
         public void Log(string tag, string message)
         {
+            if (!enable)
+            {
+                return;
+            }
             Debug.Log($"[<color=green><b>✔️ {tag}</b></color>] {message}");
         }
 
@@ -28,6 +36,10 @@ namespace YanGameFrameWork.DebugSystem
         /// <param name="message">消息</param>
         public void LogWarning(string tag, string message)
         {
+            if (!enable)
+            {
+                return;
+            }
             Debug.LogWarning($"[<color=yellow><b>⚠️ {tag}</b></color>] {message}");
         }
 
@@ -38,6 +50,10 @@ namespace YanGameFrameWork.DebugSystem
         /// <param name="message">消息</param>
         public void LogError(string tag, string message)
         {
+            if (!enable)
+            {
+                return;
+            }
             Debug.LogError($"[<color=red><b>❌ {tag}</b></color>] {message}");
         }
 

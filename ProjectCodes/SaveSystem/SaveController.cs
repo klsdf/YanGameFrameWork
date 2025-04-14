@@ -91,16 +91,13 @@ namespace YanGameFrameWork.SaveSystem
                 // 序列化并写入文件
                 string updatedJson = JsonUtility.ToJson(new SaveDataList { DataList = _saveDataList }, true);
                 File.WriteAllText(SaveFilePath, updatedJson);
-                UnityEngine.Debug.Log($"保存成功，保存到路径：{SaveFilePath}");
+                YanGF.Debug.Log(nameof(SaveController), $"保存成功，保存到路径：{SaveFilePath}");
             }
             catch (Exception e)
             {
-                UnityEngine.Debug.LogError($"保存失败：{e.Message}\n{e.StackTrace}");
+                YanGF.Debug.LogError(nameof(SaveController), $"保存失败：{e.Message}\n{e.StackTrace}");
             }
         }
-
-
-
 
         /// <summary>
         /// 加载数据
@@ -146,16 +143,16 @@ namespace YanGameFrameWork.SaveSystem
                             }
                         }
                     }
-                    UnityEngine.Debug.LogWarning($"未找到键为 {key} 的数据。");
+                    YanGF.Debug.LogWarning(nameof(SaveController), $"未找到键为 {key} 的数据。");
                 }
                 else
                 {
-                    UnityEngine.Debug.LogWarning("保存文件不存在。");
+                    YanGF.Debug.LogWarning(nameof(SaveController), "保存文件不存在。");
                 }
             }
             catch (Exception e)
             {
-                UnityEngine.Debug.LogError($"加载数据失败：{e.Message}\n{e.StackTrace}");
+                YanGF.Debug.LogError(nameof(SaveController), $"加载数据失败：{e.Message}\n{e.StackTrace}");
             }
             return defaultValue;
         }

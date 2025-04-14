@@ -23,6 +23,10 @@ namespace YanGameFrameWork.LocalizationSystem
 
     public class LocalizationController : Singleton<LocalizationController>
     {
+
+        public bool enable = true;
+
+
         private StringTable _tableStory;
         private StringTable tableStory
         {
@@ -141,7 +145,10 @@ namespace YanGameFrameWork.LocalizationSystem
         /// </summary>
         public string GetLocalizedString(string key)
         {
-            return key;
+            if (!enable)
+            {
+                return key;
+            }
             try
             {
                 if (tableStory == null)
