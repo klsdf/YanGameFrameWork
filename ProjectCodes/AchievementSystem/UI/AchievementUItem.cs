@@ -8,9 +8,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using YanGameFrameWork.AchievementSystem;
-public class AchievementItem : MonoBehaviour
+public class AchievementUItem : MonoBehaviour
 {
+
+    [Header("成就标题")]
     public TMP_Text achievementTitle;
+
+    [Header("成就描述")]
     public TMP_Text achievementDescription;
 
 

@@ -11,15 +11,23 @@ using System.Collections.Generic;
 using YanGameFrameWork.AchievementSystem;
 
 
+/// <summary>
+/// 成就的展示面板
+/// </summary>
 public class AchievementPanel : UIPanelBase
 {
-    public List<AchievementItem> achievementItemList;
-    public GameObject achievementItemPrefab;
+    private List<AchievementUItem> _achievementItemList;
+
+
+    [Header("成就项的预制体")]
+    public AchievementUItem achievementItemPrefab;
+
+    [Header("成就项的容器")]
     public Transform container;
     void Start()
     {
 
-        achievementItemList = new List<AchievementItem>();
+        _achievementItemList = new List<AchievementUItem>();
 
         ClearAchievementList();
         AchievementSystem.Instance.OnAchievementRegistered += AddAchievementItem;
@@ -36,21 +44,21 @@ public class AchievementPanel : UIPanelBase
     void AddAchievementItem(AchievementBase registeredAchievement, List<AchievementBase> achievements)
     {
 
-        AchievementItem achievementItem = Instantiate(achievementItemPrefab, container).GetComponent<AchievementItem>();
+        AchievementUItem achievementItem = Instantiate(achievementItemPrefab, container).GetComponent<AchievementUItem>();
         achievementItem.Init(registeredAchievement);
         achievementItem.transform.SetParent(container);
-        achievementItemList.Add(achievementItem);
+        _achievementItemList.Add(achievementItem);
 
 
-        achievementItem.GetComponent<AchievementItem>().Init(registeredAchievement);
+        achievementItem.GetComponent<AchievementUItem>().Init(registeredAchievement);
 
-        YanGF.Debug.Log(nameof(AchievementPanel), achievementItem.name);
+        YanGF.Debug.Log(nameof(AchievementPanel), $"添加了成就项：{achievementItem.name}");
     }
 
     void UpdateAchievementItem(AchievementBase achievement)
     {
         // 找到对应的成就项
-        AchievementItem achievementItem = achievementItemList.Find(item => item.CheckIsSelf(achievement));
+        AchievementUItem achievementItem = _achievementItemList.Find(item => item.CheckIsSelf(achievement));
         if (achievementItem != null)
         {
             achievementItem.Unlock();
@@ -60,7 +68,7 @@ public class AchievementPanel : UIPanelBase
 
     private void ClearAchievementList()
     {
-        achievementItemList.Clear();
+        _achievementItemList.Clear();
         // 遍历并销毁container下的所有子对象
 
         if (container != null)
@@ -73,7 +81,7 @@ public class AchievementPanel : UIPanelBase
         }
         else
         {
-            Debug.LogWarning("找不到Container对象,请检查UI结构是否正确");
+            YanGF.Debug.LogError(nameof(AchievementPanel), "找不到Container对象,请检查UI结构是否正确");
         }
     }
 

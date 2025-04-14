@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 #if UNITY_EDITOR
 using UnityEditor;
+using YanGameFrameWork.Editor;
 #endif
 
 public abstract class SkillSystem : MonoBehaviour
@@ -123,7 +124,7 @@ public abstract class SkillSystem : MonoBehaviour
     /// <summary>
     /// 生成场景的对象
     /// </summary>
-    [InspectorButton("生成场景的对象")]
+    [Button("生成场景的对象")]
     public void CreateSkillNodesToScene()
     {
         Debug.Log("生成场景的对象");

@@ -9,7 +9,7 @@ using YanGameFrameWork.UISystem;
 using TMPro;
 using System.Collections;
 
-public class AchievementUIItem : UIPanelBase
+public class AchievementPrompt : UIPanelBase
 {
     public GameObject achievementItem;
     public TMP_Text achievementTitle;

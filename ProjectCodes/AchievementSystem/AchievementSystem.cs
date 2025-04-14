@@ -13,11 +13,14 @@ using UnityEngine;
 // using Sirenix.OdinInspector;
 using System;
 using System.Collections;
+using YanGameFrameWork.Editor;
 namespace YanGameFrameWork.AchievementSystem
 {
     public class AchievementSystem : Singleton<AchievementSystem>
     {
-        public AchievementUIItem achievementUI;
+
+        [Header("成就弹出的UI")]
+        public AchievementPrompt achievementPromptUI;
         private Dictionary<string, AchievementBase> _achievements = new Dictionary<string, AchievementBase>();
         private Queue<AchievementBase> _achievementQueue = new Queue<AchievementBase>();
         private bool _isDisplaying = false;
@@ -58,19 +61,8 @@ namespace YanGameFrameWork.AchievementSystem
 
 
 
-        // [Button("测试")]
-        // public void TestAchievement()
-        // {
-        //     UpdateOrUnlockAchievement("梦的开始");
-        //     UpdateOrUnlockAchievement("靓仔，要来点拼好饭吗？", 10);
-        // }
-
-        void Start()
-        {
-            InitializeAchievements();
-        }
-
-        private void InitializeAchievements()
+        [Button("测试注册成就")]
+        public void TestRegisterAchievement()
         {
             RegisterAchievement(new EventAchievement("梦的开始", "第一次进入游戏", () =>
             {
@@ -80,7 +72,18 @@ namespace YanGameFrameWork.AchievementSystem
             {
                 print("靓仔，要来点拼好饭吗？");
             }));
+            // UpdateOrUnlockAchievement("梦的开始");
+            // UpdateOrUnlockAchievement("靓仔，要来点拼好饭吗？", 10);
         }
+
+        [Button("测试解锁成就")]
+        public void TestUnlockAchievement()
+        {
+            UpdateOrUnlockAchievement("梦的开始");
+            UpdateOrUnlockAchievement("靓仔，要来点拼好饭吗？", 10);
+        }
+
+
 
 
 
@@ -159,7 +162,7 @@ namespace YanGameFrameWork.AchievementSystem
 
         private void ShowAchievementUI(AchievementBase achievement)
         {
-            Instantiate(achievementUI).GetComponent<AchievementUIItem>().Init(achievement.title, achievement.description);
+            Instantiate(achievementPromptUI).GetComponent<AchievementPrompt>().Init(achievement.title, achievement.description);
             OnAchievementUnlocked?.Invoke(achievement);
         }
 

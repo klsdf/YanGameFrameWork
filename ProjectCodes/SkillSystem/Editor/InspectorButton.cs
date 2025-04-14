@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using YanGameFrameWork.Editor;
 
 [CustomEditor(typeof(SkillSystem), true)]
 [CanEditMultipleObjects]
@@ -23,13 +24,13 @@ public class InspectorButton : Editor
                 BindingFlags.Public | BindingFlags.NonPublic |
                 BindingFlags.Instance | BindingFlags.Static
             ).Where(method =>
-                Attribute.IsDefined(method, typeof(InspectorButtonAttribute))
+                Attribute.IsDefined(method, typeof(ButtonAttribute))
             ).ToArray();
         foreach (var method in methods)
         {
 
-            var attr = method.GetCustomAttribute<InspectorButtonAttribute>();
-            DrawButton(method, attr.Name);
+            var attr = method.GetCustomAttribute<ButtonAttribute>();
+            DrawButton(method, attr.ButtonName);
         }
     }
 
