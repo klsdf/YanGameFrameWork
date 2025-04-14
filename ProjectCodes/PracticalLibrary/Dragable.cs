@@ -14,18 +14,29 @@ public class Dragable : MonoBehaviour
 {
     private Vector3 _offset;
 
-    private Vector3 _startPosition;
     private bool _isDragging = false;
 
     public Transform root;
+
+    /// <summary>
+    /// 当这个对象浮在Dragable的对象上时，对象无法被拖动
+    /// </summary>
+    private GraphicRaycaster _raycaster;
+
     private void Start()
     {
-        raycaster = ShopController.Instance.GetGraphicRaycaster();
-        eventSystem = GameObject.Find("EventSystem").GetComponent<EventSystem>();
+        _eventSystem = GameObject.Find("EventSystem").GetComponent<EventSystem>();
     }
+
+
+    public void SetRaycaster(GraphicRaycaster raycaster)
+    {
+        _raycaster = raycaster;
+    }
+
     void OnMouseDown()
     {
-        if (IsTouchedShopUI())
+        if (IsTouchingBlockCanvas())
         {
             return;
         }
@@ -43,7 +54,6 @@ public class Dragable : MonoBehaviour
 
         _offset = root.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
         _isDragging = true;
-        _startPosition = root.position;
     }
 
     void OnMouseDrag()
@@ -73,15 +83,19 @@ public class Dragable : MonoBehaviour
     }
 
 
-    public GraphicRaycaster raycaster;
-    public EventSystem eventSystem;
-    private bool IsTouchedShopUI()
+
+    private EventSystem _eventSystem;
+    private bool IsTouchingBlockCanvas()
     {
-        PointerEventData pointerEventData = new PointerEventData(eventSystem);
+        if (_raycaster == null)
+        {
+            return false;
+        }
+        PointerEventData pointerEventData = new PointerEventData(_eventSystem);
         pointerEventData.position = Input.mousePosition;
 
         List<RaycastResult> results = new List<RaycastResult>();
-        raycaster.Raycast(pointerEventData, results);
+        _raycaster.Raycast(pointerEventData, results);
 
         foreach (RaycastResult result in results)
         {
