@@ -23,7 +23,7 @@ namespace YanGameFrameWork.FSM
 
             if (newState == null)
             {
-                Debug.LogError("newState is null");
+                YanGF.Debug.LogError(nameof(YanFSMController), "newState is null");
                 return;
             }
             _currentState?.OnExit();

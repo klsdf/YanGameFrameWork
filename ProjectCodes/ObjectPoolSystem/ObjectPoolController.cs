@@ -76,7 +76,7 @@ namespace YanGameFrameWork.ObjectPoolSystem
             }
             else
             {
-                Debug.LogError($"返回对象池错误：未找到预制体 {prefab.name} 对应的对象池");
+                YanGF.Debug.LogError(nameof(ObjectPoolController), $"返回对象池错误：未找到预制体 {prefab.name} 对应的对象池");
             }
         }
 

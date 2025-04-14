@@ -62,7 +62,7 @@ public class AssetLocatorWindow : EditorWindow
         }
         else
         {
-            Debug.LogWarning($"目录不存在: {path}");
+            YanGF.Debug.LogWarning(nameof(AssetLocatorWindow), $"目录不存在: {path}");
         }
     }
 }

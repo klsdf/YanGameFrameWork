@@ -32,7 +32,7 @@ namespace YanGameFrameWork.CoreCodes
 
                         if (FindObjectsOfType(typeof(T)).Length > 1)
                         {
-                            Debug.LogError($"[Singleton] Something went really wrong " +
+                            YanGF.Debug.LogError(nameof(Singleton<T>), $"[Singleton] Something went really wrong " +
                                 $" - there should never be more than 1 {typeof(T)}!" +
                                 " Reopening the scene might fix it.");
                             return _instance;
