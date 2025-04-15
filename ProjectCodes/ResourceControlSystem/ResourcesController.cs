@@ -41,7 +41,9 @@ namespace YanGameFrameWork.ResourceControlSystem
                 resource = Resources.Load<T>(fullPath);
                 if (resource == null)
                 {
-                    throw new Exception($"没有找到{fullPath}的{typeof(T).Name}");
+                    // throw new Exception($"没有找到{fullPath}的{typeof(T).Name}");
+                    YanGF.Debug.LogWarning(nameof(ResourcesController), "没有找到" + fullPath + "的" + typeof(T).Name);
+                    return null;
                 }
                 _cache.CacheResource(fullPath, resource);
             }
