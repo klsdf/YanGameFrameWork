@@ -195,7 +195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 887c70aa7d41b5042b757eb315e39b6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  achievementUI: {fileID: 8669225603624444378, guid: a70433791d073d14c9400f45c49e1250, type: 3}
+  achievementPromptUI: {fileID: 0}
 --- !u!1 &1668420333348603630
 GameObject:
   m_ObjectHideFlags: 0
@@ -329,16 +329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3b179af172e7af44bf371317cb4bdcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cursors:
-  - name: Normal
-    cursorTexture: {fileID: 2800000, guid: 9693111aeb70b764696dfcc22f35ca5c, type: 3}
-    hotSpot: {x: 0, y: 0}
-  - name: Clicking
-    cursorTexture: {fileID: 2800000, guid: e1af58549ae0eb14dad2011dbbd51e9d, type: 3}
-    hotSpot: {x: 0, y: 0}
-  - name: Delete
-    cursorTexture: {fileID: 2800000, guid: 2d398aae2cfa4124c9dbe977203aeb11, type: 3}
-    hotSpot: {x: 0, y: 0}
+  cursors: []
 --- !u!1 &3206147607702399937
 GameObject:
   m_ObjectHideFlags: 0
@@ -614,9 +605,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abb07888ba01206468e5ec69c5553d69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneObjList:
-  - {fileID: 0}
-  - {fileID: 0}
+  sceneObjList: []
   StartScene: {fileID: 0}
 --- !u!1 &8994248202096352928
 GameObject:
