@@ -16,7 +16,7 @@ using YanGameFrameWork.AchievementSystem;
 /// </summary>
 public class AchievementPanel : UIPanelBase
 {
-    private List<AchievementUItem> _achievementItemList;
+    private List<AchievementUItem> _achievementItemList = new List<AchievementUItem>();
 
 
     [Header("成就项的预制体")]
@@ -24,14 +24,38 @@ public class AchievementPanel : UIPanelBase
 
     [Header("成就项的容器")]
     public Transform container;
+
+    [Header("返回按钮")]
+    public Button backButton;
+
     void Start()
     {
 
-        _achievementItemList = new List<AchievementUItem>();
+
 
         ClearAchievementList();
         AchievementSystem.Instance.OnAchievementRegistered += AddAchievementItem;
-        AchievementSystem.Instance.OnAchievementUnlocked += UpdateAchievementItem;
+        AchievementSystem.Instance.OnAchievementUnlocked += ShowUnlockItem;
+
+        backButton.onClick.AddListener(() =>
+        {
+            YanGF.UI.PopPanel();
+        });
+    }
+
+    public override void OnEnter()
+    {
+        base.OnEnter();
+        ClearAchievementList();
+        //拿到现在所有的成就数据进行处理
+        List<AchievementBase> achievements = YanGF.Achievement.GetAllAchievements();
+        foreach (var achievement in achievements)
+        {
+            AddAchievementItem(achievement, achievements);
+        }
+
+        UpdateAllAchievementItem();
+
     }
 
 
@@ -43,7 +67,6 @@ public class AchievementPanel : UIPanelBase
     /// <param name="achievements">注册后的所有成就</param>
     void AddAchievementItem(AchievementBase registeredAchievement, List<AchievementBase> achievements)
     {
-
         AchievementUItem achievementItem = Instantiate(achievementItemPrefab, container).GetComponent<AchievementUItem>();
         achievementItem.Init(registeredAchievement);
         achievementItem.transform.SetParent(container);
@@ -55,7 +78,21 @@ public class AchievementPanel : UIPanelBase
         YanGF.Debug.Log(nameof(AchievementPanel), $"添加了成就项：{achievementItem.name}");
     }
 
-    void UpdateAchievementItem(AchievementBase achievement)
+
+    void UpdateAllAchievementItem()
+    {
+        foreach (var achievementItem in _achievementItemList)
+        {
+            achievementItem.TryUnlock();
+        }
+    }
+
+
+    /// <summary>
+    /// 显示解锁成就，把一个成就的状态更新为已经解锁
+    /// </summary>
+    /// <param name="achievement">解锁的成就</param>
+    void ShowUnlockItem(AchievementBase achievement)
     {
         // 找到对应的成就项
         AchievementUItem achievementItem = _achievementItemList.Find(item => item.CheckIsSelf(achievement));

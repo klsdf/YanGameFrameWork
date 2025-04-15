@@ -57,6 +57,12 @@ namespace YanGameFrameWork.AchievementSystem
         }
 
 
+        public List<AchievementBase> GetAllAchievements()
+        {
+            return new List<AchievementBase>(_achievements.Values);
+        }
+
+
 
 
 
@@ -162,6 +168,12 @@ namespace YanGameFrameWork.AchievementSystem
 
         private void ShowAchievementUI(AchievementBase achievement)
         {
+
+            if (achievementPromptUI == null)
+            {
+                YanGF.Debug.LogWarning(nameof(AchievementSystem), "成就弹出UI为空，看看是不是忘了赋值预制体");
+                return;
+            }
             Instantiate(achievementPromptUI).GetComponent<AchievementPrompt>().Init(achievement.title, achievement.description);
             OnAchievementUnlocked?.Invoke(achievement);
         }

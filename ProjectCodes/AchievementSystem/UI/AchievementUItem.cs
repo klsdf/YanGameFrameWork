@@ -27,12 +27,24 @@ public class AchievementUItem : MonoBehaviour
         achievementDescription.text = YanGF.Localization.GetLocalizedString("仔细想想哦~");
     }
 
+    /// <summary>
+    /// 显示解锁成就
+    /// </summary>
     public void Unlock()
     {
-        _achievement.isUnlock = true;
         achievementTitle.text = YanGF.Localization.GetLocalizedString(_achievement.title);
         achievementDescription.text = YanGF.Localization.GetLocalizedString(_achievement.description);
     }
+
+
+    public void TryUnlock()
+    {
+        if (_achievement.isUnlock)
+        {
+            Unlock();
+        }
+    }
+
 
     public bool CheckIsSelf(AchievementBase achievement)
     {
