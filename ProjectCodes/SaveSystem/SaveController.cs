@@ -14,6 +14,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using YanGameFrameWork.Editor;
+using Newtonsoft.Json;
+
 
 
 namespace YanGameFrameWork.SaveSystem
@@ -43,9 +45,15 @@ namespace YanGameFrameWork.SaveSystem
         private List<SaveData> _saveDataList = new List<SaveData>();
 
 
-        public SaveController SetSaveFilePath(string saveFilePath)
+        public SaveController SetSaveFileName(string saveFileName)
         {
-            _customSaveFilePath = saveFilePath;
+            // 检查文件名是否以 .json 结尾，如果不是则添加
+            if (!saveFileName.EndsWith(".json"))
+            {
+                saveFileName += ".json";
+            }
+
+            _customSaveFilePath = saveFileName;
             return this;
         }
 
@@ -86,25 +94,21 @@ namespace YanGameFrameWork.SaveSystem
                     _saveDataList = new List<SaveData>();
                 }
 
-                // 检查是否已存在相同 key 的数据，若存在则更新
-                bool found = false;
                 string jsonData;
-
-                // 处理基本类型
+                //创建数据
                 if (data is ValueType || data is string)
                 {
                     jsonData = data.ToString();
                 }
                 else
                 {
-                    jsonData = JsonUtility.ToJson(data);
+                    jsonData = JsonConvert.SerializeObject(data);
 
-                    if (data is Array)
-                    {
-                        print($"data is Array:{data.ToString()}");
-                    }
-                    print($"jsonData:{jsonData}");
                 }
+
+
+                // 检查是否已存在相同 key 的数据，若存在则更新
+                bool found = false;
 
                 foreach (var item in _saveDataList)
                 {
@@ -173,7 +177,7 @@ namespace YanGameFrameWork.SaveSystem
                             else
                             {
                                 // 复杂类型使用 JsonUtility
-                                return JsonUtility.FromJson<T>(item.JsonData);
+                                return JsonConvert.DeserializeObject<T>(item.JsonData);
                             }
                         }
                     }
@@ -234,12 +238,6 @@ namespace YanGameFrameWork.SaveSystem
             }
         }
 
-
-        [Button("保存数据")]
-        public void TestSave()
-        {
-            YanGF.Save.Save("SkillSystemUnlockedNodes", new string[] { "123", "234", "234234" });
-        }
 
     }
 
