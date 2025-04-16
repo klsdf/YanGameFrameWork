@@ -63,36 +63,6 @@ namespace YanGameFrameWork.AchievementSystem
         }
 
 
-
-
-
-
-        [Button("测试注册成就")]
-        public void TestRegisterAchievement()
-        {
-            RegisterAchievement(new EventAchievement("梦的开始", "第一次进入游戏", () =>
-            {
-                print("梦的开始");
-            }));
-            RegisterAchievement(new ProgressAchievement("靓仔，要来点拼好饭吗？", "赚到100块钱", 100, () =>
-            {
-                print("靓仔，要来点拼好饭吗？");
-            }));
-            // UpdateOrUnlockAchievement("梦的开始");
-            // UpdateOrUnlockAchievement("靓仔，要来点拼好饭吗？", 10);
-        }
-
-        [Button("测试解锁成就")]
-        public void TestUnlockAchievement()
-        {
-            UpdateOrUnlockAchievement("梦的开始");
-            UpdateOrUnlockAchievement("靓仔，要来点拼好饭吗？", 10);
-        }
-
-
-
-
-
         /// <summary>
         /// 成就解锁时调用
         /// </summary>
