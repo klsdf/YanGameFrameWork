@@ -11,12 +11,18 @@ using System;
 using UnityEngine;
 using YanGameFrameWork.CoreCodes;
 
-
 namespace YanGameFrameWork.ModelControlSystem
 {
+
+
     public class ModelController : Singleton<ModelController>
     {
-        private static Dictionary<Type, YanModelBase> _modules = new Dictionary<Type, YanModelBase>();
+
+        [SerializeField]
+        private SerializableDictionary<Type, YanModelBase> _modules = new SerializableDictionary<Type, YanModelBase>();
+
+        // 在Inspector中显示和编辑数据
+
 
         /// <summary>
         /// 单纯注册模块，如果模块已经注册过，则不会注册
@@ -126,7 +132,7 @@ namespace YanGameFrameWork.ModelControlSystem
         /// 获取所有已注册的模块
         /// </summary>
         /// <returns></returns>
-        public IReadOnlyDictionary<Type, YanModelBase> GetAllModules()
+        public SerializableDictionary<Type, YanModelBase> GetAllModules()
         {
             return _modules;
         }

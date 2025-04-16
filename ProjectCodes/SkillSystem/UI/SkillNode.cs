@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEditor;
 
 public class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -30,6 +31,7 @@ public class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             if (nodeData.Condition() && !nodeData.HasUnlocked)
             {
                 nodeData.OnUnlock(gameObject);
+
                 nodeData.HasUnlocked = true;
                 nodeData.SkillSystem.UpdateDisplay();
             }

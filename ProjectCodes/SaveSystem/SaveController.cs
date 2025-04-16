@@ -20,12 +20,40 @@ namespace YanGameFrameWork.SaveSystem
 {
     public class SaveController : Singleton<SaveController>
     {
-        [Header("默认保存路径")]
-        public string _saveFilePath = "savefileTest.json";
+        private string _defaultSaveFilePath = "savefile.json";
+        private string _customSaveFilePath;
 
-        public string SaveFilePath => Path.Combine(Application.persistentDataPath, _saveFilePath);
+        public string SaveFilePath
+        {
+            get
+            {
+                if (_customSaveFilePath == null || _customSaveFilePath == "")
+                {
+                    return Path.Combine(Application.persistentDataPath, _defaultSaveFilePath);
+                }
+                else
+                {
+                    return Path.Combine(Application.persistentDataPath, _customSaveFilePath);
+                }
+            }
+        }
+
+        [Header("保存数据列表")]
+        [SerializeField]
         private List<SaveData> _saveDataList = new List<SaveData>();
 
+
+        public SaveController SetSaveFilePath(string saveFilePath)
+        {
+            _customSaveFilePath = saveFilePath;
+            return this;
+        }
+
+        public SaveController SetDefaultSaveFilePath()
+        {
+            _customSaveFilePath = _defaultSaveFilePath;
+            return this;
+        }
 
 
 
@@ -70,6 +98,12 @@ namespace YanGameFrameWork.SaveSystem
                 else
                 {
                     jsonData = JsonUtility.ToJson(data);
+
+                    if (data is Array)
+                    {
+                        print($"data is Array:{data.ToString()}");
+                    }
+                    print($"jsonData:{jsonData}");
                 }
 
                 foreach (var item in _saveDataList)
@@ -91,7 +125,7 @@ namespace YanGameFrameWork.SaveSystem
                 // 序列化并写入文件
                 string updatedJson = JsonUtility.ToJson(new SaveDataList { DataList = _saveDataList }, true);
                 File.WriteAllText(SaveFilePath, updatedJson);
-                YanGF.Debug.Log(nameof(SaveController), $"保存成功，保存到路径：{SaveFilePath}");
+                YanGF.Debug.Log(nameof(SaveController), $"保存成功，存储路径：{SaveFilePath}，存储字段{key},数据：{jsonData}");
             }
             catch (Exception e)
             {
@@ -199,5 +233,17 @@ namespace YanGameFrameWork.SaveSystem
                 UnityEngine.Debug.LogError($"打开保存目录失败：{e.Message}\n{e.StackTrace}");
             }
         }
+
+
+        [Button("保存数据")]
+        public void TestSave()
+        {
+            YanGF.Save.Save("SkillSystemUnlockedNodes", new string[] { "123", "234", "234234" });
+        }
+
     }
+
+
+
+
 }
