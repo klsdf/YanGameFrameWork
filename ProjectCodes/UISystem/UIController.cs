@@ -42,10 +42,13 @@ namespace YanGameFrameWork.UISystem
         /// </summary>
         private Transform _uiRoot;
 
+        private Transform _popCanvas;
+
         protected override void Awake()
         {
             base.Awake();
             _uiRoot = transform;
+            _popCanvas = transform.GetChild(0);
         }
 
 
@@ -144,13 +147,12 @@ namespace YanGameFrameWork.UISystem
                 if (element.GetType() == elementType)
                 {
 
-                    Transform elementContainer = PeekPanel()?.transform;
-                    if (elementContainer == null)
+                    if (_popCanvas == null)
                     {
                         YanGF.Debug.LogError(nameof(UIController), "没有找到元素的容器");
                         return null;
                     }
-                    UIElementBase instantiatedElement = Instantiate(element.gameObject, elementContainer).GetComponent<UIElementBase>();
+                    UIElementBase instantiatedElement = Instantiate(element.gameObject, _popCanvas).GetComponent<UIElementBase>();
                     RegisterElement(instantiatedElement);
                     return instantiatedElement;
                 }
