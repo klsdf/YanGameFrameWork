@@ -21,14 +21,17 @@ namespace YanGameFrameWork.ModelControlSystem
             OnDataChanged?.Invoke(newdata);
         }
 
+
+        /// <summary>
+        /// 添加数据变化监听，需要手动把类型as为子类的类型
+        /// </summary>
+        /// <param name="listener"></param>
         public void AddDataChangedListener(Action<YanModelBase> listener)
         {
             OnDataChanged += listener;
         }
 
-        // public YanModelBase()
-        // {
-        //     ModelController.Instance.RegisterModule(this);
-        // }
+
+
     }
 }

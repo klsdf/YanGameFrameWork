@@ -18,8 +18,9 @@ namespace YanGameFrameWork.ModelControlSystem
     public class ModelController : Singleton<ModelController>
     {
 
-        [SerializeField]
-        private SerializableDictionary<Type, YanModelBase> _modules = new SerializableDictionary<Type, YanModelBase>();
+
+        private Dictionary<Type, YanModelBase> _modules = new Dictionary<Type, YanModelBase>();
+
 
         // 在Inspector中显示和编辑数据
 
@@ -30,7 +31,7 @@ namespace YanGameFrameWork.ModelControlSystem
         /// <typeparam name="T"></typeparam>
         /// <param name="module">要注册的模块</param>
         /// <returns>注册的模块</returns>
-        public T RegisterModule<T>(T module) where T : YanModelBase
+        public T RegisterModule<T>(T module) where T : YanModelBase, new()
         {
             Type moduleType = module.GetType();
             if (HasModule<T>())
@@ -67,11 +68,11 @@ namespace YanGameFrameWork.ModelControlSystem
         }
 
         /// <summary>
-        /// 获取模块，支持接口和具体类型
+        /// 获取模块，支持接口和具体类型，如果模块不存在，则创建一个
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T GetModule<T>() where T : class
+        public T GetModule<T>() where T : YanModelBase, new()
         {
             Type requestType = typeof(T);
 
@@ -93,7 +94,15 @@ namespace YanGameFrameWork.ModelControlSystem
                 }
             }
             YanGF.Debug.LogError(nameof(ModelController), $"未找到模块 {requestType.Name}");
-            return null;
+
+
+
+            // 如果模块不存在，则创建一个
+            T newModule = new T();
+            RegisterModule(newModule);
+            return newModule;
+
+            // return null;
         }
 
 
@@ -132,7 +141,7 @@ namespace YanGameFrameWork.ModelControlSystem
         /// 获取所有已注册的模块
         /// </summary>
         /// <returns></returns>
-        public SerializableDictionary<Type, YanModelBase> GetAllModules()
+        public Dictionary<Type, YanModelBase> GetAllModules()
         {
             return _modules;
         }
