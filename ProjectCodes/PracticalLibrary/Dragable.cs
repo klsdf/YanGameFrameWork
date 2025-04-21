@@ -16,7 +16,17 @@ public class Dragable : MonoBehaviour
 
     private bool _isDragging = false;
 
+
+    /// <summary>
+    /// 拖动对象的根节点
+    /// </summary>
     public Transform root;
+
+
+    /// <summary>
+    /// 阻止拖动的UI名称,也就是说，当这个名字的ui在拖动对象的上方时，拖动对象无法被拖动
+    /// </summary>
+    public string[] blockUINames;
 
     /// <summary>
     /// 当这个对象浮在Dragable的对象上时，对象无法被拖动
@@ -58,10 +68,6 @@ public class Dragable : MonoBehaviour
 
     void OnMouseDrag()
     {
-        // if (IsTouchedUI())
-        // {
-        //     return;
-        // }
         if (_isDragging)
         {
             Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
@@ -100,10 +106,14 @@ public class Dragable : MonoBehaviour
         foreach (RaycastResult result in results)
         {
 
-            if (result.gameObject.name.Contains("ShopPenal"))
+            foreach (string blockUIName in blockUINames)
             {
-                return true;
+                if (result.gameObject.name.Contains(blockUIName))
+                {
+                    return true;
+                }
             }
+
 
         }
         return false;
