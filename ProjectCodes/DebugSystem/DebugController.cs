@@ -57,5 +57,7 @@ namespace YanGameFrameWork.DebugSystem
             Debug.LogError($"[<color=red><b>❌ {tag}</b></color>] {message}");
         }
 
+
+
     }
 }
