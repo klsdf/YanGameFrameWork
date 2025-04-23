@@ -24,6 +24,7 @@ namespace YanGameFrameWork.UISystem
         public string UIPanelPath = "UIPanels/";
 
         [SerializeField]
+        [Header("注册的UI面板，注册的对象需要在场景上")]
         private List<UIPanelBase> _registerPanels = new List<UIPanelBase>();
 
         [SerializeField]
@@ -129,8 +130,16 @@ namespace YanGameFrameWork.UISystem
         #region UI元素的操作
 
 
+
+        /// <summary>
+        /// 根据类型查找已经注册的UI元素,如果找不到，从Resources中加载
+        /// </summary>
+        /// <param name="elementType">UI元素类型</param>
+        /// <returns>找到的UI元素</returns>
         private UIElementBase FindElementByType(Type elementType)
         {
+
+            // 先从已经注册的UI元素中查找
             foreach (UIElementBase element in _registerElements)
             {
                 if (element.GetType() == elementType)
@@ -165,6 +174,14 @@ namespace YanGameFrameWork.UISystem
 
         public void RegisterElement(UIElementBase element)
         {
+            // 检查是否已经存在相同类型的元素
+            if (HasElement(element))
+            {
+                YanGF.Debug.LogWarning(nameof(UIController), "已经存在相同类型的元素：" + element.GetType());
+                return;
+            }
+
+            // 如果没有相同类型的元素，则注册
             _registerElements.Add(element);
         }
 
@@ -184,6 +201,12 @@ namespace YanGameFrameWork.UISystem
         }
 
 
+
+        /// <summary>
+        /// 推入一个UI元素，默认会从已经注册的UI元素中查找，如果找不到，从Resources中加载
+        /// </summary>
+        /// <typeparam name="T">UI元素类型</typeparam>
+        /// <returns>推入的UI元素</returns>
         public UIElementBase PushElement<T>() where T : UIElementBase
         {
             UIElementBase tempElement = PeekElement();
@@ -192,6 +215,44 @@ namespace YanGameFrameWork.UISystem
             _activeElements.Add(element);
             element.OnEnter();
             return element;
+        }
+
+
+
+        /// <summary>
+        /// 传入一个UI预制体，并push，并注册这个元素
+        /// </summary>
+        /// <param name="element">UI预制体</param>
+        public UIElementBase PushElement(UIElementBase elementPrefab)
+        {
+
+            UIElementBase element;
+            if (HasElement(elementPrefab))
+            {
+                element = FindElementByType(elementPrefab.GetType());
+            }
+            else
+            {
+                element = Instantiate(elementPrefab.gameObject, _popCanvas).GetComponent<UIElementBase>();
+                RegisterElement(element);
+            }
+            UIElementBase tempElement = PeekElement();
+            tempElement?.OnPause();
+            _activeElements.Add(element);
+            element.OnEnter();
+            return element;
+        }
+
+        private bool HasElement(UIElementBase element)
+        {
+            foreach (UIElementBase registeredElement in _registerElements)
+            {
+                if (registeredElement.GetType() == element.GetType())
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public UIElementBase PeekElement()
@@ -243,3 +304,4 @@ namespace YanGameFrameWork.UISystem
     }
 
 }
+

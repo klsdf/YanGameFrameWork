@@ -1,3 +1,9 @@
+/****************************************************************************
+ * Author: 闫辰祥
+ * Date: 2025-04-15
+ * Description: 技能系统,需要子类重写
+ *
+ ****************************************************************************/
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +21,9 @@ public abstract class SkillSystem : MonoBehaviour
 
     [Header("技能树UI的容器")]
     public Transform container; // 场景中的Canvas
+
+    [Header("技能提示弹窗")]
+    public SkillPromptPop skillPromptPopPrefab;
 
     void Start()
     {
@@ -34,7 +43,13 @@ public abstract class SkillSystem : MonoBehaviour
     /// <returns></returns>
     protected SkillNodeData InitNode(string name, string description, Action<GameObject> onUnlock, Func<bool> condition)
     {
-        SkillNodeData nodedata = new SkillNodeData(name, description, onUnlock, condition, this);
+        SkillNodeData nodedata = new SkillNodeData(
+            name: name,
+            description: description,
+            onUnlock: onUnlock,
+            condition: condition,
+            skillSystem: this
+        );
         if (Application.isPlaying)
         {
             GameObject skillObject = GameObject.Find(name);
@@ -44,6 +59,7 @@ public abstract class SkillSystem : MonoBehaviour
         }
         return nodedata;
     }
+
     public List<SkillNodeData> rootSkillList = new List<SkillNodeData>();
 
 
@@ -66,6 +82,26 @@ public abstract class SkillSystem : MonoBehaviour
         }
     }
 
+
+    /// <summary>
+    /// 显示技能提示弹窗
+    /// </summary>
+    /// <param name="skillNodeData">技能节点数据</param>
+    /// <param name="nodePosition">技能节点位置</param>
+    public void ShowPromptPop(SkillNodeData skillNodeData, Vector3 nodePosition)
+    {
+        if (skillPromptPopPrefab == null)
+        {
+            YanGF.Debug.LogWarning(nameof(SkillSystem), "技能提示弹窗的预制体为空");
+            return;
+        }
+        SkillPromptPop skillPromptPop = YanGF.UI.PushElement(skillPromptPopPrefab) as SkillPromptPop;
+
+        var newPosition = nodePosition;
+        newPosition.y += skillPromptPop.GetComponent<RectTransform>().rect.height + 100;
+        skillPromptPop.ShowSkillPrompt(skillNodeData, newPosition);
+    }
+
     private void InitLines()
     {
         List<SkillNodeData> flattenedSkillTree = FlattenSkillTree(rootSkillList[0]);
@@ -83,6 +119,14 @@ public abstract class SkillSystem : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// 绘制技能树的线
+    /// </summary>
+    /// <param name="parent">父级</param>
+    /// <param name="start">起始点</param>
+    /// <param name="end">结束点</param>
+    /// <param name="width">线宽</param>
+    /// <param name="color">颜色</param>
     private void DrawLine(RectTransform parent, Vector2 start, Vector2 end, float width, Color color)
     {
         GameObject line = new GameObject("Line");

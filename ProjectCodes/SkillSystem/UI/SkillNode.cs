@@ -1,16 +1,27 @@
+/****************************************************************************
+ * Author: 闫辰祥
+ * Date: 2025-04-15
+ * Description: 技能节点,也就是技能树的节点
+ *
+ ****************************************************************************/
 using System;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using UnityEditor;
 
+
+/// <summary>
+/// 技能节点,也就是技能树的节点，可以点击解锁一个技能或者类似的东西
+/// </summary>
 public class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public TMP_Text nameText;
     public Button unlockButton;
     public SkillNodeData nodeData;
     public Action OnUnlock;
+
+
 
 
     /// <summary>
@@ -61,20 +72,9 @@ public class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        SkillPromptPop skillPromptPop = YanGF.UI.PushElement<SkillPromptPop>() as SkillPromptPop;
-        skillPromptPop.ShowSkillPrompt(nodeData);
-
         // 获取 SkillNode 的 RectTransform
-        RectTransform skillNodeRect = GetComponent<RectTransform>();
-        // 获取 SkillPromptPop 的 RectTransform
-        RectTransform skillPromptRect = skillPromptPop.GetComponent<RectTransform>();
-
-        // 计算新位置
-        Vector3 newPosition = skillNodeRect.position;
-        newPosition.y += skillNodeRect.rect.height + skillPromptRect.rect.height + 100;
-
-        // 设置 SkillPromptPop 的位置
-        skillPromptRect.position = newPosition;
+        // RectTransform skillNodeRect = GetComponent<RectTransform>();
+        nodeData.SkillSystem.ShowPromptPop(nodeData, transform.position);
     }
 
     public void OnPointerExit(PointerEventData eventData)
