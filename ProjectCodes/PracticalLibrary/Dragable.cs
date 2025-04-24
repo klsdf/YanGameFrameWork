@@ -39,6 +39,10 @@ public class Dragable : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// 设置拖动对象的Raycaster
+    /// </summary>
+    /// <param name="raycaster"></param>
     public void SetRaycaster(GraphicRaycaster raycaster)
     {
         _raycaster = raycaster;

@@ -64,14 +64,37 @@ public abstract class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void UpdateDisplay()
     {
+        //有父节点，并且父节点未解锁时，卡牌显示锁定状态
         if (nodeData.Parent != null && nodeData.Parent.HasUnlocked == false)
         {
             ShowLockInfo();
-
             return;
         }
-        ShowLockInfo();
-        // nameText.text = nodeData.Name;
+
+        // //根节点默认是可解锁状态
+        // if (nodeData.Parent == null)
+        // {
+
+        //     if (nodeData.HasUnlocked)
+        //     {
+        //         ShowUnlockInfo();
+        //     }
+        //     else
+        //     {
+        //         ShowCanUnlockInfo();
+        //     }
+        //     return;
+        // }
+
+
+        if (nodeData.HasUnlocked)
+        {
+            ShowUnlockInfo();
+        }
+        else
+        {
+            ShowCanUnlockInfo();
+        }
     }
 
 
@@ -98,6 +121,12 @@ public abstract class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerE
     /// 当技能节点被锁定时，显示的信息
     /// </summary>
     protected abstract void ShowLockInfo();
+
+
+    /// <summary>
+    /// 当技能节点可以解锁时，显示的信息
+    /// </summary>
+    protected abstract void ShowCanUnlockInfo();
 
     /// <summary>
     /// 当技能节点被解锁时，显示的信息

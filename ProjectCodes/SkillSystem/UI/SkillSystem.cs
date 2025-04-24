@@ -98,7 +98,7 @@ public abstract class SkillSystem : MonoBehaviour
         SkillPromptPop skillPromptPop = YanGF.UI.PushElement(skillPromptPopPrefab) as SkillPromptPop;
 
         var newPosition = nodePosition;
-        newPosition.y += skillPromptPop.GetComponent<RectTransform>().rect.height + 100;
+        newPosition.y += skillPromptPop.GetComponent<RectTransform>().rect.height + 50;
         skillPromptPop.ShowSkillPrompt(skillNodeData, newPosition);
     }
 
