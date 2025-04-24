@@ -1,7 +1,7 @@
 /****************************************************************************
  * Author: 闫辰祥
  * Date: 2025-04-15
- * Description: 技能节点,也就是技能树的节点
+ * Description: 技能节点,也就是技能树的节点，需要子类自己实现
  *
  ****************************************************************************/
 using System;
@@ -14,9 +14,8 @@ using UnityEngine.EventSystems;
 /// <summary>
 /// 技能节点,也就是技能树的节点，可以点击解锁一个技能或者类似的东西
 /// </summary>
-public class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public abstract class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    public TMP_Text nameText;
     public Button unlockButton;
     public SkillNodeData nodeData;
     public Action OnUnlock;
@@ -51,9 +50,13 @@ public class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     }
 
 
-    public void InitInScene(SkillNodeData nodeData)
+    /// <summary>
+    /// 在场景中初始化，也就是直接在场景中生成一个技能节点
+    /// </summary>
+    /// <param name="nodeData"></param>
+    public virtual void InitInScene(SkillNodeData nodeData)
     {
-        nameText.text = nodeData.Name;
+
         gameObject.name = nodeData.Name;
     }
 
@@ -63,10 +66,12 @@ public class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     {
         if (nodeData.Parent != null && nodeData.Parent.HasUnlocked == false)
         {
-            nameText.text = "???";
+            ShowLockInfo();
+
             return;
         }
-        nameText.text = nodeData.Name;
+        ShowLockInfo();
+        // nameText.text = nodeData.Name;
     }
 
 
@@ -82,4 +87,20 @@ public class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         YanGF.UI.PopElement();
     }
 
+
+
+
+
+    /////////////////////////////////子类需要实现的方法////////////////////////////////
+
+
+    /// <summary>
+    /// 当技能节点被锁定时，显示的信息
+    /// </summary>
+    protected abstract void ShowLockInfo();
+
+    /// <summary>
+    /// 当技能节点被解锁时，显示的信息
+    /// </summary>
+    protected abstract void ShowUnlockInfo();
 }

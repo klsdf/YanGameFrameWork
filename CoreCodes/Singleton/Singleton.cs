@@ -20,6 +20,15 @@ namespace YanGameFrameWork.CoreCodes
                 _instance = this as T;
             }
         }
+
+        protected virtual void OnDestroy()
+        {
+            if (_instance == this)
+            {
+                _instance = null;
+            }
+        }
+
         public static T Instance
         {
             get
@@ -32,9 +41,7 @@ namespace YanGameFrameWork.CoreCodes
 
                         if (FindObjectsOfType(typeof(T)).Length > 1)
                         {
-                            YanGF.Debug.LogError(nameof(Singleton<T>), $"[Singleton] Something went really wrong " +
-                                $" - there should never be more than 1 {typeof(T)}!" +
-                                " Reopening the scene might fix it.");
+                            YanGF.Debug.LogError(nameof(Singleton<T>), $"[Singleton] 出现了严重错误 - 不应该有超过1个 {typeof(T)}！重新打开场景可能会修复此问题。");
                             return _instance;
                         }
 
@@ -44,7 +51,7 @@ namespace YanGameFrameWork.CoreCodes
                             _instance = singleton.AddComponent<T>();
                             singleton.name = "(singleton) " + typeof(T).ToString();
 
-                            // DontDestroyOnLoad(singleton);
+                             DontDestroyOnLoad(singleton);
 
                             // Debug.Log("[Singleton] An instance of " + typeof(T) +
                             //     " is needed in the scene, so '" + singleton +

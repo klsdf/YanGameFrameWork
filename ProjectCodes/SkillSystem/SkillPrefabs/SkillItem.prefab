@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 4005159597170992221}
   - component: {fileID: 6773813870260072073}
   - component: {fileID: 1248632875955158830}
-  - component: {fileID: 5532847422340459503}
   m_Layer: 5
   m_Name: SkillItem
   m_TagString: Untagged
@@ -227,20 +226,6 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
---- !u!114 &5532847422340459503
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3050244927739885497}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38516ba54afb94048b10cc6689c0bacc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nameText: {fileID: 262348124343918852}
-  unlockButton: {fileID: 6773813870260072073}
 --- !u!1 &7732032263528071358
 GameObject:
   m_ObjectHideFlags: 0

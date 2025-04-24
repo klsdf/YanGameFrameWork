@@ -37,7 +37,7 @@ namespace YanGameFrameWork.ModelControlSystem
             if (HasModule<T>())
             {
                 YanGF.Debug.LogWarning(nameof(ModelController), $"模块 {moduleType.Name} 已经注册过了");
-                return GetModule<T>();
+                return GetModel<T>();
             }
             _modules[moduleType] = module;
             YanGF.Debug.Log(nameof(ModelController), $"模块 {moduleType.Name} 注册成功");
@@ -72,7 +72,7 @@ namespace YanGameFrameWork.ModelControlSystem
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T GetModule<T>() where T : YanModelBase, new()
+        public T GetModel<T>() where T : YanModelBase, new()
         {
             Type requestType = typeof(T);
 
