@@ -33,7 +33,7 @@ public class AchievementPanel : UIPanelBase
 
 
 
-        ClearAchievementList();
+        // ClearAchievementList();
         AchievementSystem.Instance.OnAchievementRegistered += AddAchievementItem;
         AchievementSystem.Instance.OnAchievementUnlocked += ShowUnlockItem;
 
@@ -49,6 +49,7 @@ public class AchievementPanel : UIPanelBase
         ClearAchievementList();
         //拿到现在所有的成就数据进行处理
         List<AchievementBase> achievements = YanGF.Achievement.GetAllAchievements();
+        print("当前所有成就数量：" + achievements.Count);
         foreach (var achievement in achievements)
         {
             AddAchievementItem(achievement, achievements);
@@ -61,7 +62,7 @@ public class AchievementPanel : UIPanelBase
 
 
     /// <summary>
-    /// 当成就被新注册的时候，添加成就项
+    /// 添加成就的UI项，当成就被注册的时候或者解锁的时候调用
     /// </summary>
     /// <param name="registeredAchievement">注册的成就</param>
     /// <param name="achievements">注册后的所有成就</param>
@@ -79,6 +80,9 @@ public class AchievementPanel : UIPanelBase
     }
 
 
+    /// <summary>
+    /// 更新所有成就项
+    /// </summary>
     void UpdateAllAchievementItem()
     {
         foreach (var achievementItem in _achievementItemList)
