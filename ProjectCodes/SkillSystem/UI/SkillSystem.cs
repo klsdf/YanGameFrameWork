@@ -41,18 +41,19 @@ public abstract class SkillSystem : MonoBehaviour
     /// <param name="onUnlock">技能解锁时执行的事件</param>
     /// <param name="condition">技能解锁的条件</param>
     /// <returns></returns>
-    protected SkillNodeData InitNode(string name, string description, Action<GameObject> onUnlock, Func<bool> condition)
+    protected SkillNodeData InitNode(SkillNodeData nodedata)
     {
-        SkillNodeData nodedata = new SkillNodeData(
-            name: name,
-            description: description,
-            onUnlock: onUnlock,
-            condition: condition,
-            skillSystem: this
-        );
+        nodedata.SkillSystem = this;
+        // SkillNodeData nodedata = new SkillNodeData(
+        //     name: name,
+        //     description: description,
+        //     onUnlock: onUnlock,
+        //     condition: condition,
+        //     skillSystem: this
+        // );
         if (Application.isPlaying)
         {
-            GameObject skillObject = GameObject.Find(name);
+            GameObject skillObject = GameObject.Find(nodedata.Name);
             SkillNode skillNode = skillObject.GetComponent<SkillNode>();
             skillNode.Init(nodedata);
 

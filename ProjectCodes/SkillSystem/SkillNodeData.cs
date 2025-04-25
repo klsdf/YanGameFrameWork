@@ -7,17 +7,21 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-public class SkillNodeData
+
+/// <summary>
+/// 子类需要重写构造函数，来初始化自己的数据
+/// </summary>
+public abstract class SkillNodeData
 {
-    public string Name { get; private set; }
-    public string Description { get; private set; }
+    public string Name { get;  set; }
+    public string Description { get;  set; }
 
 
     public bool HasUnlocked { get;set; }
 
 
     public SkillNodeData Parent { get; set; }
-    public List<SkillNodeData> Children { get; private set; }
+    public List<SkillNodeData> Children { get;  set; }
 
     /// <summary>
     /// 这个技能节点所属的技能系统

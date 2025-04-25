@@ -50,16 +50,6 @@ public abstract class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerE
     }
 
 
-    /// <summary>
-    /// 在场景中初始化，也就是直接在场景中生成一个技能节点
-    /// </summary>
-    /// <param name="nodeData"></param>
-    public virtual void InitInScene(SkillNodeData nodeData)
-    {
-
-        gameObject.name = nodeData.Name;
-    }
-
 
 
     public void UpdateDisplay()
@@ -70,23 +60,6 @@ public abstract class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerE
             ShowLockInfo();
             return;
         }
-
-        // //根节点默认是可解锁状态
-        // if (nodeData.Parent == null)
-        // {
-
-        //     if (nodeData.HasUnlocked)
-        //     {
-        //         ShowUnlockInfo();
-        //     }
-        //     else
-        //     {
-        //         ShowCanUnlockInfo();
-        //     }
-        //     return;
-        // }
-
-
         if (nodeData.HasUnlocked)
         {
             ShowUnlockInfo();
@@ -100,8 +73,6 @@ public abstract class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        // 获取 SkillNode 的 RectTransform
-        // RectTransform skillNodeRect = GetComponent<RectTransform>();
         nodeData.SkillSystem.ShowPromptPop(nodeData, transform.position);
     }
 
@@ -111,6 +82,18 @@ public abstract class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerE
     }
 
 
+    /////////////////////////////虚方法////////////////////////////////////////
+
+
+    /// <summary>
+    /// 在场景中初始化，也就是直接在场景中生成一个技能节点
+    /// </summary>
+    /// <param name="nodeData"></param>
+    public virtual void InitInScene(SkillNodeData nodeData)
+    {
+
+        gameObject.name = nodeData.Name;
+    }
 
 
 
