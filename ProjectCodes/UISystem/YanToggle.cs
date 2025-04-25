@@ -2,15 +2,13 @@
  * Author: 闫辰祥
  * Date: 2025-04-17
  * Description: 一个可以切换状态的按钮，需要来手动继承这个类。
- * 需要设置groupName，只有同一个groupName的按钮才会互相影响。也就是说按下一个的时候，其他同一个groupName的按钮会自动关闭。
+ * 同一个类的按钮默认是同一个group，只有同一个group的按钮才会互相影响。也就是说按下一个的时候，其他同一个group的按钮会自动关闭。
  ****************************************************************************/
 using UnityEngine.EventSystems;
 using UnityEngine;
 using System;
 public abstract class YanToggle : MonoBehaviour, IPointerClickHandler
 {
-    public string groupName;
-
 
 
     //自己当前是否处于激活状态
@@ -31,7 +29,8 @@ public abstract class YanToggle : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        YanGF.Event.TriggerEvent<string, string>("OnButtonClick", groupName, name);
+        print(this.GetType().ToString());
+        YanGF.Event.TriggerEvent<string, string>("OnButtonClick", this.GetType().ToString(), name);
     }
 
 
@@ -40,7 +39,7 @@ public abstract class YanToggle : MonoBehaviour, IPointerClickHandler
     {
 
         //如果不是自己的组，则不响应
-        if (groupName != this.groupName)
+        if (groupName != this.GetType().ToString())
         {
             return;
         }
@@ -65,7 +64,7 @@ public abstract class YanToggle : MonoBehaviour, IPointerClickHandler
 
 
     /// <summary>
-    /// 打开按钮，同时会关闭其他同一个groupName的按钮
+    /// 打开按钮，同时会关闭其他同一个类的按钮
     /// </summary>
     public void TurnOn()
     {

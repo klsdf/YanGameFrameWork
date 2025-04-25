@@ -14,5 +14,10 @@ using UnityEngine;
 /// </summary>
 public abstract class SkillPromptPop : UIElementBase
 {
+    /// <summary>
+    /// 显示技能提示弹窗
+    /// </summary>
+    /// <param name="skillNodeData">技能节点数据</param>
+    /// <param name="position">技能节点位置</param>
     public abstract void ShowSkillPrompt(SkillNodeData skillNodeData, Vector3 position);
 }
