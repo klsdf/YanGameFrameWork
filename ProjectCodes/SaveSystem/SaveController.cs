@@ -5,7 +5,7 @@
  *
  * 修改记录：
  * 2025-04-11 闫辰祥 允许保存的文件可以有多个并且可以自定义名字
- *
+ * 2025-04-25 闫辰祥 取消设置全局文件名的api，会导致保存的文件名反复变化。为了方便管理，现在save和load的时候可以直接提供保存的文件名
  ****************************************************************************/
 using UnityEngine;
 using System;
@@ -22,22 +22,19 @@ namespace YanGameFrameWork.SaveSystem
 {
     public class SaveController : Singleton<SaveController>
     {
-        private string _defaultSaveFilePath = "savefile.json";
-        private string _customSaveFilePath;
+        private const string _defaultSaveFileName = "savefile.json";
 
-        public string SaveFilePath
+
+        private string GetSaveFilePath(string saveFileName)
         {
-            get
+
+            // 检查文件名是否以 .json 结尾，如果不是则添加
+            if (!saveFileName.EndsWith(".json"))
             {
-                if (_customSaveFilePath == null || _customSaveFilePath == "")
-                {
-                    return Path.Combine(Application.persistentDataPath, _defaultSaveFilePath);
-                }
-                else
-                {
-                    return Path.Combine(Application.persistentDataPath, _customSaveFilePath);
-                }
+                saveFileName += ".json";
             }
+            return Path.Combine(Application.persistentDataPath, saveFileName);
+
         }
 
         [Header("保存数据列表")]
@@ -45,23 +42,19 @@ namespace YanGameFrameWork.SaveSystem
         private List<SaveData> _saveDataList = new List<SaveData>();
 
 
-        public SaveController SetSaveFileName(string saveFileName)
-        {
-            // 检查文件名是否以 .json 结尾，如果不是则添加
-            if (!saveFileName.EndsWith(".json"))
-            {
-                saveFileName += ".json";
-            }
+        // public SaveController SetSaveFileName(string saveFileName)
+        // {
 
-            _customSaveFilePath = saveFileName;
-            return this;
-        }
 
-        public SaveController SetDefaultSaveFilePath()
-        {
-            _customSaveFilePath = _defaultSaveFilePath;
-            return this;
-        }
+        //     _customSaveFilePath = saveFileName;
+        //     return this;
+        // }
+
+        // public SaveController SetDefaultSaveFilePath()
+        // {
+        //     _customSaveFilePath = _defaultSaveFilePath;
+        //     return this;
+        // }
 
 
 
@@ -72,8 +65,10 @@ namespace YanGameFrameWork.SaveSystem
         /// <typeparam name="T">数据类型</typeparam>
         /// <param name="key">键</param>
         /// <param name="data">数据</param>
-        public void Save<T>(string key, T data)
+        public void Save<T>(string key, T data, string saveFileName = _defaultSaveFileName)
         {
+
+            string SaveFilePath = GetSaveFilePath(saveFileName);
             try
             {
                 // 确保目录存在
@@ -144,8 +139,9 @@ namespace YanGameFrameWork.SaveSystem
         /// <param name="key">键</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns>数据</returns>
-        public T Load<T>(string key, T defaultValue = default)
+        public T Load<T>(string key, T defaultValue = default, string saveFileName = _defaultSaveFileName)
         {
+            string SaveFilePath = GetSaveFilePath(saveFileName);
             try
             {
                 if (File.Exists(SaveFilePath))
@@ -181,7 +177,7 @@ namespace YanGameFrameWork.SaveSystem
                             }
                         }
                     }
-                    YanGF.Debug.LogWarning(nameof(SaveController), $"未找到键为 {key} 的数据。");
+                    YanGF.Debug.LogWarning(nameof(SaveController), $"在文件{SaveFilePath}中未找到键为 {key} 的数据。");
                 }
                 else
                 {
@@ -202,6 +198,7 @@ namespace YanGameFrameWork.SaveSystem
         [Button("打开保存目录")]
         public void OpenSaveDirectory()
         {
+            string SaveFilePath = GetSaveFilePath(_defaultSaveFileName);
             try
             {
                 string directory = Path.GetDirectoryName(SaveFilePath);

@@ -105,10 +105,10 @@ namespace YanGameFrameWork.Example
         public void SaveDataInt()
         {
             int testInt = 123;
-            YanGF.Save.SetSaveFileName("TestSave").Save("testInt", testInt);
+            YanGF.Save.Save("testInt", testInt, "TestSave");
 
 
-            int result = YanGF.Save.Load<int>("testInt");
+            int result = YanGF.Save.Load<int>("testInt", 0, "TestSave");
 
             TestAssert.AreEqual(result, testInt);
         }
@@ -118,9 +118,9 @@ namespace YanGameFrameWork.Example
         public void SaveDataString()
         {
             string testString = "测试字符串";
-            YanGF.Save.SetSaveFileName("TestSave").Save("testString", testString);
+            YanGF.Save.Save("testString", testString, "TestSave");
 
-            string result = YanGF.Save.Load<string>("testString");
+            string result = YanGF.Save.Load<string>("testString", "默认值", "TestSave");
 
             TestAssert.AreEqual(result, testString);
         }
@@ -131,9 +131,9 @@ namespace YanGameFrameWork.Example
         public void SaveDataArrayInt()
         {
             int[] testArrayInt = new int[] { 1, 2, 3 };
-            YanGF.Save.SetSaveFileName("TestSave").Save("testArrayInt", testArrayInt);
+            YanGF.Save.Save("testArrayInt", testArrayInt, "TestSave");
 
-            int[] result = YanGF.Save.Load<int[]>("testArrayInt");
+            int[] result = YanGF.Save.Load<int[]>("testArrayInt", new int[] { 0, 0, 0 }, "TestSave");
 
             TestAssert.AreEqual(result, testArrayInt);
         }
@@ -142,9 +142,9 @@ namespace YanGameFrameWork.Example
         public void SaveDataArrayString()
         {
             string[] testArrayString = new string[] { "1", "2", "3" };
-            YanGF.Save.SetSaveFileName("TestSave").Save("testArrayString", testArrayString);
+            YanGF.Save.Save("testArrayString", testArrayString, "TestSave");
 
-            string[] result = YanGF.Save.Load<string[]>("testArrayString");
+            string[] result = YanGF.Save.Load<string[]>("testArrayString", new string[] { "0", "0", "0" }, "TestSave");
 
             TestAssert.AreEqual(result, testArrayString);
         }
@@ -153,9 +153,9 @@ namespace YanGameFrameWork.Example
         public void SaveDataListInt()
         {
             List<int> testListInt = new List<int> { 1, 2, 3 };
-            YanGF.Save.SetSaveFileName("TestSave").Save("testListInt", testListInt);
+            YanGF.Save.Save("testListInt", testListInt, "TestSave");
 
-            List<int> result = YanGF.Save.Load<List<int>>("testListInt");
+            List<int> result = YanGF.Save.Load<List<int>>("testListInt", new List<int> { 0, 0, 0 }, "TestSave");
 
             TestAssert.AreEqual(result, testListInt);
         }
@@ -164,9 +164,9 @@ namespace YanGameFrameWork.Example
         public void SaveDataTestData()
         {
             TestData testData = new TestData { intValue = 1, stringValue = "测试字符串", intArray = new int[] { 1, 2, 3 }, intList = new List<int> { 1, 2, 3 } };
-            YanGF.Save.SetSaveFileName("TestSave").Save("testTestData", testData);
+            YanGF.Save.Save("testTestData", testData, "TestSave");
 
-            TestData result = YanGF.Save.Load<TestData>("testTestData");
+            TestData result = YanGF.Save.Load<TestData>("testTestData", new TestData(), "TestSave");
 
             TestAssert.AreEqual(result, testData);
         }

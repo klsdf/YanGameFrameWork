@@ -29,6 +29,10 @@ public class GameSettingPanel : UIPanelBase
     [Header("退出按钮")]
     public Button exitButton;
 
+
+
+    public Button closeButton;
+
     GameSettingData _gameSettingData;
 
 
@@ -40,6 +44,10 @@ public class GameSettingPanel : UIPanelBase
         InitializeVolumeSliders();
         InitializeResolutionDropdown();
         InitializeButtons();
+        closeButton.onClick.AddListener(() =>
+        {
+            YanGF.UI.PopPanel();
+        });
     }
 
     void InitializeLanguageDropdown()
@@ -149,7 +157,7 @@ public class GameSettingPanel : UIPanelBase
     public override void OnEnter()
     {
         base.OnEnter();
-        _gameSettingData = YanGF.Save.SetSaveFileName(_saveFileName).Load("GameSettingData", new GameSettingData());
+        _gameSettingData = YanGF.Save.Load("GameSettingData", new GameSettingData(), _saveFileName);
 
         // 设置滑动条的值
         masterVolumeSlider.value = _gameSettingData.masterVolume;
@@ -175,7 +183,7 @@ public class GameSettingPanel : UIPanelBase
         base.OnExit();
         if (_gameSettingData != null)
         {
-            YanGF.Save.SetSaveFileName(_saveFileName).Save("GameSettingData", _gameSettingData);
+            YanGF.Save.Save("GameSettingData", _gameSettingData, _saveFileName);
         }
     }
 
