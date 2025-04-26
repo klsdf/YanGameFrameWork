@@ -44,6 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd05303cbc4172d43b3a08792b41413b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioMixer: {fileID: 24100000, guid: 36caf33f6dae75f4ca69f2e1c34182d5, type: 2}
+  masterGroup: {fileID: 24300002, guid: 36caf33f6dae75f4ca69f2e1c34182d5, type: 2}
+  bgmGroup: {fileID: -8640419781191819113, guid: 36caf33f6dae75f4ca69f2e1c34182d5, type: 2}
+  seGroup: {fileID: -5368766363599728603, guid: 36caf33f6dae75f4ca69f2e1c34182d5, type: 2}
 --- !u!1 &934622688944269119
 GameObject:
   m_ObjectHideFlags: 0
@@ -627,8 +631,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d3264d984c57d1469cf65dd8544fd41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _modules:
-    list: []
 --- !u!1 &6703248564761043069
 GameObject:
   m_ObjectHideFlags: 0
