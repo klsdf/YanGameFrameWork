@@ -3,6 +3,8 @@
  * Date: 2025-03-20
  * Description: 本地化系统
  *
+ * 修改记录:
+ * 2025-04-26 闫辰祥 增加了tableName，取消使用枚举来指定本地化表的名称，而是使用字符串来指定
  ****************************************************************************/
 using UnityEngine;
 using UnityEngine.Localization.Settings;
@@ -16,15 +18,18 @@ using YanGameFrameWork.CoreCodes;
 namespace YanGameFrameWork.LocalizationSystem
 {
 
-    public enum TableType
-    {
-        Card,
-    }
+    // public enum TableType
+    // {
+    //     Card,
+    // }
+
 
     public class LocalizationController : Singleton<LocalizationController>
     {
 
         public bool enable = true;
+        public string tableName;
+
 
 
         private StringTable _tableStory;
@@ -34,7 +39,7 @@ namespace YanGameFrameWork.LocalizationSystem
             {
                 if (_tableStory == null)
                 {
-                    _tableStory = LocalizationSettings.StringDatabase.GetTable(TableType.Card.ToString());
+                    _tableStory = LocalizationSettings.StringDatabase.GetTable(tableName);
                 }
                 return _tableStory;
             }
@@ -48,7 +53,7 @@ namespace YanGameFrameWork.LocalizationSystem
         {
             if (LocalizationSettings.AvailableLocales.Locales.Count > 0)
             {
-                GetLocalizationTable(TableType.Card);
+                GetLocalizationTable(tableName);
             }
             else
             {
@@ -58,9 +63,10 @@ namespace YanGameFrameWork.LocalizationSystem
             SwitchToEnglish();
         }
 
-        void OnDestroy()
+        protected override void OnDestroy()
         {
             LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+            base.OnDestroy();
         }
 
         /// <summary>
@@ -72,7 +78,7 @@ namespace YanGameFrameWork.LocalizationSystem
             {
                 Debug.Log("Localization initialized successfully!");
                 //这里临时用一下Card
-                GetLocalizationTable(TableType.Card);
+                GetLocalizationTable(tableName);
             }
             else
             {
@@ -88,7 +94,7 @@ namespace YanGameFrameWork.LocalizationSystem
             print("切换语言：" + newLocale.Identifier.Code);
             LocalizationSettings.SelectedLocale = newLocale;
             //这里临时用一下Card
-            GetLocalizationTable(TableType.Card);
+            GetLocalizationTable(tableName);
         }
 
 
@@ -97,14 +103,14 @@ namespace YanGameFrameWork.LocalizationSystem
         /// <summary>
         /// 获取本地化表
         /// </summary>
-        private void GetLocalizationTable(TableType tableType)
+        private void GetLocalizationTable(string tableName)
         {
             try
             {
-                tableStory = LocalizationSettings.StringDatabase.GetTable(tableType.ToString());
+                tableStory = LocalizationSettings.StringDatabase.GetTable(tableName);
                 if (tableStory == null)
                 {
-                    Debug.LogError($"无法获取本地化表: {tableType}");
+                    Debug.LogError($"无法获取本地化表: {tableName}");
                     return;
                 }
                 // Debug.Log($"成功获取本地化表: {tableType}");
