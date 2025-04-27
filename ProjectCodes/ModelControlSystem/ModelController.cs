@@ -4,9 +4,11 @@
  * Description: 模块控制器，Module是指游戏的数据。所有的游戏数据都应该继承自YanModelBase，理论上是这样（
  数据本身应该也是单例的，一个数据类型只能注册一次
  *
- ****************************************************************************/
+ *修改记录：
+* 2025-04-27 闫辰祥 将_modules的数据类型从dictionary改为ModelDataList，从而在Inspector中显示和编辑数据
+不过要想显示具体的数据，还需要model的具体类的各个字段加上[SerializeField]
+****************************************************************************/
 
-using System.Collections.Generic;
 using System;
 using UnityEngine;
 using YanGameFrameWork.CoreCodes;
@@ -14,12 +16,11 @@ using YanGameFrameWork.CoreCodes;
 namespace YanGameFrameWork.ModelControlSystem
 {
 
-
     public class ModelController : Singleton<ModelController>
     {
 
-
-        private Dictionary<Type, YanModelBase> _modules = new Dictionary<Type, YanModelBase>();
+        [SerializeField]
+        private ModelDataList _modules = new ModelDataList();
 
 
         // 在Inspector中显示和编辑数据
@@ -141,7 +142,7 @@ namespace YanGameFrameWork.ModelControlSystem
         /// 获取所有已注册的模块
         /// </summary>
         /// <returns></returns>
-        public Dictionary<Type, YanModelBase> GetAllModules()
+        public ModelDataList GetAllModules()
         {
             return _modules;
         }

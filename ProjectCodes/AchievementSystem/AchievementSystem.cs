@@ -13,7 +13,7 @@ using UnityEngine;
 // using Sirenix.OdinInspector;
 using System;
 using System.Collections;
-using YanGameFrameWork.Editor;
+
 namespace YanGameFrameWork.AchievementSystem
 {
     public class AchievementSystem : Singleton<AchievementSystem>
