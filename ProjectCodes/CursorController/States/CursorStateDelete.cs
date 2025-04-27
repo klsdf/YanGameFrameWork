@@ -1,4 +1,5 @@
-namespace YanGameFrameWork.CursourController
+using UnityEngine;
+namespace YanGameFrameWork.CursorController
 {
     public class CursorStateDelete : CursorState
     {
@@ -6,7 +7,8 @@ namespace YanGameFrameWork.CursourController
 
         public override void OnEnter()
         {
-            cursorManager.SetCursor("Delete");
+            cursorManager.SetCursor(CursorManager.Delete);
+            Debug.Log("CursorStateDelete OnEnter");
         }
     }
 }

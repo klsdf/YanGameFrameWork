@@ -1,5 +1,5 @@
 using UnityEngine;
-namespace YanGameFrameWork.CursourController
+namespace YanGameFrameWork.CursorController
 {
     [System.Serializable]
     public struct CursorData

@@ -1,6 +1,6 @@
 using YanGameFrameWork.FSM;
 
-namespace YanGameFrameWork.CursourController
+namespace YanGameFrameWork.CursorController
 {
     public abstract class CursorState : YanStateBase
     {

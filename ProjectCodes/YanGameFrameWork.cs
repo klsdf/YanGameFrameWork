@@ -14,6 +14,7 @@ using YanGameFrameWork.AchievementSystem;
 using YanGameFrameWork.EventSystem;
 using YanGameFrameWork.ModelControlSystem;
 using YanGameFrameWork.ResourceControlSystem;
+using YanGameFrameWork.CursorController;
 /// <summary>
 /// 游戏框架的静态类，用于简化代码，使其可以快速访问常见的控制类，可以直接使用
 /// </summary>
@@ -134,6 +135,17 @@ public static class YanGF
         get
         {
             return YanGameFrameWork.ResourceControlSystem.ResourcesController.Instance;
+        }
+    }
+
+    /// <summary>
+    /// 光标控制器，全称是CursorManager
+    /// </summary>
+    public static YanGameFrameWork.CursorController.CursorManager Cursor
+    {
+        get
+        {
+            return YanGameFrameWork.CursorController.CursorManager.Instance;
         }
     }
 

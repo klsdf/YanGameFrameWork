@@ -1,5 +1,5 @@
 using UnityEngine;
-namespace YanGameFrameWork.CursourController
+namespace YanGameFrameWork.CursorController
 {
     public class CursorStateNormal : CursorState
     {
@@ -7,7 +7,7 @@ namespace YanGameFrameWork.CursourController
 
         public override void OnEnter()
         {
-            cursorManager.SetCursor("Normal");
+            cursorManager.SetCursor(CursorManager.Normal);
         }
 
         public override void OnUpdate()
@@ -16,11 +16,11 @@ namespace YanGameFrameWork.CursourController
 
             if (Input.GetMouseButtonDown(0))
             {
-                cursorManager.SetCursor("Clicking");
+                cursorManager.SetCursor(CursorManager.Clicking);
             }
             else if (Input.GetMouseButtonUp(0))
             {
-                cursorManager.SetCursor("Normal");
+                cursorManager.SetCursor(CursorManager.Normal);
             }
 
 
