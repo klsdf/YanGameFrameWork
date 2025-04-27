@@ -23,6 +23,7 @@ public abstract class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerE
 
 
 
+
     /// <summary>
     /// 初始化数据
     /// </summary>
@@ -42,13 +43,23 @@ public abstract class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 nodeData.OnUnlock(gameObject);
 
+
                 nodeData.HasUnlocked = true;
+
+                //一旦某个节点更新，会刷新整棵树
                 nodeData.SkillSystem.UpdateDisplay();
+                Save();
             }
         });
 
     }
 
+
+
+    /// <summary>
+    /// 当解锁了该节点后，会自动调用这个函数，用来存储解锁后的数据，当然了，也可以不实现 ，但是强烈建议实现，所以使用了抽象方法
+    /// </summary>
+    public abstract void Save();
 
 
 

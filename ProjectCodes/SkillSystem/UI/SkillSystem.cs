@@ -29,8 +29,16 @@ public abstract class SkillSystem : MonoBehaviour
     {
         rootSkillList = CreateInitData();
         InitLines();
+        LoadSkillData();
         UpdateDisplay();
     }
+
+
+    /// <summary>
+    /// 从本地数据中加载技能数据，需要配合SkillNode的save方法来使用，具体的节点解锁时来保存数据，在初始化的时候，SkillSystem会自动读取数据
+    /// 具体内容就是，把已经解锁的节点的nodeData.HasUnlocked设置为true
+    /// </summary>
+    abstract protected void LoadSkillData();
 
 
     /// <summary>
@@ -61,7 +69,22 @@ public abstract class SkillSystem : MonoBehaviour
         return nodedata;
     }
 
+
+    /// <summary>
+    /// 技能树的根节点，因为技能树的根节点不一定只有一个，所以需要一个列表来存储
+    /// </summary>
     public List<SkillNodeData> rootSkillList = new List<SkillNodeData>();
+
+    /// <summary>
+    /// 已经解锁的技能节点
+    /// </summary>
+    public List<SkillNodeData> AllSkillNodeDatas
+    {
+        get
+        {
+            return FlattenAndMergeSkillTrees(rootSkillList);
+        }
+    }
 
 
 
@@ -72,11 +95,11 @@ public abstract class SkillSystem : MonoBehaviour
     public abstract List<SkillNodeData> CreateInitData();
 
     /// <summary>
-    /// 初始化技能节点的显示
+    /// 刷新技能节点的显示
     /// </summary>
     public void UpdateDisplay()
     {
-        List<SkillNodeData> flattenedSkillTree = FlattenSkillTree(rootSkillList[0]);
+        List<SkillNodeData> flattenedSkillTree = FlattenAndMergeSkillTrees(rootSkillList);
         foreach (SkillNodeData skillNodeData in flattenedSkillTree)
         {
             skillNodeData.skillObject.GetComponent<SkillNode>().UpdateDisplay();
@@ -105,7 +128,7 @@ public abstract class SkillSystem : MonoBehaviour
 
     private void InitLines()
     {
-        List<SkillNodeData> flattenedSkillTree = FlattenSkillTree(rootSkillList[0]);
+        List<SkillNodeData> flattenedSkillTree = FlattenAndMergeSkillTrees(rootSkillList);
         foreach (SkillNodeData skillNodeData in flattenedSkillTree)
         {
             RectTransform parentTransform = container.GetComponent<RectTransform>();
@@ -161,6 +184,26 @@ public abstract class SkillSystem : MonoBehaviour
         }
         return result;
     }
+
+
+    /// <summary>
+    /// 扁平化多个技能树并连接它们
+    /// </summary>
+    /// <param name="nodeLists">多个技能树的根节点列表</param>
+    /// <returns>扁平化后的技能节点列表</returns>
+    private List<SkillNodeData> FlattenAndMergeSkillTrees(List<SkillNodeData> nodeLists)
+    {
+        List<SkillNodeData> result = new List<SkillNodeData>();
+        foreach (var rootNode in nodeLists)
+        {
+            result.AddRange(FlattenSkillTree(rootNode));
+        }
+        return result;
+    }
+
+
+
+
 
 
     #region 编辑器方法

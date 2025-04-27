@@ -70,4 +70,15 @@ public class ExampleSkillSystem : SkillSystem
 
         return new List<SkillNodeData> { _rootSkill };
     }
+
+    protected override void LoadSkillData()
+    {
+        List<string> unlockedSkillNames = YanGF.Save.Load("UnlockedSkills", new List<string>(), "ExampleSkillSystem");
+        foreach (string unLockedSkillName in unlockedSkillNames)
+        {
+            AllSkillNodeDatas.Find(skill => skill.Name == unLockedSkillName).HasUnlocked = true;
+        }
+    }
+
+
 }
