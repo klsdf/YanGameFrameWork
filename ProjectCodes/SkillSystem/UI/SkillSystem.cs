@@ -25,11 +25,43 @@ public abstract class SkillSystem : MonoBehaviour
     [Header("技能提示弹窗")]
     public SkillPromptPop skillPromptPopPrefab;
 
+
+    /// <summary>
+    /// 技能树的根节点，因为技能树的根节点不一定只有一个，所以需要一个列表来存储
+    /// </summary>
+    public List<SkillNodeData> rootSkillList = new List<SkillNodeData>();
+
+    /// <summary>
+    /// 已经解锁的技能节点
+    /// </summary>
+    public List<SkillNodeData> AllSkillNodeDatas
+    {
+        get
+        {
+            return FlattenAndMergeSkillTrees(rootSkillList);
+        }
+    }
+
     void Start()
     {
         rootSkillList = CreateInitData();
         InitLines();
-        LoadSkillData();
+
+
+
+        //从本地数据中加载已经解锁的技能名称
+        List<string> unlockedSkillNames = LoadUnlockedSkillName();
+        foreach (string unlockedSkillName in unlockedSkillNames)
+        {
+            SkillNodeData skillNodeData = AllSkillNodeDatas.Find(skill => skill.Name == unlockedSkillName);
+            if (skillNodeData != null)
+            {
+                skillNodeData.HasUnlocked = true;
+            }
+        }
+
+
+
         UpdateDisplay();
     }
 
@@ -38,7 +70,7 @@ public abstract class SkillSystem : MonoBehaviour
     /// 从本地数据中加载技能数据，需要配合SkillNode的save方法来使用，具体的节点解锁时来保存数据，在初始化的时候，SkillSystem会自动读取数据
     /// 具体内容就是，把已经解锁的节点的nodeData.HasUnlocked设置为true
     /// </summary>
-    abstract protected void LoadSkillData();
+    abstract protected List<string> LoadUnlockedSkillName();
 
 
     /// <summary>
@@ -70,21 +102,7 @@ public abstract class SkillSystem : MonoBehaviour
     }
 
 
-    /// <summary>
-    /// 技能树的根节点，因为技能树的根节点不一定只有一个，所以需要一个列表来存储
-    /// </summary>
-    public List<SkillNodeData> rootSkillList = new List<SkillNodeData>();
 
-    /// <summary>
-    /// 已经解锁的技能节点
-    /// </summary>
-    public List<SkillNodeData> AllSkillNodeDatas
-    {
-        get
-        {
-            return FlattenAndMergeSkillTrees(rootSkillList);
-        }
-    }
 
 
 

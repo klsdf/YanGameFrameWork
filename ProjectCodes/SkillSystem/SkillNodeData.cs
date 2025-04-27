@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 子类需要重写构造函数，来初始化自己的数据
+/// 子类需要重写构造函数，用于初始化数据，也可以增加自己的数据
 /// </summary>
 public abstract class SkillNodeData
 {
@@ -17,7 +17,10 @@ public abstract class SkillNodeData
     public string Description { get;  set; }
 
 
-    public bool HasUnlocked { get;set; }
+    /// <summary>
+    /// 该技能是否已经点亮了
+    /// </summary>
+    public bool HasUnlocked { get; set; }
 
 
     public SkillNodeData Parent { get; set; }

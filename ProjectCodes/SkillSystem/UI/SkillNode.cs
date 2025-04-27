@@ -51,7 +51,6 @@ public abstract class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerE
                 Save();
             }
         });
-
     }
 
 
