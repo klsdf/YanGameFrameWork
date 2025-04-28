@@ -15,6 +15,7 @@ using YanGameFrameWork.EventSystem;
 using YanGameFrameWork.ModelControlSystem;
 using YanGameFrameWork.ResourceControlSystem;
 using YanGameFrameWork.CursorController;
+using YanGameFrameWork.CameraController;
 /// <summary>
 /// 游戏框架的静态类，用于简化代码，使其可以快速访问常见的控制类，可以直接使用
 /// </summary>
@@ -146,6 +147,18 @@ public static class YanGF
         get
         {
             return YanGameFrameWork.CursorController.CursorManager.Instance;
+        }
+    }
+
+
+    /// <summary>
+    /// 摄像机控制器，全称是CameraController
+    /// </summary>
+    public static YanGameFrameWork.CameraController.CameraController Camera
+    {
+        get
+        {
+            return YanGameFrameWork.CameraController.CameraController.Instance;
         }
     }
 
