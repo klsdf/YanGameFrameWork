@@ -279,11 +279,6 @@ namespace YanGameFrameWork.EventSystem
                    $"Once Events: {_onceEvents.Count}";
         }
 
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            ClearAllEvents();
-        }
         #endregion
     }
 }
