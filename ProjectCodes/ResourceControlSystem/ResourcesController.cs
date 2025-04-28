@@ -10,7 +10,7 @@
 using UnityEngine;
 using System;
 using System.Threading.Tasks;
-using YanGameFrameWork.CoreCodes;
+using YanGameFrameWork.Singleton;
 namespace YanGameFrameWork.ResourceControlSystem
 {
     public class ResourcesController : Singleton<ResourcesController>

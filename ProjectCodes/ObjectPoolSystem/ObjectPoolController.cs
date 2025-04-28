@@ -6,7 +6,7 @@
  ****************************************************************************/
 using System.Collections.Generic;
 using UnityEngine;
-using YanGameFrameWork.CoreCodes;
+using YanGameFrameWork.Singleton;
 namespace YanGameFrameWork.ObjectPoolSystem
 {
     public class ObjectPoolController : Singleton<ObjectPoolController>

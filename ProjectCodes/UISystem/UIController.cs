@@ -13,7 +13,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using YanGameFrameWork.CoreCodes;
+using YanGameFrameWork.Singleton;
 namespace YanGameFrameWork.UISystem
 {
     public class UIController : Singleton<UIController>

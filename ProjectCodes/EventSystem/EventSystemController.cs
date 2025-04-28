@@ -8,7 +8,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using YanGameFrameWork.CoreCodes;
+using YanGameFrameWork.Singleton;
 
 namespace YanGameFrameWork.EventSystem
 {
@@ -279,8 +279,9 @@ namespace YanGameFrameWork.EventSystem
                    $"Once Events: {_onceEvents.Count}";
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             ClearAllEvents();
         }
         #endregion

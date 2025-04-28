@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
-using YanGameFrameWork.CoreCodes;
-using YanGameFrameWork.AudioSystem;
+using YanGameFrameWork.Singleton;
+
 
 namespace YanGameFrameWork.CollectionSystem
 {

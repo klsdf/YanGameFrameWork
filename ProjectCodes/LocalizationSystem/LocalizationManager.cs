@@ -12,7 +12,7 @@ using UnityEngine.Localization.Tables;
 using UnityEngine.Localization;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System;
-using YanGameFrameWork.CoreCodes;
+using YanGameFrameWork.Singleton;
 
 
 namespace YanGameFrameWork.LocalizationSystem

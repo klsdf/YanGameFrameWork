@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using YanGameFrameWork.FSM;
-using YanGameFrameWork.CoreCodes;
+using YanGameFrameWork.Singleton;
 
 namespace YanGameFrameWork.CursorController
 {

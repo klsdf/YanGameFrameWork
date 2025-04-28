@@ -6,7 +6,7 @@
  ****************************************************************************/
 using UnityEngine;
 
-namespace YanGameFrameWork.CoreCodes
+namespace YanGameFrameWork.Singleton
 {
     public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     {

@@ -7,7 +7,7 @@
  * 2025-04-10 闫辰祥 为成就系统添加了队列，分步显示，从而防止多个成就同时触发时互相重叠
  ****************************************************************************/
 
-using YanGameFrameWork.CoreCodes;
+using YanGameFrameWork.Singleton;
 using System.Collections.Generic;
 using UnityEngine;
 // using Sirenix.OdinInspector;

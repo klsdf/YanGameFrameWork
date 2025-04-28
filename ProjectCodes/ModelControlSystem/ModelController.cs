@@ -11,7 +11,7 @@
 
 using System;
 using UnityEngine;
-using YanGameFrameWork.CoreCodes;
+using YanGameFrameWork.Singleton;
 
 namespace YanGameFrameWork.ModelControlSystem
 {

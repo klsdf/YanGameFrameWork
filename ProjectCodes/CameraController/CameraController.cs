@@ -1,6 +1,6 @@
 
 using UnityEngine;
-using YanGameFrameWork.CoreCodes;
+using YanGameFrameWork.Singleton;
 namespace YanGameFrameWork.CameraController
 {
     public class CameraController : Singleton<CameraController>

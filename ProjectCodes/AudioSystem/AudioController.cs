@@ -10,7 +10,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio; // 引入Audio命名空间
-using YanGameFrameWork.CoreCodes;
+using YanGameFrameWork.Singleton;
 
 namespace YanGameFrameWork.AudioSystem
 {

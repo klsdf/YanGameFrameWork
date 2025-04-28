@@ -8,7 +8,7 @@
  ****************************************************************************/
 using System.Collections.Generic;
 using UnityEngine;
-using YanGameFrameWork.CoreCodes;
+using YanGameFrameWork.Singleton;
 
 
 namespace YanGameFrameWork.SceneControlSystem

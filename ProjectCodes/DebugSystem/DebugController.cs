@@ -4,7 +4,7 @@
  * Description: 调试系统，负责打印YanGameFramework的日志。
  *
  ****************************************************************************/
-using YanGameFrameWork.CoreCodes;
+using YanGameFrameWork.Singleton;
 using UnityEngine;
 namespace YanGameFrameWork.DebugSystem
 {

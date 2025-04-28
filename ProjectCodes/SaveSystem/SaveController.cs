@@ -9,7 +9,7 @@
  ****************************************************************************/
 using UnityEngine;
 using System;
-using YanGameFrameWork.CoreCodes;
+using YanGameFrameWork.Singleton;
 using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;

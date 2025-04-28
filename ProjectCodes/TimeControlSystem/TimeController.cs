@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using YanGameFrameWork.CoreCodes;
+using YanGameFrameWork.Singleton;
 using UnityEngine;
 // using Sirenix.OdinInspector;
 
