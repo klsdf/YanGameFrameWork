@@ -7,6 +7,8 @@
  *修改记录：
 * 2025-04-27 闫辰祥 将_modules的数据类型从dictionary改为ModelDataList，从而在Inspector中显示和编辑数据
 不过要想显示具体的数据，还需要model的具体类的各个字段加上[SerializeField]
+* 2025-04-28 闫辰祥 修改RegisteOrUpdateModule方法，不再直接把module的值赋值给_modules中已有的module，而是调用克隆方法
+避免直接赋值覆盖了引用，导致OnDataChanged的事件丢失
 ****************************************************************************/
 
 using System;
@@ -57,7 +59,7 @@ namespace YanGameFrameWork.ModelControlSystem
             Type moduleType = module.GetType();
             if (HasModule<T>())
             {
-                _modules[moduleType] = module;
+                _modules[moduleType].Clone(module);
                 YanGF.Debug.Log(nameof(ModelController), $"模块 {moduleType.Name} 更新成功");
             }
             else
@@ -162,9 +164,4 @@ namespace YanGameFrameWork.ModelControlSystem
         }
     }
 
-    // 可选的接口定义
-    public interface IInitializable
-    {
-        void Init();
-    }
 }
