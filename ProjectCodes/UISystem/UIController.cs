@@ -7,6 +7,7 @@
  *
  * 修改记录：
  * 2025-04-10 闫辰祥 添加了从Resources中加载UI面板的功能，不用每次都手动注册面板，把面板都放场景中了
+ * 2025-04-28 闫辰祥 增加了mainCanvas。在每次pushPanel时，检查根节点是否有Canvas组件，如果没有，则将其加入到_mainCanvas下
  ****************************************************************************/
 
 using UnityEngine;
@@ -44,12 +45,14 @@ namespace YanGameFrameWork.UISystem
         private Transform _uiRoot;
 
         private Transform _popCanvas;
+        private Transform _mainCanvas;
 
         protected override void Awake()
         {
             base.Awake();
             _uiRoot = transform;
             _popCanvas = transform.GetChild(0);
+            _mainCanvas = transform.GetChild(1);
         }
 
 
@@ -109,6 +112,14 @@ namespace YanGameFrameWork.UISystem
             UIPanelBase tempPanel = PeekPanel();
             tempPanel?.OnPause();
             UIPanelBase panel = FindPanelByType(typeof(T));
+
+            // 检查根节点是否有Canvas组件
+            if (panel.transform.GetComponent<Canvas>() == null)
+            {
+                // 如果没有Canvas组件，将其加入到_mainCanvas下
+                panel.transform.SetParent(_mainCanvas, false);
+            }
+
             _activePanels.Add(panel);
             panel.OnEnter();
             return panel;
