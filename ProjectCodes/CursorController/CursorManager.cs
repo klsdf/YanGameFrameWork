@@ -14,10 +14,10 @@ namespace YanGameFrameWork.CursorController
         public CursorData[] cursors;
         private Dictionary<string, CursorData> _cursorDictionary;
 
-       protected YanStateBase _currentState;
+        protected YanStateBase _currentState;
 
-       public string CurrentCursorName
-       {
+        public string CurrentCursorName
+        {
             get
             {
                 if (_currentState is CursorStateNormal)
@@ -33,7 +33,7 @@ namespace YanGameFrameWork.CursorController
                     return Normal;
                 }
             }
-       }
+        }
 
 
         public const string Normal = "Normal";
@@ -45,6 +45,12 @@ namespace YanGameFrameWork.CursorController
         protected override void Awake()
         {
             base.Awake();
+
+
+            if (cursors == null || cursors.Length == 0)
+            {
+                return;
+            }
             // 初始化字典
             _cursorDictionary = new Dictionary<string, CursorData>();
             foreach (CursorData cursor in cursors)
