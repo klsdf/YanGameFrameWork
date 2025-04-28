@@ -1,6 +1,6 @@
-
 using UnityEngine;
 using YanGameFrameWork.Singleton;
+using System.Collections;
 namespace YanGameFrameWork.CameraController
 {
     public class CameraController : Singleton<CameraController>
@@ -226,6 +226,42 @@ namespace YanGameFrameWork.CameraController
         public void SetCameraPosition(Vector3 position)
         {
             controlCamera.transform.position = position;
+        }
+
+        /// <summary>
+        /// 使摄像机震动。
+        /// </summary>
+        /// <param name="duration">震动持续时间。</param>
+        /// <param name="magnitude">震动幅度。</param>
+        public void ShakeCamera(float duration, float magnitude)
+        {
+            StartCoroutine(Shake(duration, magnitude));
+        }
+
+        /// <summary>
+        /// 摄像机震动的协程
+        /// </summary>
+        /// <param name="duration">震动持续时间</param>
+        /// <param name="magnitude">震动幅度</param>
+        /// <returns></returns>
+        private IEnumerator Shake(float duration, float magnitude)
+        {
+            Vector3 originalPosition = controlCamera.transform.localPosition;
+            float elapsed = 0.0f;
+
+            while (elapsed < duration)
+            {
+                float x = Random.Range(-1f, 1f) * magnitude;
+                float y = Random.Range(-1f, 1f) * magnitude;
+
+                controlCamera.transform.localPosition = new Vector3(originalPosition.x + x, originalPosition.y + y, originalPosition.z);
+
+                elapsed += Time.deltaTime;
+
+                yield return null;
+            }
+
+            controlCamera.transform.localPosition = originalPosition;
         }
 
 

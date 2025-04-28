@@ -5,6 +5,12 @@ using YanGameFrameWork.CameraController;
 [CustomEditor(typeof(CameraController))]
 public class CameraControllerEditor : Editor
 {
+    // 定义 SerializedProperty 来存储震动参数
+    private float _shakeDurationProp = 0.2f;
+    private float _shakeMagnitudeProp = 0.15f;
+
+
+
     public override void OnInspectorGUI()
     {
         CameraController cameraController = (CameraController)target;
@@ -58,8 +64,6 @@ public class CameraControllerEditor : Editor
             EditorGUI.indentLevel--;
         }
 
-
-
         cameraController.IsEnableLookAt = EditorGUILayout.Toggle("是否启用注视", cameraController.IsEnableLookAt);
         // 根据 IsEnableLookAt 显示注视相关参数
         if (cameraController.IsEnableLookAt)
@@ -69,6 +73,35 @@ public class CameraControllerEditor : Editor
             cameraController.lookAtTarget = (Transform)EditorGUILayout.ObjectField("注视目标", cameraController.lookAtTarget, typeof(Transform), true);
             EditorGUI.indentLevel--;
         }
+
+
+
+        // 为调试参数和函数添加背景
+        GUIStyle debugStyle = new GUIStyle(GUI.skin.box);
+        debugStyle.padding = new RectOffset(10, 10, 10, 10);
+        debugStyle.margin = new RectOffset(10, 10, 10, 10);
+
+        // 创建一个纹理并设置颜色
+        Texture2D backgroundTexture = new Texture2D(1, 1);
+        backgroundTexture.SetPixel(0, 0, new Color(0.9f, 0.9f, 0.9f)); // 设置为浅灰色
+        backgroundTexture.Apply();
+
+        // 设置背景颜色
+        debugStyle.normal.background = backgroundTexture;
+
+        EditorGUILayout.BeginVertical(debugStyle);
+        EditorGUILayout.LabelField("调试区域", EditorStyles.boldLabel);
+
+        _shakeDurationProp = EditorGUILayout.FloatField("震动持续时间", _shakeDurationProp);
+        _shakeMagnitudeProp = EditorGUILayout.FloatField("震动幅度", _shakeMagnitudeProp);
+
+        // 添加震动测试按钮
+        if (GUILayout.Button("测试摄像机震动"))
+        {
+            // 调用摄像机震动方法，设置持续时间和幅度
+            cameraController.ShakeCamera(_shakeDurationProp, _shakeMagnitudeProp);
+        }
+        EditorGUILayout.EndVertical();
 
         // 保存更改
         if (GUI.changed)
