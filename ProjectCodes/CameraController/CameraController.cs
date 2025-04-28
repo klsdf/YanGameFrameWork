@@ -7,19 +7,14 @@ namespace YanGameFrameWork.CameraController
     {
         public Camera controlCamera;
 
-        public bool IsEnableDarg = true;
-        public bool IsEnableZoom = true;
 
+        #region 拖拽相关参数
+        public bool IsEnableDarg = true;
 
         public float dragSpeed = 2.0f;
         private Vector3 _dragOrigin;
         private bool _isDragging = false;
-        public float zoomSpeed = 2.0f;
 
-        [Header("最小视野")]
-        public float minFov = 15.0f;
-        [Header("最大视野")]
-        public float maxFov = 90.0f;
         [Header("最小X")]
         public float minX = -10.0f;
         [Header("最大X")]
@@ -29,16 +24,89 @@ namespace YanGameFrameWork.CameraController
         [Header("最大Y")]
         public float maxY = 10.0f;
 
+        #endregion
+
+        #region 缩放相关参数
+        public bool IsEnableZoom = true;
+
+        public float zoomSpeed = 2.0f;
+
+        [Header("最小视野")]
+        public float minFov = 15.0f;
+        [Header("最大视野")]
+        public float maxFov = 90.0f;
+
+        #endregion
+
+
+        #region 摄像机跟随相关参数
+        public bool IsEnableFollow = true;
+        public Transform followTarget;
+
+        /// <summary>
+        /// 摄像头移动的比例因子。
+        /// 设置为1.0f时，摄像机移动的距离与玩家移动的距离相同。
+        /// 设置为0.0f时，摄像机不移动。
+        /// 设置为2.0f时，摄像机移动的距离是玩家移动的距离的2倍。
+        /// </summary>
+        public  float moveFactor = 1.0f;
+
+
+        /// <summary>
+        /// 玩家上次已知的位置。
+        /// </summary>
+        private Vector3 _lastPlayerPosition;
+        #endregion
+
+
+        #region 摄像机注视相关参数
+        public bool IsEnableLookAt = true;
+        public Transform lookAtTarget;
+        #endregion
+
+
+
 
         void Start()
         {
             controlCamera ??= GetMainCamera();
+
+
+            /// 初始化摄像头的偏移量和玩家的初始位置。
+            _lastPlayerPosition = followTarget.position;
         }
 
-        void Update()
+
+        void LateUpdate()
         {
+
             Drag();
             Zoom();
+            Follow();
+            LookAt();
+        }
+
+        private void LookAt()
+        {
+            if (!IsEnableLookAt)
+                return;
+
+            controlCamera.transform.LookAt(lookAtTarget.position);
+        }
+
+        private void Follow()
+        {
+            if (!IsEnableFollow)
+                return;
+
+            // print("player.position:" + player.position);
+            // 计算玩家的移动距离
+            Vector3 playerMovement = followTarget.position - _lastPlayerPosition;
+
+
+            Vector3 newCameraPosition = controlCamera.transform.position + playerMovement * moveFactor;
+            controlCamera.transform.position = newCameraPosition;
+            _lastPlayerPosition = followTarget.position;
         }
 
         private void Drag()

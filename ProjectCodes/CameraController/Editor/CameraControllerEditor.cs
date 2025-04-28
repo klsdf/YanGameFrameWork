@@ -7,10 +7,13 @@ public class CameraControllerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-
-
         CameraController cameraController = (CameraController)target;
+        // 显示脚本部分为只读
+        GUI.enabled = false;
+        EditorGUILayout.ObjectField("Script", MonoScript.FromMonoBehaviour(cameraController), typeof(MonoScript), false);
+        GUI.enabled = true;
 
+        // 其他字段保持可编辑
         cameraController.controlCamera = (Camera)EditorGUILayout.ObjectField("控制摄像机", cameraController.controlCamera, typeof(Camera), true);
 
         // 绘制默认的 Inspector
@@ -43,6 +46,29 @@ public class CameraControllerEditor : Editor
             EditorGUI.indentLevel--;
         }
 
+        cameraController.IsEnableFollow = EditorGUILayout.Toggle("是否启用跟随", cameraController.IsEnableFollow);
+
+        // 根据 IsEnableFollow 显示跟随相关参数
+        if (cameraController.IsEnableFollow)
+        {
+            EditorGUI.indentLevel++;
+            EditorGUILayout.LabelField("跟随参数", EditorStyles.boldLabel);
+            cameraController.followTarget = (Transform)EditorGUILayout.ObjectField("跟随目标", cameraController.followTarget, typeof(Transform), true);
+            cameraController.moveFactor = EditorGUILayout.FloatField("移动比例", cameraController.moveFactor);
+            EditorGUI.indentLevel--;
+        }
+
+
+
+        cameraController.IsEnableLookAt = EditorGUILayout.Toggle("是否启用注视", cameraController.IsEnableLookAt);
+        // 根据 IsEnableLookAt 显示注视相关参数
+        if (cameraController.IsEnableLookAt)
+        {
+            EditorGUI.indentLevel++;
+            EditorGUILayout.LabelField("注视参数", EditorStyles.boldLabel);
+            cameraController.lookAtTarget = (Transform)EditorGUILayout.ObjectField("注视目标", cameraController.lookAtTarget, typeof(Transform), true);
+            EditorGUI.indentLevel--;
+        }
 
         // 保存更改
         if (GUI.changed)
