@@ -91,6 +91,7 @@ Transform:
   - {fileID: 3351556569313152384}
   - {fileID: 8791823242814596084}
   - {fileID: 6933912594327836756}
+  - {fileID: 2018138325319832927}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &9153833883985154410
@@ -248,6 +249,50 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enable: 0
   tableName: 
+--- !u!1 &2144531834985014672
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2018138325319832927}
+  - component: {fileID: 4404991521414876858}
+  m_Layer: 0
+  m_Name: TweenController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2018138325319832927
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144531834985014672}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 473336524611316862}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4404991521414876858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144531834985014672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0068a65826c24c4982fbbd427a6bd82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2217296472955721803
 GameObject:
   m_ObjectHideFlags: 0
@@ -480,16 +525,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controlCamera: {fileID: 0}
-  isEnableDarg: 1
-  isEnableZoom: 1
+  IsEnableDarg: 1
   dragSpeed: 2
-  zoomSpeed: 2
-  minFov: 15
-  maxFov: 90
   minX: -10
   maxX: 10
   minY: -10
   maxY: 10
+  IsEnableZoom: 1
+  zoomSpeed: 2
+  minFov: 15
+  maxFov: 90
+  IsEnableFollow: 1
+  followTarget: {fileID: 0}
+  moveFactor: 1
+  IsEnableLookAt: 1
+  lookAtTarget: {fileID: 0}
 --- !u!1 &5284742614383397330
 GameObject:
   m_ObjectHideFlags: 0
