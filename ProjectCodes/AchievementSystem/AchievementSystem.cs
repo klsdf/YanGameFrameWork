@@ -19,6 +19,8 @@ namespace YanGameFrameWork.AchievementSystem
     public class AchievementSystem : Singleton<AchievementSystem>
     {
 
+        [Header("是否显示成就的弹窗")]
+        public bool isShowAchievementPrompt = true;
         [Header("成就弹出的UI")]
         public AchievementPrompt achievementPromptUI;
         private Dictionary<string, AchievementBase> _achievements = new Dictionary<string, AchievementBase>();
@@ -131,6 +133,7 @@ namespace YanGameFrameWork.AchievementSystem
             {
                 var achievement = _achievementQueue.Dequeue();
                 ShowAchievementUI(achievement);
+                OnAchievementUnlocked?.Invoke(achievement);
                 yield return new WaitForSeconds(_achievementDisplayTime);
             }
             _isDisplaying = false;
@@ -138,6 +141,11 @@ namespace YanGameFrameWork.AchievementSystem
 
         private void ShowAchievementUI(AchievementBase achievement)
         {
+            if (isShowAchievementPrompt == false)
+            {
+                return;
+            }
+
 
             if (achievementPromptUI == null)
             {
@@ -145,7 +153,7 @@ namespace YanGameFrameWork.AchievementSystem
                 return;
             }
             Instantiate(achievementPromptUI).GetComponent<AchievementPrompt>().Init(achievement.title, achievement.description);
-            OnAchievementUnlocked?.Invoke(achievement);
+
         }
 
     }
