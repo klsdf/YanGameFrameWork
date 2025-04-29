@@ -162,5 +162,28 @@ public static class YanGF
         }
     }
 
+    /// <summary>
+    /// Tween控制器，全称是TweenController
+    /// </summary>
+    public static YanGameFrameWork.TweenSystem.TweenController Tween
+    {
+        get
+        {
+            return YanGameFrameWork.TweenSystem.TweenController.Instance;
+        }
+    }
+
+
+    /// <summary>
+    /// 时间控制器，全称是TimeController
+    /// </summary>
+    public static YanGameFrameWork.TimeControlSystem.TimeController Timer
+    {
+        get
+        {
+            return YanGameFrameWork.TimeControlSystem.TimeController.Instance;
+        }
+    }
+
 }
 

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using YanGameFrameWork.Singleton;
 using UnityEngine;
-// using Sirenix.OdinInspector;
+using YanGameFrameWork.Editor;
 
 /// <summary>
 /// 基础命令接口
@@ -184,89 +184,94 @@ public class CommandExecutor : MonoBehaviour
 
 
 
-public class TimeController : Singleton<TimeController>
+
+
+namespace YanGameFrameWork.TimeControlSystem
 {
-    private CommandExecutor _executor;
-
-    protected override void Awake()
+    public class TimeController : Singleton<TimeController>
     {
-        base.Awake();
-        _executor = gameObject.AddComponent<CommandExecutor>();
-    }
+        private CommandExecutor _executor;
 
-    /// <summary>
-    /// 延迟执行某个动作
-    /// </summary>
-    public void SetTimeOut(Action action, float seconds)
-    {
-        var sequence = new SequenceCommand();
-        sequence.AddCommand(new WaitCommand(WaitCommand.WaitType.Seconds, seconds));
-        sequence.AddCommand(new ExecuteCommand(action));
-        _executor.ExecuteCommand(sequence);
-    }
+        protected override void Awake()
+        {
+            base.Awake();
+            _executor = gameObject.AddComponent<CommandExecutor>();
+        }
 
-    /// <summary>
-    /// 定期重复执行某个动作
-    /// </summary>
-    public void SetInterval(Action action, float seconds)
-    {
-        var sequence = new SequenceCommand();
-        sequence.AddCommand(new ExecuteCommand(action));
-        sequence.AddCommand(new WaitCommand(WaitCommand.WaitType.Seconds, seconds));
-        sequence.AddCommand(new ExecuteCommand(() => SetInterval(action, seconds)));
-        _executor.ExecuteCommand(sequence);
-    }
+        /// <summary>
+        /// 延迟执行某个动作
+        /// </summary>
+        public void SetTimeOut(Action action, float seconds)
+        {
+            var sequence = new SequenceCommand();
+            sequence.AddCommand(new WaitCommand(WaitCommand.WaitType.Seconds, seconds));
+            sequence.AddCommand(new ExecuteCommand(action));
+            _executor.ExecuteCommand(sequence);
+        }
 
-    /// <summary>
-    /// 按帧等待
-    /// </summary>
-    public void WaitFrames(Action action, int frames)
-    {
-        var sequence = new SequenceCommand();
-        sequence.AddCommand(new WaitCommand(WaitCommand.WaitType.Frames, frames));
-        sequence.AddCommand(new ExecuteCommand(action));
-        _executor.ExecuteCommand(sequence);
-    }
+        /// <summary>
+        /// 定期重复执行某个动作
+        /// </summary>
+        public void SetInterval(Action action, float seconds)
+        {
+            var sequence = new SequenceCommand();
+            sequence.AddCommand(new ExecuteCommand(action));
+            sequence.AddCommand(new WaitCommand(WaitCommand.WaitType.Seconds, seconds));
+            sequence.AddCommand(new ExecuteCommand(() => SetInterval(action, seconds)));
+            _executor.ExecuteCommand(sequence);
+        }
 
-    /// <summary>
-    /// 等待自定义条件
-    /// </summary>
-    public void WaitUntil(Action action, Func<bool> condition)
-    {
-        var sequence = new SequenceCommand();
-        sequence.AddCommand(new WaitCommand(WaitCommand.WaitType.Custom, customCondition: condition));
-        sequence.AddCommand(new ExecuteCommand(action));
-        _executor.ExecuteCommand(sequence);
-    }
+        /// <summary>
+        /// 按帧等待
+        /// </summary>
+        public void WaitFrames(Action action, int frames)
+        {
+            var sequence = new SequenceCommand();
+            sequence.AddCommand(new WaitCommand(WaitCommand.WaitType.Frames, frames));
+            sequence.AddCommand(new ExecuteCommand(action));
+            _executor.ExecuteCommand(sequence);
+        }
 
-    /// <summary>
-    /// 停止所有命令
-    /// </summary>
-    public void StopAll()
-    {
-        _executor.StopAllCommands();
-    }
+        /// <summary>
+        /// 等待自定义条件
+        /// </summary>
+        public void WaitUntil(Action action, Func<bool> condition)
+        {
+            var sequence = new SequenceCommand();
+            sequence.AddCommand(new WaitCommand(WaitCommand.WaitType.Custom, customCondition: condition));
+            sequence.AddCommand(new ExecuteCommand(action));
+            _executor.ExecuteCommand(sequence);
+        }
 
-    // [Button("测试")]
-    public void Test()
-    {
-        // 测试延时执行
-        SetTimeOut(() => Debug.Log("1秒后执行"), 1);
+        /// <summary>
+        /// 停止所有命令
+        /// </summary>
+        public void StopAll()
+        {
+            _executor.StopAllCommands();
+        }
 
-        // 测试间隔执行
-        SetInterval(() => Debug.Log("每秒执行一次"), 1);
+        [Button("测试")]
+        public void Test()
+        {
+            // 测试延时执行
+            SetTimeOut(() => Debug.Log("1秒后执行"), 1);
 
-        // 测试按帧等待
-        WaitFrames(() => Debug.Log("等待10帧后执行"), 10);
+            // 测试间隔执行
+            SetInterval(() => Debug.Log("每秒执行一次"), 1);
 
-        // 测试自定义条件
-        float startTime = Time.time;
-        WaitUntil(
-            () => Debug.Log("等待3秒后执行"),
-            () => Time.time - startTime >= 3
-        );
+            // 测试按帧等待
+            WaitFrames(() => Debug.Log("等待10帧后执行"), 10);
 
-        // 5秒后停止所有命令
-        SetTimeOut(() => StopAll(), 5);
+            // 测试自定义条件
+            float startTime = Time.time;
+            WaitUntil(
+                () => Debug.Log("等待3秒后执行"),
+                () => Time.time - startTime >= 3
+            );
+
+            // 5秒后停止所有命令
+            SetTimeOut(() => StopAll(), 5);
+        }
     }
 }

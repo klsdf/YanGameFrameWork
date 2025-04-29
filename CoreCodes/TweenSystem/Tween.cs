@@ -2,46 +2,49 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class Tween
+namespace YanGameFrameWork.TweenSystem
 {
-    public float duration;
-    public float startValue;
-    public float endValue;
-
-    public Action onStart;
-    public Action<float> onUpdate;
-    public Action onComplete;
-
-    public Tween(float duration, float startValue, float endValue, Action<float> onUpdate, Action onComplete)
+    public class Tween
     {
-        this.duration = duration;
-        this.startValue = startValue;
-        this.endValue = endValue;
-        this.onUpdate = onUpdate;
-        this.onComplete = onComplete;
-    }
+        public float duration;
+        public float startValue;
+        public float endValue;
 
-    public void Start()
-    {
-        TweenController.Instance.StartTween(this);
-    }
+        public Action onStart;
+        public Action<float> onUpdate;
+        public Action onComplete;
 
-    public IEnumerator Tweening(float startValue, float endValue, float duration, Action<float> onUpdate, Action onComplete = null)
-    {
-        float elapsedTime = 0f;
-
-        while (elapsedTime < duration)
+        public Tween(float duration, float startValue, float endValue, Action<float> onUpdate, Action onComplete)
         {
-            elapsedTime += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsedTime / duration);
-            float currentValue = Mathf.Lerp(startValue, endValue, t);
-            onUpdate?.Invoke(currentValue);
-            yield return null;
+            this.duration = duration;
+            this.startValue = startValue;
+            this.endValue = endValue;
+            this.onUpdate = onUpdate;
+            this.onComplete = onComplete;
         }
 
-        // Ensure the final value is set
-        onUpdate?.Invoke(endValue);
-        onComplete?.Invoke();
-    }
+        public void Start()
+        {
+            TweenController.Instance.StartTween(this);
+        }
 
+        public IEnumerator Tweening(float startValue, float endValue, float duration, Action<float> onUpdate, Action onComplete = null)
+        {
+            float elapsedTime = 0f;
+
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsedTime / duration);
+                float currentValue = Mathf.Lerp(startValue, endValue, t);
+                onUpdate?.Invoke(currentValue);
+                yield return null;
+            }
+
+            // Ensure the final value is set
+            onUpdate?.Invoke(endValue);
+            onComplete?.Invoke();
+        }
+
+    }
 }
