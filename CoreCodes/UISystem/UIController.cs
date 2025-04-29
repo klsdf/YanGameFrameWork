@@ -24,6 +24,11 @@ namespace YanGameFrameWork.UISystem
         /// UI面板的路径
         /// </summary>
         public string UIPanelPath = "UIPanels/";
+        [Header("UI元素的路径")]
+        /// <summary>
+        /// UI元素的路径
+        /// </summary>
+        public string UIElementPath = "UIElements/";
 
         [SerializeField]
         [Header("注册的UI面板，注册的对象需要在场景上")]
