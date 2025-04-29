@@ -1,3 +1,10 @@
+/****************************************************************************
+ * Author: 闫辰祥
+ * Date: 2025-04-29
+ * Description: 时间控制器，主要包括跟js同款的setTimeout、setInterval方法。
+ 以及函数调用限制器CreateRateLimitedAction
+ ****************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using YanGameFrameWork.Singleton;
@@ -212,7 +219,6 @@ namespace YanGameFrameWork.TimeControlSystem
 
                 canInvoke = false;
                 action.Invoke();
-
                 // 使用协程来重置 canInvoke 标志
                 StartCoroutine(ResetInvokeFlag(interval, () => canInvoke = true));
             };
