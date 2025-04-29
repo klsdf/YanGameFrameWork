@@ -107,6 +107,26 @@ namespace YanGameFrameWork.UISystem
         }
 
 
+        public void PopPanel<T>() where T : UIPanelBase
+        {
+            if (_activePanels.Count == 0)
+            {
+                YanGF.Debug.LogWarning(nameof(UIController), "没有面板可以退出");
+                return;
+            }
+
+            foreach (UIPanelBase panel in _activePanels)
+            {
+                if (panel.GetType() == typeof(T))
+                {
+                    panel.OnExit();
+                    _activePanels.Remove(panel);
+                    return;
+                }
+            }
+        }
+
+
         public UIPanelBase PushPanel<T>() where T : UIPanelBase
         {
             UIPanelBase tempPanel = PeekPanel();
