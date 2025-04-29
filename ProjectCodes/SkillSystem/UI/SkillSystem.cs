@@ -60,8 +60,6 @@ public abstract class SkillSystem : MonoBehaviour
             }
         }
 
-
-
         UpdateDisplay();
     }
 
@@ -169,7 +167,7 @@ public abstract class SkillSystem : MonoBehaviour
     /// <param name="end">结束点</param>
     /// <param name="width">线宽</param>
     /// <param name="color">颜色</param>
-    private void DrawLine(RectTransform parent, Vector2 start, Vector2 end, float width, Color color)
+    private void DrawLine(RectTransform parent, Vector2 start, Vector2 end, float width, Color color, int siblingIndex = 0)
     {
         GameObject line = new GameObject("Line");
         line.transform.SetParent(parent, false);
@@ -184,6 +182,9 @@ public abstract class SkillSystem : MonoBehaviour
         rectTransform.pivot = new Vector2(0, 0.5f);
         rectTransform.anchoredPosition = start;
         rectTransform.rotation = Quaternion.FromToRotation(Vector2.right, direction);
+
+        // 设置线条对象在父节点中的位置
+        line.transform.SetSiblingIndex(siblingIndex);
     }
 
 
@@ -218,11 +219,6 @@ public abstract class SkillSystem : MonoBehaviour
         }
         return result;
     }
-
-
-
-
-
 
     #region 编辑器方法
 
