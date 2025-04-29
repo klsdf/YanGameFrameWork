@@ -3,69 +3,9 @@ using System.Collections.Generic;
 using YanGameFrameWork.Singleton;
 using UnityEngine;
 using YanGameFrameWork.Editor;
+using System.Collections;
 
-/// <summary>
-/// 基础命令接口
-/// </summary>
-public interface ICommand
-{
-    void Execute();
-    void Stop();
-    bool IsCompleted { get; }
-}
 
-/// <summary>
-/// 等待命令
-/// </summary>
-public class WaitCommand : ICommand
-{
-    public enum WaitType
-    {
-        Seconds,
-        Frames,
-        Custom
-    }
-
-    private readonly WaitType _type;
-    private readonly float _value;
-    private readonly Func<bool> _customCondition;
-    private bool _isCompleted;
-    private float _elapsedTime;
-    private int _elapsedFrames;
-
-    public bool IsCompleted => _isCompleted;
-
-    public WaitCommand(WaitType type, float value = 0, Func<bool> customCondition = null)
-    {
-        _type = type;
-        _value = value;
-        _customCondition = customCondition;
-        _isCompleted = false;
-    }
-
-    public void Execute()
-    {
-        switch (_type)
-        {
-            case WaitType.Seconds:
-                _elapsedTime += Time.deltaTime;
-                _isCompleted = _elapsedTime >= _value;
-                break;
-            case WaitType.Frames:
-                _elapsedFrames++;
-                _isCompleted = _elapsedFrames >= _value;
-                break;
-            case WaitType.Custom:
-                _isCompleted = _customCondition?.Invoke() ?? true;
-                break;
-        }
-    }
-
-    public void Stop()
-    {
-        _isCompleted = true;
-    }
-}
 
 /// <summary>
 /// 执行命令
@@ -251,27 +191,38 @@ namespace YanGameFrameWork.TimeControlSystem
             _executor.StopAllCommands();
         }
 
-        [Button("测试")]
-        public void Test()
+
+
+
+
+        /// <summary>
+        /// 创建一个频率限制的委托。
+        /// </summary>
+        /// <param name="action">需要限制频率的动作。</param>
+        /// <param name="interval">限制的时间间隔（秒）。</param>
+        /// <returns>包装后的委托。</returns>
+        public Action CreateRateLimitedAction(Action action, float interval)
         {
-            // 测试延时执行
-            SetTimeOut(() => Debug.Log("1秒后执行"), 1);
+            bool canInvoke = true;
 
-            // 测试间隔执行
-            SetInterval(() => Debug.Log("每秒执行一次"), 1);
+            return () =>
+            {
+                if (!canInvoke)
+                    return;
 
-            // 测试按帧等待
-            WaitFrames(() => Debug.Log("等待10帧后执行"), 10);
+                canInvoke = false;
+                action.Invoke();
 
-            // 测试自定义条件
-            float startTime = Time.time;
-            WaitUntil(
-                () => Debug.Log("等待3秒后执行"),
-                () => Time.time - startTime >= 3
-            );
-
-            // 5秒后停止所有命令
-            SetTimeOut(() => StopAll(), 5);
+                // 使用协程来重置 canInvoke 标志
+                StartCoroutine(ResetInvokeFlag(interval, () => canInvoke = true));
+            };
         }
+
+        private IEnumerator ResetInvokeFlag(float interval, Action resetAction)
+        {
+            yield return new WaitForSeconds(interval);
+            resetAction.Invoke();
+        }
+
     }
 }
