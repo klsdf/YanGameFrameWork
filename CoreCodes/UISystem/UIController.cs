@@ -8,6 +8,7 @@
  * 修改记录：
  * 2025-04-10 闫辰祥 添加了从Resources中加载UI面板的功能，不用每次都手动注册面板，把面板都放场景中了
  * 2025-04-28 闫辰祥 增加了mainCanvas。在每次pushPanel时，检查根节点是否有Canvas组件，如果没有，则将其加入到_mainCanvas下
+ * 2025-04-29 闫辰祥 增加了PushPanel的参数，可以指定父级
  ****************************************************************************/
 
 using UnityEngine;
@@ -76,7 +77,7 @@ namespace YanGameFrameWork.UISystem
             {
                 if (panel.GetType() == panelType)
                 {
-                    UIPanelBase instantiatedPanel = Instantiate(panel.gameObject, _uiRoot).GetComponent<UIPanelBase>();
+                    UIPanelBase instantiatedPanel = Instantiate(panel.gameObject).GetComponent<UIPanelBase>();
                     RegisterPanel(instantiatedPanel);
                     return instantiatedPanel;
                 }
@@ -127,18 +128,36 @@ namespace YanGameFrameWork.UISystem
         }
 
 
-        public UIPanelBase PushPanel<T>() where T : UIPanelBase
+        public UIPanelBase PushPanel<T>(Transform parentTransform = null) where T : UIPanelBase
         {
             UIPanelBase tempPanel = PeekPanel();
             tempPanel?.OnPause();
             UIPanelBase panel = FindPanelByType(typeof(T));
 
-            // 检查根节点是否有Canvas组件
-            if (panel.transform.GetComponent<Canvas>() == null)
+
+
+
+            //调整push进来的panel的父级
+            if (parentTransform != null)
             {
-                // 如果没有Canvas组件，将其加入到_mainCanvas下
-                panel.transform.SetParent(_mainCanvas, false);
+                panel.transform.SetParent(parentTransform, false);
             }
+            else
+            {
+                // 检查根节点是否有Canvas组件
+                if (panel.transform.GetComponent<Canvas>() == null)
+                {
+                    // 如果没有Canvas组件，将其加入到_mainCanvas下
+                    panel.transform.SetParent(_mainCanvas, false);
+                }
+                else
+                {
+                    // 如果存在Canvas组件，将其加入到_uiRoot下
+                    panel.transform.SetParent(_uiRoot, false);
+                }
+
+            }
+
 
             _activePanels.Add(panel);
             panel.OnEnter();

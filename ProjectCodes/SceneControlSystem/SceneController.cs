@@ -45,7 +45,13 @@ namespace YanGameFrameWork.SceneControlSystem
             sceneObjList.Add(sceneObj);
         }
 
-        public SceneObjBase GetSceneObjByType<T>()
+
+        /// <summary>
+        /// 根据类型获取场景对象
+        /// </summary>
+        /// <typeparam name="T">一个继承了SceneObjBase的类</typeparam>
+        /// <returns>一个继承了SceneObjBase的类</returns>
+        public SceneObjBase GetSceneObjByType<T>() where T : SceneObjBase
         {
             foreach (SceneObjBase sceneObj in sceneObjList)
             {
