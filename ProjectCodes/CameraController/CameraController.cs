@@ -72,8 +72,11 @@ namespace YanGameFrameWork.CameraController
             controlCamera ??= GetMainCamera();
 
 
-            /// 初始化摄像头的偏移量和玩家的初始位置。
-            _lastPlayerPosition = followTarget.position;
+            if (followTarget != null)
+            {
+                /// 初始化摄像头的偏移量和玩家的初始位置。
+                _lastPlayerPosition = followTarget.position;
+            }
         }
 
 
