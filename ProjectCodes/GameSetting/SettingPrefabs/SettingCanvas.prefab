@@ -3002,7 +3002,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 119
 --- !u!114 &6773766405950342214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3021,7 +3021,9 @@ MonoBehaviour:
   effectsVolumeSlider: {fileID: 2263530344005079843}
   resolutionDropdown: {fileID: 5297848352290622766}
   fullScreenButton: {fileID: 0}
+  fullScreenText: {fileID: 0}
   lockFrameButton: {fileID: 0}
+  lockFrameText: {fileID: 0}
   exitButton: {fileID: 3162064975816194740}
   closeButton: {fileID: 0}
 --- !u!1 &4639235193617998152

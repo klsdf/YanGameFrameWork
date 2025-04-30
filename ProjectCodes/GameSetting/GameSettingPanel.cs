@@ -183,6 +183,7 @@ namespace YanGameFrameWork.GameSetting
         {
             Screen.fullScreen = isFullScreen;
             _gameSettingData.isFullScreen = isFullScreen;
+            fullScreenText.text = isFullScreen ? "开启" : "关闭";
             Debug.Log("全屏模式: " + (Screen.fullScreen ? "开启" : "关闭"));
         }
 
@@ -194,6 +195,7 @@ namespace YanGameFrameWork.GameSetting
             // 假设锁定帧率为60
             Application.targetFrameRate = isFrameLocked ? 60 : -1;
             _gameSettingData.isFrameLocked = isFrameLocked;
+            lockFrameText.text = isFrameLocked ? "开启" : "关闭";
             Debug.Log("锁帧: " + (isFrameLocked ? "开启" : "关闭"));
         }
 
