@@ -235,7 +235,7 @@ public abstract class SkillSystem : MonoBehaviour
         }
 
         // 确保返回的坐标是世界坐标
-        return nodePosition;
+        return topWorldPoint;
     }
 
 
