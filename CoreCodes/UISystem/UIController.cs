@@ -37,12 +37,23 @@ namespace YanGameFrameWork.UISystem
         [SerializeField]
         private List<UIPanelBase> _activePanels = new List<UIPanelBase>();
 
+        /// <summary>
+        /// 弹窗的UI面板
+        /// </summary>
+        [SerializeField]
+        private List<UIPanelBase> _activePopupPanels = new List<UIPanelBase>();
+
 
         [SerializeField]
         private List<UIElementBase> _registerElements = new List<UIElementBase>();
 
         [SerializeField]
         private List<UIElementBase> _activeElements = new List<UIElementBase>();
+
+
+
+
+
 
 
         /// <summary>
@@ -99,6 +110,9 @@ namespace YanGameFrameWork.UISystem
         }
 
 
+        /// <summary>
+        /// 退出一个面板
+        /// </summary>
         public void PopPanel()
         {
             if (_activePanels.Count == 0)
@@ -112,7 +126,10 @@ namespace YanGameFrameWork.UISystem
             _activePanels.RemoveAt(_activePanels.Count - 1);
         }
 
-
+        /// <summary>
+        /// 退出一个面板
+        /// </summary>
+        /// <typeparam name="T">面板类型</typeparam>
         public void PopPanel<T>() where T : UIPanelBase
         {
             if (_activePanels.Count == 0)
@@ -133,6 +150,62 @@ namespace YanGameFrameWork.UISystem
         }
 
 
+
+        /// <summary>
+        /// 推入一个弹窗面板
+        /// </summary>
+        /// <typeparam name="T">面板类型</typeparam>
+        /// <param name="parentTransform">父级</param>
+        /// <returns>推入的弹窗面板</returns>
+        public UIPanelBase PushPopupPanel<T>(Transform parentTransform = null) where T : UIPanelBase
+        {
+            UIPanelBase tempPanel = PeekPanel();
+            tempPanel?.OnPause();
+            UIPanelBase panel = FindPanelByType(typeof(T));
+
+            //调整push进来的panel的父级
+            if (parentTransform != null)
+            {
+                panel.transform.SetParent(parentTransform, false);
+            }
+            else
+            {
+                SetPanelParent(panel);
+
+            }
+
+
+            _activePopupPanels.Add(panel);
+            panel.OnEnter();
+            return panel;
+        }
+
+
+        /// <summary>
+        /// 退出弹窗面板
+        /// </summary>
+        /// <typeparam name="T">面板类型</typeparam>
+        public void PopPopupPanel<T>() where T : UIPanelBase
+        {
+            if (_activePopupPanels.Count == 0)
+            {
+                YanGF.Debug.LogWarning(nameof(UIController), "没有面板可以退出");
+                return;
+            }
+
+            foreach (UIPanelBase panel in _activePopupPanels)
+            {
+                if (panel.GetType() == typeof(T))
+                {
+                    panel.OnExit();
+                    _activePopupPanels.Remove(panel);
+                    return;
+                }
+            }
+        }
+
+
+
         public UIPanelBase PushPanel<T>(Transform parentTransform = null) where T : UIPanelBase
         {
             UIPanelBase tempPanel = PeekPanel();
@@ -149,24 +222,29 @@ namespace YanGameFrameWork.UISystem
             }
             else
             {
-                // 检查根节点是否有Canvas组件
-                if (panel.transform.GetComponent<Canvas>() == null)
-                {
-                    // 如果没有Canvas组件，将其加入到_mainCanvas下
-                    panel.transform.SetParent(_mainCanvas, false);
-                }
-                else
-                {
-                    // 如果存在Canvas组件，将其加入到_uiRoot下
-                    panel.transform.SetParent(_uiRoot, false);
-                }
-
+                SetPanelParent(panel);
             }
 
 
             _activePanels.Add(panel);
             panel.OnEnter();
             return panel;
+        }
+
+
+        private void SetPanelParent(UIPanelBase panel)
+        {
+            // 检查根节点是否有Canvas组件
+            if (panel.transform.GetComponent<Canvas>() == null)
+            {
+                // 如果没有Canvas组件，将其加入到_mainCanvas下
+                panel.transform.SetParent(_mainCanvas, false);
+            }
+            else
+            {
+                // 如果存在Canvas组件，将其加入到_uiRoot下
+                panel.transform.SetParent(_uiRoot, false);
+            }
         }
 
         public UIPanelBase PeekPanel()

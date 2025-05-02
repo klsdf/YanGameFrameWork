@@ -30,16 +30,13 @@ public class AchievementPanel : UIPanelBase
 
     void Start()
     {
-
-
-
         // ClearAchievementList();
         AchievementSystem.Instance.OnAchievementRegistered += AddAchievementItem;
         AchievementSystem.Instance.OnAchievementUnlocked += ShowUnlockItem;
 
         backButton.onClick.AddListener(() =>
         {
-            YanGF.UI.PopPanel();
+            YanGF.UI.PopPanel<AchievementPanel>();
         });
     }
 

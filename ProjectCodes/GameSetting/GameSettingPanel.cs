@@ -36,8 +36,14 @@ namespace YanGameFrameWork.GameSetting
         [Header("全屏按钮")]
         public YanSingleToggle fullScreenButton;
 
+        [Header("全屏文本")]
+        public TMP_Text fullScreenText;
+
         [Header("锁帧")]
         public YanSingleToggle lockFrameButton;
+
+        [Header("锁帧文本")]
+        public TMP_Text lockFrameText;
 
         [Header("退出按钮")]
         public Button exitButton;
@@ -177,6 +183,7 @@ namespace YanGameFrameWork.GameSetting
         {
             Screen.fullScreen = isFullScreen;
             _gameSettingData.isFullScreen = isFullScreen;
+            fullScreenText.text = isFullScreen ? "开启" : "关闭";
             Debug.Log("全屏模式: " + (Screen.fullScreen ? "开启" : "关闭"));
         }
 
@@ -188,6 +195,7 @@ namespace YanGameFrameWork.GameSetting
             // 假设锁定帧率为60
             Application.targetFrameRate = isFrameLocked ? 60 : -1;
             _gameSettingData.isFrameLocked = isFrameLocked;
+            lockFrameText.text = isFrameLocked ? "开启" : "关闭";
             Debug.Log("锁帧: " + (isFrameLocked ? "开启" : "关闭"));
         }
 
@@ -225,20 +233,24 @@ namespace YanGameFrameWork.GameSetting
             // 设置全屏和锁帧状态
             if (_gameSettingData.isFullScreen)
             {
+                fullScreenText.text = "开启";
                 fullScreenButton.TurnOn();
             }
             else
             {
+                fullScreenText.text = "关闭";
                 fullScreenButton.TurnOff();
             }
 
 
             if (_gameSettingData.isFrameLocked)
             {
+                lockFrameText.text = "开启";
                 lockFrameButton.TurnOn();
             }
             else
             {
+                lockFrameText.text = "关闭";
                 lockFrameButton.TurnOff();
             }
         }

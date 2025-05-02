@@ -83,7 +83,24 @@ public abstract class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        nodeData.SkillSystem.ShowPromptPop(nodeData, transform.position);
+        RectTransform rectTransform = GetComponent<RectTransform>();
+        RectTransformUtility.ScreenPointToWorldPointInRectangle(
+            rectTransform,
+            eventData.position,
+            eventData.pressEventCamera,
+            out Vector3 worldPosition
+        );
+
+
+
+        Vector3 worldPosition2 = rectTransform.position; // 获取RectTransform的世界坐标
+        Vector3 screenPosition = Camera.main.WorldToScreenPoint(worldPosition2); // 转换为屏幕坐标
+
+        Debug.Log($"Screen Position: {screenPosition}");
+
+
+
+        nodeData.SkillSystem.ShowPromptPop(nodeData, worldPosition);
     }
 
     public void OnPointerExit(PointerEventData eventData)

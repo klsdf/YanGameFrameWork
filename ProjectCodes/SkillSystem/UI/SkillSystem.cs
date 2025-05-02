@@ -3,6 +3,8 @@
  * Date: 2025-04-15
  * Description: 技能系统,需要子类重写
  *
+ * 修改记录：
+ * 2025-04-30 闫辰祥 技能提示弹窗的显示位置优化，会自动寻找一个能放得下的地方
  ****************************************************************************/
 using System;
 using System.Collections.Generic;
@@ -123,6 +125,14 @@ public abstract class SkillSystem : MonoBehaviour
     }
 
 
+
+
+    public Vector3 nodePosition;
+    public float worldHeight;
+    public float worldWidth;
+    const float OFFSET_Y = 0; // 正值以便在上方显示
+    const float OFFSET_X = 0; // 正值以便在左边显示
+
     /// <summary>
     /// 显示技能提示弹窗
     /// </summary>
@@ -130,17 +140,108 @@ public abstract class SkillSystem : MonoBehaviour
     /// <param name="nodePosition">技能节点位置</param>
     public void ShowPromptPop(SkillNodeData skillNodeData, Vector3 nodePosition)
     {
+        this.nodePosition = nodePosition;
         if (skillPromptPopPrefab == null)
         {
             YanGF.Debug.LogWarning(nameof(SkillSystem), "技能提示弹窗的预制体为空");
             return;
         }
+
         SkillPromptPop skillPromptPop = YanGF.UI.PushElement(skillPromptPopPrefab) as SkillPromptPop;
 
-        var newPosition = nodePosition;
-        newPosition.y += skillPromptPop.GetComponent<RectTransform>().rect.height + 50;
+        RectTransform rectTransform = skillPromptPop.GetComponent<RectTransform>();
+        Vector3 newPosition = FindBestPosition(rectTransform, nodePosition);
         skillPromptPop.ShowSkillPrompt(skillNodeData, newPosition);
     }
+
+
+
+    /// <summary>
+    /// 寻找一个能放得下技能描述弹窗的位置
+    /// </summary>
+    /// <param name="rect">技能提示弹窗的矩形</param>
+    /// <param name="nodePosition">技能节点位置，使用世界坐标</param>
+    private Vector3 FindBestPosition(RectTransform rectTransform, Vector3 nodePosition)
+    {
+        Camera mainCamera = Camera.main;
+        if (mainCamera == null)
+        {
+            YanGF.Debug.LogWarning(nameof(SkillSystem), "主摄像机未找到");
+            return nodePosition;
+        }
+
+        float screenHeight = Screen.height;
+        float screenWidth = Screen.width;
+
+
+        // 计算世界坐标系下的高度
+        Vector3[] worldCorners = new Vector3[4];
+        rectTransform.GetWorldCorners(worldCorners);
+        worldHeight = Vector3.Distance(worldCorners[0], worldCorners[1]);
+        worldWidth = Vector3.Distance(worldCorners[0], worldCorners[3]);
+
+        // 判断是否应该显示在上面
+
+        print("屏幕坐标系下的nodePosition:" + Camera.main.WorldToScreenPoint(nodePosition));
+
+        Vector3 topWorldPoint = nodePosition + Vector3.up * worldHeight + Vector3.up * OFFSET_Y;
+
+        if (Camera.main.WorldToScreenPoint(topWorldPoint + Vector3.up * worldHeight / 2).y < screenHeight)
+        {
+            print("上面点在屏幕内:" + Camera.main.WorldToScreenPoint(topWorldPoint + Vector3.up * worldHeight / 2));
+            return topWorldPoint;
+        }
+        else
+        {
+            print("上面点不在屏幕内:" + Camera.main.WorldToScreenPoint(topWorldPoint + Vector3.up * worldHeight / 2));
+        }
+
+
+
+        // 判断是否应该显示在下面
+        Vector3 bottomWorldPoint = nodePosition + Vector3.down * worldHeight + Vector3.down * OFFSET_Y;
+        if (Camera.main.WorldToScreenPoint(bottomWorldPoint + Vector3.down * worldHeight / 2).y > 0)
+        {
+            print("下面点在屏幕内:" + Camera.main.WorldToScreenPoint(bottomWorldPoint + Vector3.down * worldHeight / 2));
+            return bottomWorldPoint;
+        }
+        else
+        {
+            print("下面点不在屏幕内:" + Camera.main.WorldToScreenPoint(bottomWorldPoint + Vector3.down * worldHeight / 2));
+        }
+
+        // 判断是否应该显示在左边
+        Vector3 leftWorldPoint = nodePosition + Vector3.left * worldWidth + Vector3.left * OFFSET_X;
+        if (Camera.main.WorldToScreenPoint(leftWorldPoint + Vector3.left * worldWidth / 2).x > 0)
+        {
+            print("左边点在屏幕内:" + Camera.main.WorldToScreenPoint(leftWorldPoint + Vector3.left * worldWidth / 2));
+            return leftWorldPoint;
+        }
+        else
+        {
+            print("左边点不在屏幕内:" + Camera.main.WorldToScreenPoint(leftWorldPoint + Vector3.left * worldWidth / 2));
+        }
+
+        // 判断是否应该显示在右边
+        Vector3 rightWorldPoint = nodePosition + Vector3.right * worldWidth + Vector3.right * OFFSET_X;
+        if (Camera.main.WorldToScreenPoint(rightWorldPoint + Vector3.right * worldWidth / 2).x < screenWidth)
+        {
+            print("右边点在屏幕内:" + Camera.main.WorldToScreenPoint(rightWorldPoint + Vector3.right * worldWidth / 2));
+            return rightWorldPoint;
+        }
+        else
+        {
+            print("右边点不在屏幕内:" + Camera.main.WorldToScreenPoint(rightWorldPoint + Vector3.right * worldWidth / 2));
+        }
+
+        // 确保返回的坐标是世界坐标
+        return topWorldPoint;
+    }
+
+
+
+
+
 
     private void InitLines()
     {
@@ -290,5 +391,35 @@ public abstract class SkillSystem : MonoBehaviour
     }
 #endif
     #endregion
+
+    void OnDrawGizmos()
+    {
+        Camera mainCamera = Camera.main;
+        if (mainCamera == null)
+        {
+            return;
+        }
+
+        // 计算四个点的世界坐标
+        Vector3 topWorldPoint = nodePosition + Vector3.up * worldHeight + Vector3.up * OFFSET_Y;
+        Vector3 bottomWorldPoint = nodePosition + Vector3.down * worldHeight + Vector3.down * OFFSET_Y;
+        Vector3 leftWorldPoint = nodePosition + Vector3.left * worldWidth + Vector3.left * OFFSET_X;
+        Vector3 rightWorldPoint = nodePosition + Vector3.right * worldWidth + Vector3.right * OFFSET_X;
+
+        // 将世界坐标转换为屏幕坐标
+        Vector3 topScreenPoint = mainCamera.WorldToScreenPoint(topWorldPoint);
+        Vector3 bottomScreenPoint = mainCamera.WorldToScreenPoint(bottomWorldPoint);
+        Vector3 leftScreenPoint = mainCamera.WorldToScreenPoint(leftWorldPoint);
+        Vector3 rightScreenPoint = mainCamera.WorldToScreenPoint(rightWorldPoint);
+
+        // 设置Gizmos的颜色
+        Gizmos.color = Color.red;
+
+        // 绘制四个点的区域
+        Gizmos.DrawSphere(topScreenPoint, 0.1f);
+        Gizmos.DrawSphere(bottomScreenPoint, 0.1f);
+        Gizmos.DrawSphere(leftScreenPoint, 0.1f);
+        Gizmos.DrawSphere(rightScreenPoint, 0.1f);
+    }
 
 }
