@@ -30,6 +30,12 @@ namespace YanGameFrameWork.UISystem
         /// </summary>
         public string UIElementPath = "UIElements/";
 
+        [Header("UI预制体，不在场景中的")]
+        /// <summary>
+        /// UIpanel的预制体，直接从project拖入
+        /// </summary>
+        public List<UIPanelBase> UIPanelPrefabs = new List<UIPanelBase>();
+
         [SerializeField]
         [Header("注册的UI面板，注册的对象需要在场景上")]
         private List<UIPanelBase> _registerPanels = new List<UIPanelBase>();
@@ -78,11 +84,24 @@ namespace YanGameFrameWork.UISystem
 
         private UIPanelBase FindPanelByType(Type panelType)
         {
+            // 先从已经注册的UI面板中查找
             foreach (UIPanelBase panel in _registerPanels)
             {
                 if (panel.GetType() == panelType)
                 {
                     return panel;
+                }
+            }
+
+
+            // 如果找不到，从UIPanelPrefabs中查找
+            foreach (UIPanelBase panel in UIPanelPrefabs)
+            {
+                if (panel.GetType() == panelType)
+                {
+                    UIPanelBase instantiatedPanel = Instantiate(panel.gameObject).GetComponent<UIPanelBase>();
+                    RegisterPanel(instantiatedPanel);
+                    return instantiatedPanel;
                 }
             }
 
@@ -104,6 +123,8 @@ namespace YanGameFrameWork.UISystem
             return null;
         }
 
+
+
         public void RegisterPanel(UIPanelBase panel)
         {
             _registerPanels.Add(panel);
@@ -124,6 +145,11 @@ namespace YanGameFrameWork.UISystem
             UIPanelBase temp = PeekPanel();
             temp.OnExit();
             _activePanels.RemoveAt(_activePanels.Count - 1);
+
+            if (_activePanels.Count > 0)
+            {
+                _activePanels[_activePanels.Count - 1].OnResume();
+            }
         }
 
         /// <summary>
@@ -143,7 +169,13 @@ namespace YanGameFrameWork.UISystem
                 if (panel.GetType() == typeof(T))
                 {
                     panel.OnExit();
+
                     _activePanels.Remove(panel);
+
+                    if (_activePanels.Count > 0)
+                    {
+                        _activePanels[_activePanels.Count - 1].OnResume();
+                    }
                     return;
                 }
             }

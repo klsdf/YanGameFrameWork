@@ -156,8 +156,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UIPanelPath: UI/Panels
   UIElementPath: UIElements/
+  UIPanelPrefabs:
+  - {fileID: 6773766405950342214, guid: 2928891a55f6c5e4a848559813deaa5c, type: 3}
   _registerPanels: []
   _activePanels: []
+  _activePopupPanels: []
   _registerElements: []
   _activeElements: []
 --- !u!1 &1302401670669243615
@@ -204,6 +207,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 887c70aa7d41b5042b757eb315e39b6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isShowAchievementPrompt: 1
   achievementPromptUI: {fileID: 8407329335603484383, guid: 5940461c5996362429e60a2a833b26ac, type: 3}
 --- !u!1 &1668420333348603630
 GameObject:

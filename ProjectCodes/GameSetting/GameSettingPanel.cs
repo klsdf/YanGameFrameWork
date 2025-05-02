@@ -145,7 +145,7 @@ namespace YanGameFrameWork.GameSetting
             float minDb = -80f;
             float maxDb = 20f;
             float mappedValue = Mathf.Log10(value * 9 + 1) * (maxDb - minDb) + minDb;
-            Debug.Log(volumeType + " 当前值: " + mappedValue);
+            // Debug.Log(volumeType + " 当前值: " + mappedValue);
 
             switch (volumeType)
             {
