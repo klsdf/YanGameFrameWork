@@ -185,5 +185,17 @@ public static class YanGF
         }
     }
 
+
+    /// <summary>
+    /// 对话控制器，全称是DialogController
+    /// </summary>
+    public static YanGameFrameWork.DialogSystem.DialogController Dialog
+    {
+        get
+        {
+            return YanGameFrameWork.DialogSystem.DialogController.Instance;
+        }
+    }
+
 }
 
