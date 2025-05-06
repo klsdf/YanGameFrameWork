@@ -12,8 +12,6 @@ using UnityEngine.UI;
 using YanGameFrameWork.UISystem;
 
 
-
-
 namespace YanGameFrameWork.GameSetting
 {
     public class GameSettingPanel : UIPanelBase
@@ -53,6 +51,16 @@ namespace YanGameFrameWork.GameSetting
         public Button closeButton;
 
         GameSettingData _gameSettingData;
+
+
+        [SerializeField]
+        [Header("自定义分辨率")]
+        public Vector2Int[] customResolutions = new Vector2Int[]
+        {
+            new Vector2Int(1280, 720),
+            new Vector2Int(1920, 1080),
+            new Vector2Int(2560, 1440)
+        };
 
 
         const string _saveFileName = "GameSettingData";
@@ -108,13 +116,12 @@ namespace YanGameFrameWork.GameSetting
             // 清空分辨率下拉框的选项
             resolutionDropdown.options.Clear();
 
-            // 必备支持分辨率
-            resolutionDropdown.options.Add(new TMP_Dropdown.OptionData("1920x1080"));
-            resolutionDropdown.options.Add(new TMP_Dropdown.OptionData("1366x768"));
-            resolutionDropdown.options.Add(new TMP_Dropdown.OptionData("1280x720"));
-
-            // 推荐支持分辨率
-            resolutionDropdown.options.Add(new TMP_Dropdown.OptionData("2560x1440"));
+            // 使用customResolutions数组初始化分辨率选项
+            foreach (var resolution in customResolutions)
+            {
+                string optionText = $"{resolution.x}x{resolution.y}";
+                resolutionDropdown.options.Add(new TMP_Dropdown.OptionData(optionText));
+            }
 
             // 添加分辨率下拉框监听器
             resolutionDropdown.onValueChanged.AddListener(delegate
@@ -170,10 +177,19 @@ namespace YanGameFrameWork.GameSetting
         void ResolutionItemSelected(TMP_Dropdown dropdown)
         {
             int index = dropdown.value;
-            Resolution selectedResolution = Screen.resolutions[index];
-            Screen.SetResolution(selectedResolution.width, selectedResolution.height, Screen.fullScreen);
-            Debug.Log("分辨率设置为: " + selectedResolution.width + "x" + selectedResolution.height);
-            _gameSettingData.resolutionIndex = index;
+
+            // 从customResolutions中获取选中的分辨率
+            if (index >= 0 && index < customResolutions.Length)
+            {
+                Vector2Int selectedResolution = customResolutions[index];
+                Screen.SetResolution(selectedResolution.x, selectedResolution.y, Screen.fullScreen);
+                Debug.Log("分辨率设置为: " + selectedResolution.x + "x" + selectedResolution.y);
+                _gameSettingData.resolutionIndex = index;
+            }
+            else
+            {
+                Debug.LogWarning("无效的分辨率索引");
+            }
         }
 
         /// <summary>
