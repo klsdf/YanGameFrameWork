@@ -35,7 +35,7 @@ namespace YanGameFrameWork.UISystem
 
         public virtual void OnResume()
         {
-
+            Debug.Log("OnResume");
         }
     }
 
