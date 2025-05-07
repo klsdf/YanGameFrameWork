@@ -143,6 +143,21 @@ namespace YanGameFrameWork.GameSetting
         {
             int index = dropdown.value;
             Debug.Log("选择了: " + dropdown.options[index].text);
+
+            switch (dropdown.options[index].text)
+            {
+                case "中文":
+                    YanGF.Localization.SwitchToChinese();
+                    break;
+                case "English":
+                    YanGF.Localization.SwitchToEnglish();
+                    break;
+                case "日本語":
+                    YanGF.Localization.SwitchToJapanese();
+                    break;
+
+            }
+
             _gameSettingData.languageIndex = index;
         }
 
