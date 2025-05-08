@@ -36,7 +36,7 @@ public class MaskedUIEditor : Editor
         if (GUILayout.Button("测试高亮"))
         {
             // 调用摄像机震动方法，设置持续时间和幅度
-            maskedUI.HighlightTargets();
+            maskedUI.HighlightTarget();
         }
         // 应用属性的变化
         serializedObject.ApplyModifiedProperties();
