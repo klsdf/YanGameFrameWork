@@ -28,7 +28,7 @@ public class MaskedUI : Graphic, ICanvasRaycastFilter
 
 #if USE_LIBTESSDOTNET
     [SerializeField]
-    private List<RectTransform> _targets = new List<RectTransform>();  // 多个目标
+    private List<Transform> _targets = new List<Transform>();  // 多个目标
 
 
     protected override void OnPopulateMesh(VertexHelper vh)
@@ -61,19 +61,67 @@ public class MaskedUI : Graphic, ICanvasRaycastFilter
             if (target == null)
                 continue;
 
-            Bounds bounds = RectTransformUtility.CalculateRelativeRectTransformBounds(this.rectTransform, target);
-            float holeLeft = bounds.min.x - paddingLeft;
-            float holeRight = bounds.max.x + paddingRight;
-            float holeBottom = bounds.min.y - paddingBottom;
-            float holeTop = bounds.max.y + paddingTop;
-
-            tess.AddContour(new ContourVertex[]
+            // 判断是否为UI元素
+            if (target is RectTransform)
             {
-                new ContourVertex(new Vec3(holeLeft, holeTop, 0)),
-                new ContourVertex(new Vec3(holeRight, holeTop, 0)),
-                new ContourVertex(new Vec3(holeRight, holeBottom, 0)),
-                new ContourVertex(new Vec3(holeLeft, holeBottom, 0))
-            }, ContourOrientation.CounterClockwise);
+                // 处理UI元素
+                Bounds bounds = RectTransformUtility.CalculateRelativeRectTransformBounds(this.rectTransform, target as RectTransform);
+                float holeLeft = bounds.min.x - paddingLeft;
+                float holeRight = bounds.max.x + paddingRight;
+                float holeBottom = bounds.min.y - paddingBottom;
+                float holeTop = bounds.max.y + paddingTop;
+
+                print($"rect的值：holeLeft: {holeLeft}, holeRight: {holeRight}, holeBottom: {holeBottom}, holeTop: {holeTop}");
+
+                tess.AddContour(new ContourVertex[]
+                {
+                    new ContourVertex(new Vec3(holeLeft, holeTop, 0)),
+                    new ContourVertex(new Vec3(holeRight, holeTop, 0)),
+                    new ContourVertex(new Vec3(holeRight, holeBottom, 0)),
+                    new ContourVertex(new Vec3(holeLeft, holeBottom, 0))
+                }, ContourOrientation.CounterClockwise);
+            }
+            else
+            {
+                // 使用SpriteRenderer来计算边界
+                SpriteRenderer spriteRenderer = target.GetComponent<SpriteRenderer>();
+                if (spriteRenderer != null)
+                {
+                    Vector3 min = spriteRenderer.bounds.min;
+                    Vector3 max = spriteRenderer.bounds.max;
+
+                    Vector3[] worldCorners = new Vector3[]
+                    {
+                        new Vector3(min.x, min.y, min.z),
+                        new Vector3(max.x, min.y, min.z),
+                        new Vector3(max.x, max.y, min.z),
+                        new Vector3(min.x, max.y, min.z),
+                    };
+
+                    Vector2[] uiCorners = new Vector2[4];
+                    //如果 UI 是 Overlay 模式，RectTransformUtility 需要传 null 做相机；
+                    Camera cam = (canvas.renderMode == RenderMode.ScreenSpaceOverlay) ? null : canvas.worldCamera;
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Vector2 screenPoint = Camera.main.WorldToScreenPoint(worldCorners[i]);
+                        RectTransformUtility.ScreenPointToLocalPointInRectangle(this.rectTransform, screenPoint, cam, out uiCorners[i]);
+                    }
+
+                    float holeLeft = Mathf.Min(uiCorners[0].x, uiCorners[1].x, uiCorners[2].x, uiCorners[3].x) - paddingLeft;
+                    float holeRight = Mathf.Max(uiCorners[0].x, uiCorners[1].x, uiCorners[2].x, uiCorners[3].x) + paddingRight;
+                    float holeBottom = Mathf.Min(uiCorners[0].y, uiCorners[1].y, uiCorners[2].y, uiCorners[3].y) - paddingBottom;
+                    float holeTop = Mathf.Max(uiCorners[0].y, uiCorners[1].y, uiCorners[2].y, uiCorners[3].y) + paddingTop;
+
+                    tess.AddContour(new ContourVertex[]
+                    {
+                        new ContourVertex(new Vec3(holeLeft, holeTop, 0)),
+                        new ContourVertex(new Vec3(holeRight, holeTop, 0)),
+                        new ContourVertex(new Vec3(holeRight, holeBottom, 0)),
+                        new ContourVertex(new Vec3(holeLeft, holeBottom, 0))
+                    }, ContourOrientation.CounterClockwise);
+                }
+            }
         }
 
         // 执行剖分
@@ -119,7 +167,7 @@ public class MaskedUI : Graphic, ICanvasRaycastFilter
     {
         foreach (var target in _targets)
         {
-            if (target != null && RectTransformUtility.RectangleContainsScreenPoint(target, sp, eventCamera))
+            if (target != null && RectTransformUtility.RectangleContainsScreenPoint(target as RectTransform, sp, eventCamera))
             {
                 return false; // 命中任意 target 就透传
             }
@@ -134,7 +182,7 @@ public class MaskedUI : Graphic, ICanvasRaycastFilter
             Vector2 localMousePosition = RectTransformUtility.WorldToScreenPoint(Camera.main, Input.mousePosition);
             foreach (var target in _targets)
             {
-                if (target != null && RectTransformUtility.RectangleContainsScreenPoint(target, localMousePosition, Camera.main))
+                if (target != null && RectTransformUtility.RectangleContainsScreenPoint(target as RectTransform, localMousePosition, Camera.main))
                 {
                     Debug.Log("点击到了目标区域");
                 }
@@ -142,12 +190,12 @@ public class MaskedUI : Graphic, ICanvasRaycastFilter
         }
     }
 
-    public void SetTargets(List<RectTransform> targets)
+    public void SetTargets(List<Transform> targets)
     {
         _targets = targets;
     }
 
-    public void AddTarget(RectTransform target)
+    public void AddTarget(Transform target)
     {
         if (!_targets.Contains(target))
         {
