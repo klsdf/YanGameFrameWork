@@ -20,11 +20,6 @@ public abstract class YanToggle : MonoBehaviour, IPointerClickHandler
         YanGF.Event.AddListener<string, string>("OnButtonClick", OnButtonClick);
     }
 
-    protected virtual void OnDestroy()
-    {
-        YanGF.Event.RemoveListener<string, string>("OnButtonClick", OnButtonClick);
-    }
-
 
 
     public void OnPointerClick(PointerEventData eventData)
