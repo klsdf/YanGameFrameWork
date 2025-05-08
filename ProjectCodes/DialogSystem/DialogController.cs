@@ -24,6 +24,10 @@ namespace YanGameFrameWork.DialogSystem
 
 
 
+        [SerializeField]
+        private bool _isTyping = false;
+
+
         /// <summary>
         /// 根据对话块名称获取对话块
         /// </summary>
@@ -46,9 +50,11 @@ namespace YanGameFrameWork.DialogSystem
 
 
         /// <summary>
-        /// 运行顺序对话，每隔3秒调用一次GetNextDialog，直到对话结束。
+        /// 运行顺序对话，每次鼠标点击会播放下一句，直到对话结束。
         /// </summary>
         /// <param name="blockName">对话块名称</param>
+        /// <param name="onDialog">每一句对话的回调</param>
+        /// <param name="onDialogEnd">当当前对话块播放完毕后，调用此回调</param>
         public void RunSequenceDialog(string blockName, Action<Dialog> onDialog, Action onDialogEnd)
         {
             StartCoroutine(RunDialogCoroutine(blockName, onDialog, onDialogEnd));
@@ -72,7 +78,7 @@ namespace YanGameFrameWork.DialogSystem
             while (!dialogBlock.IsPlayEnd)
             {
                 // 等待鼠标左键按下
-                while (!Input.GetMouseButtonDown(0))
+                while (Input.GetMouseButtonDown(0) == false || _isTyping)
                 {
                     yield return null;
                 }
@@ -96,6 +102,7 @@ namespace YanGameFrameWork.DialogSystem
         /// </summary>
         /// <param name="dialog">要显示的对话</param>
         /// <param name="typingSpeed">打字速度，字符之间的延迟时间</param>
+        /// <param name="targetText">目标文本组件</param>
         public void StartTypingEffect(Dialog dialog, float typingSpeed, TMP_Text targetText)
         {
             StartCoroutine(TypeText(dialog, typingSpeed, targetText));
@@ -110,12 +117,29 @@ namespace YanGameFrameWork.DialogSystem
         private IEnumerator TypeText(Dialog dialog, float typingSpeed, TMP_Text targetText)
         {
             targetText.text = "";
+            _isTyping = true;
+            yield return null;
 
             foreach (char letter in dialog.dialog.ToCharArray())
             {
                 targetText.text += letter;
-                yield return new WaitForSeconds(typingSpeed);
+
+                // 在每次等待之前检查鼠标左键点击
+                for (float timer = 0; timer < typingSpeed; timer += Time.deltaTime)
+                {
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        // 如果点击，立即显示完整文本
+                        targetText.text = dialog.dialog;
+                        yield return null;
+                        _isTyping = false;
+                        yield break;
+                    }
+                    yield return null;
+                }
             }
+
+            _isTyping = false;
         }
 
     }
