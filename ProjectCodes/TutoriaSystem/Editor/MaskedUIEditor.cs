@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-
+using YanGameFrameWork.TutoriaSystem;
 [CustomEditor(typeof(MaskedUI))]
 public class MaskedUIEditor : Editor
 {

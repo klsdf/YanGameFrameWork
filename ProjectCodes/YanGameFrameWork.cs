@@ -197,5 +197,18 @@ public static class YanGF
         }
     }
 
+
+
+    /// <summary>
+    /// 新手引导控制器，全称是MaskedUI
+    /// </summary>
+    public static YanGameFrameWork.TutoriaSystem.TutoriaController Tutoria
+    {
+        get
+        {
+            return YanGameFrameWork.TutoriaSystem.TutoriaController.Instance;
+        }
+    }
+
 }
 
