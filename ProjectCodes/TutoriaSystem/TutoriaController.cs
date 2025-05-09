@@ -24,8 +24,7 @@ namespace YanGameFrameWork.TutoriaSystem
         public void FocusOn(Transform target,Action pauseGame)
         {
 
-                _tutoriaPanel = YanGF.UI.PushPanel<TutoriaPanel>() as TutoriaPanel;
-
+            _tutoriaPanel = YanGF.UI.PushPanel<TutoriaPanel>() as TutoriaPanel;
             pauseGame?.Invoke();
             _tutoriaPanel.FocusOn(target);
         }

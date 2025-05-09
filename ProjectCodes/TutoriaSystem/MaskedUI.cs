@@ -214,7 +214,7 @@ namespace YanGameFrameWork.TutoriaSystem
 
 
 
-     
+
 #else
         [SerializeField]
         private RectTransform _target;  // 镂空区域的 RectTransform

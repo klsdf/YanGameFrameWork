@@ -20,6 +20,9 @@ public class MaskedUIEditor : Editor
         // 绘制父类的color属性
         EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Color"), new GUIContent("Color"));
 
+        // 绘制材质属性
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Material"), new GUIContent("Material"));
+
         // 绘制你希望显示的属性
         EditorGUILayout.PropertyField(serializedObject.FindProperty("paddingTop"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("paddingBottom"));
