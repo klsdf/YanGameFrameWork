@@ -15,7 +15,7 @@ namespace YanGameFrameWork.TutoriaSystem
         {
 
             _maskedUI.SetTargets(targets);
-            _maskedUI.HighlightTargets();
+            _maskedUI.HighlightTarget();
 
         }
 #else

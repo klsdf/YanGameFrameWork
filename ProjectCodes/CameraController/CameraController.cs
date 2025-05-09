@@ -1,8 +1,16 @@
 using UnityEngine;
 using YanGameFrameWork.Singleton;
 using System.Collections;
+using System;
 namespace YanGameFrameWork.CameraController
 {
+
+    public enum MoveCurveType
+    {
+        Linear,
+        SmoothStep,
+        Custom
+    }
     public class CameraController : Singleton<CameraController>
     {
         public Camera controlCamera;
@@ -49,7 +57,7 @@ namespace YanGameFrameWork.CameraController
         /// 设置为0.0f时，摄像机不移动。
         /// 设置为2.0f时，摄像机移动的距离是玩家移动的距离的2倍。
         /// </summary>
-        public  float moveFactor = 1.0f;
+        public float moveFactor = 1.0f;
 
 
         /// <summary>
@@ -66,6 +74,8 @@ namespace YanGameFrameWork.CameraController
 
 
 
+
+        private bool isCinematicMode = false;
 
         void Start()
         {
@@ -99,7 +109,7 @@ namespace YanGameFrameWork.CameraController
 
         private void Follow()
         {
-            if (!IsEnableFollow)
+            if (!IsEnableFollow || isCinematicMode)
                 return;
 
             // print("player.position:" + player.position);
@@ -114,7 +124,7 @@ namespace YanGameFrameWork.CameraController
 
         private void Drag()
         {
-            if (!IsEnableDarg)
+            if (!IsEnableDarg || isCinematicMode)
                 return;
 
             // 检测鼠标右键按下
@@ -152,7 +162,7 @@ namespace YanGameFrameWork.CameraController
         private void Zoom()
         {
 
-            if (!IsEnableZoom)
+            if (!IsEnableZoom || isCinematicMode)
                 return;
 
             // 检测鼠标滚轮滚动
@@ -254,8 +264,8 @@ namespace YanGameFrameWork.CameraController
 
             while (elapsed < duration)
             {
-                float x = Random.Range(-1f, 1f) * magnitude;
-                float y = Random.Range(-1f, 1f) * magnitude;
+                float x = UnityEngine.Random.Range(-1f, 1f) * magnitude;
+                float y = UnityEngine.Random.Range(-1f, 1f) * magnitude;
 
                 controlCamera.transform.localPosition = new Vector3(originalPosition.x + x, originalPosition.y + y, originalPosition.z);
 
@@ -266,6 +276,94 @@ namespace YanGameFrameWork.CameraController
 
             controlCamera.transform.localPosition = originalPosition;
         }
+
+        public void MoveToTarget(Transform target, float duration, MoveCurveType curveType, Action onComplete = null)
+        {
+            EnterCinematicMode();
+            StartCoroutine(MoveToTargetCoroutine(target.position, duration, curveType, onComplete));
+        }
+
+
+
+
+        private IEnumerator MoveToTargetCoroutine(Vector3 targetPosition, float duration, MoveCurveType curveType, Action onComplete = null)
+        {
+            Vector3 startPosition = controlCamera.transform.position;
+            float startZ = startPosition.z; // 保持初始Z轴位置
+            float elapsedTime = 0f;
+
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                float t = elapsedTime / duration;
+
+                switch (curveType)
+                {
+                    case MoveCurveType.Linear:
+                        t = t; // Linear interpolation
+                        break;
+                    case MoveCurveType.SmoothStep:
+                        t = Mathf.SmoothStep(0f, 1f, t);
+                        break;
+                }
+
+                Vector3 newPosition = Vector3.Lerp(startPosition, targetPosition, t);
+                newPosition.z = startZ; // 保持Z轴不变
+                controlCamera.transform.position = newPosition;
+                yield return null;
+            }
+
+            controlCamera.transform.position = new Vector3(targetPosition.x, targetPosition.y, startZ); // 确保最终位置的Z轴不变
+            onComplete?.Invoke();
+        }
+
+
+        public void EnterCinematicMode()
+        {
+            isCinematicMode = true;
+        }
+
+
+        public void ExitCinematicMode()
+        {
+            isCinematicMode = false;
+        }
+
+        public void ZoomToTarget(float targetSize, float duration, MoveCurveType curveType, Action onComplete = null)
+        {
+            StartCoroutine(ZoomToTargetCoroutine(targetSize, duration, curveType, onComplete));
+        }
+
+        private IEnumerator ZoomToTargetCoroutine(float targetSize, float duration, MoveCurveType curveType, Action onComplete = null)
+        {
+            float startSize = controlCamera.orthographicSize;
+            float elapsedTime = 0f;
+
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                float t = elapsedTime / duration;
+
+                switch (curveType)
+                {
+                    case MoveCurveType.Linear:
+                        t = t; // Linear interpolation
+                        break;
+                    case MoveCurveType.SmoothStep:
+                        t = Mathf.SmoothStep(0f, 1f, t);
+                        break;
+                }
+
+                controlCamera.orthographicSize = Mathf.Lerp(startSize, targetSize, t);
+                yield return null;
+            }
+
+            controlCamera.orthographicSize = targetSize; // Ensure final size is exact
+            onComplete?.Invoke();
+        }
+
+
+
 
 
 
