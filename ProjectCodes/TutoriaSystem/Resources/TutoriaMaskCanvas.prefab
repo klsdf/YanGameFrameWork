@@ -58,14 +58,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6320754, g: 0.6320754, b: 0.6320754, a: 0.8}
+  m_Color: {r: 0.7830189, g: 0.7830189, b: 0.7830189, a: 0.44705883}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  _target: {fileID: 0}
   paddingTop: 10
-  paddingBottom: 10
+  paddingBottom: 4.82
   paddingLeft: 10
-  paddingRight: 10
+  paddingRight: 9.1
+  _targets:
+  - {fileID: 0}
 --- !u!1 &7833850269189701420
 GameObject:
   m_ObjectHideFlags: 0
@@ -78,6 +79,7 @@ GameObject:
   - component: {fileID: 9158262738802368672}
   - component: {fileID: 5585905025357258763}
   - component: {fileID: 5450589733313748047}
+  - component: {fileID: 4533606085282780231}
   m_Layer: 5
   m_Name: TutoriaMaskCanvas
   m_TagString: Untagged
@@ -126,7 +128,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 996
   m_TargetDisplay: 0
 --- !u!114 &5585905025357258763
 MonoBehaviour:
@@ -168,3 +170,16 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 119
+--- !u!114 &4533606085282780231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7833850269189701420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f4e0451ce1dc1b4f85c5071e99603fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maskedUI: {fileID: 4962675144834262507}

@@ -237,7 +237,10 @@ namespace YanGameFrameWork.TutoriaSystem
 
             while (elapsedTime < duration)
             {
-                elapsedTime += Time.deltaTime;
+
+                //注意，这里使用 unscaledDeltaTime 来避免时间缩放的影响
+                //Time.unscaledDeltaTime不受Time.timeScale影响，因此即使游戏暂停，协程也能继续运行
+                elapsedTime += Time.unscaledDeltaTime;
                 float t = elapsedTime / duration;
 
                 paddingTop = Mathf.Lerp(startPaddingTop, endPaddingTop, t);
