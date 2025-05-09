@@ -159,14 +159,25 @@ namespace YanGameFrameWork.TutoriaSystem
             vert.color = this.color;
 
             vert.position = p0;
+            vert.uv0 = new Vector2(p0.x / rectTransform.rect.width + 0.5f,
+                         p0.y / rectTransform.rect.height + 0.5f);
             vh.AddVert(vert);
+
             vert.position = p1;
+            vert.uv0 = new Vector2(p1.x / rectTransform.rect.width + 0.5f,
+                         p1.y / rectTransform.rect.height + 0.5f);
             vh.AddVert(vert);
+
             vert.position = p2;
+            vert.uv0 = new Vector2(p2.x / rectTransform.rect.width + 0.5f,
+                         p2.y / rectTransform.rect.height + 0.5f);
             vh.AddVert(vert);
 
             vh.AddTriangle(idx, idx + 1, idx + 2);
         }
+
+
+
         public bool IsRaycastLocationValid(Vector2 sp, Camera eventCamera)
         {
             foreach (var target in _targets)

@@ -277,6 +277,14 @@ namespace YanGameFrameWork.CameraController
             controlCamera.transform.localPosition = originalPosition;
         }
 
+
+        /// <summary>
+        /// 移动摄像机到目标位置
+        /// </summary>
+        /// <param name="target">目标位置</param>
+        /// <param name="duration">移动时间</param>
+        /// <param name="curveType">移动曲线类型</param>
+        /// <param name="onComplete">移动完成回调</param>
         public void MoveToTarget(Transform target, float duration, MoveCurveType curveType, Action onComplete = null)
         {
             EnterCinematicMode();
@@ -318,16 +326,31 @@ namespace YanGameFrameWork.CameraController
         }
 
 
+        /// <summary>
+        /// 进入摄像机的电影模式
+        /// </summary>
         public void EnterCinematicMode()
         {
             isCinematicMode = true;
         }
 
 
+        /// <summary>
+        /// 退出摄像机的电影模式
+        /// </summary>
         public void ExitCinematicMode()
         {
             isCinematicMode = false;
         }
+
+
+        /// <summary>
+        /// 缩放摄像机到目标大小
+        /// </summary>
+        /// <param name="targetSize">目标大小</param>
+        /// <param name="duration">缩放时间</param>
+        /// <param name="curveType">缩放曲线类型</param>
+        /// <param name="onComplete">缩放完成回调</param>
 
         public void ZoomToTarget(float targetSize, float duration, MoveCurveType curveType, Action onComplete = null)
         {

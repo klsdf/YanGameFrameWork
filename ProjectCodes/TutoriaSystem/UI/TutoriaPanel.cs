@@ -1,13 +1,14 @@
 using YanGameFrameWork.UISystem;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
+using TMPro;
+using UnityEngine.UI;
+
 namespace YanGameFrameWork.TutoriaSystem
 {
     public class TutoriaPanel : UIPanelBase
     {
         public MaskedUI _maskedUI;
-
 
 
 #if USE_LIBTESSDOTNET

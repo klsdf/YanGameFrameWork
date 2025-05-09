@@ -79,6 +79,15 @@ namespace YanGameFrameWork.UISystem
         }
 
 
+
+        public void RegisterPanelPrefab(UIPanelBase panel)
+        {
+            if (!UIPanelPrefabs.Contains(panel))
+            {
+                UIPanelPrefabs.Add(panel);
+            }
+        }
+
         #region UI面板的操作
 
 

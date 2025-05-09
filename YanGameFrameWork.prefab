@@ -301,6 +301,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf6de0d2df3a41b4289ff0f411d5653e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tutoriaPanelPrefab: {fileID: 4533606085282780231, guid: 4c22e9b19a15fa94c87e8a9c273f8b19, type: 3}
 --- !u!1 &2144531834985014672
 GameObject:
   m_ObjectHideFlags: 0
@@ -637,6 +638,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dialogBlocks: []
+  _isTyping: 0
 --- !u!1 &5284742614383397330
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,4 @@
-Shader "Custom/TextureAndColorShader"
+Shader "YanGF/TutoriaPanelShader"
 {
     Properties
     {
@@ -7,46 +7,74 @@ Shader "Custom/TextureAndColorShader"
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags {
+            "Queue"="Transparent"
+            "RenderType"="Transparent"
+            "IgnoreProjector"="True"
+            "PreviewType"="Plane"
+        }
         LOD 200
 
         Pass
         {
-            HLSLPROGRAM
+            Blend SrcAlpha OneMinusSrcAlpha
+            ZWrite Off
+            Cull Off
+
+            CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #pragma multi_compile _ UNITY_UI_ALPHACLIP
+            #include "UnityCG.cginc"
+            #include "UnityUI.cginc"
 
-            struct Attributes
+            struct appdata_t
             {
-                float4 positionOS   : POSITION;
-                float2 uv          : TEXCOORD0;
+                float4 vertex   : POSITION;
+                float4 color    : COLOR;
+                float2 texcoord : TEXCOORD0;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
-            struct Varyings
+            struct v2f
             {
-                float4 positionHCS : SV_POSITION;
-                float2 uv          : TEXCOORD0;
+                float4 vertex   : SV_POSITION;
+                fixed4 color    : COLOR;
+                float2 texcoord : TEXCOORD0;
+                float4 worldPosition : TEXCOORD1;
+                UNITY_VERTEX_OUTPUT_STEREO
             };
 
-            TEXTURE2D(_MainTex);
-            SAMPLER(sampler_MainTex);
-            float4 _Color;
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
+            fixed4 _Color;
+            fixed4 _TextureSampleAdd;
+            float4 _ClipRect;
 
-            Varyings vert (Attributes v)
+            v2f vert(appdata_t v)
             {
-                Varyings o;
-                o.positionHCS = TransformObjectToHClip(v.positionOS);
-                o.uv = v.uv;
+                v2f o;
+                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+                o.worldPosition = v.vertex;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
+                o.color = v.color * _Color;
                 return o;
             }
 
-            half4 frag (Varyings i) : SV_Target
+            fixed4 frag(v2f i) : SV_Target
             {
-                half4 texColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
-                return texColor * _Color;
+                half4 color = (tex2D(_MainTex, i.texcoord) * i.color);
+                color += _TextureSampleAdd;
+
+                #ifdef UNITY_UI_ALPHACLIP
+                clip (color.a - 0.001);
+                #endif
+
+                return color;
             }
-            ENDHLSL
+            ENDCG
         }
     }
 }

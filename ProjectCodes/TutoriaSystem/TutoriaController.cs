@@ -9,12 +9,13 @@ namespace YanGameFrameWork.TutoriaSystem
     {
 
 
+        public TutoriaPanel tutoriaPanelPrefab;
         private TutoriaPanel _tutoriaPanel;
 
 #if USE_LIBTESSDOTNET
         public void FocusOn(List<Transform> targets, Action pauseGame)
         {
-
+            YanGF.UI.RegisterPanelPrefab(tutoriaPanelPrefab);
             _tutoriaPanel = YanGF.UI.PushPanel<TutoriaPanel>() as TutoriaPanel;
             pauseGame?.Invoke();
             _tutoriaPanel.FocusOn(targets);
