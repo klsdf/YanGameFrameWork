@@ -10,6 +10,10 @@ namespace YanGameFrameWork.TutoriaSystem
     {
         public MaskedUI _maskedUI;
 
+        public override void OnLocalize()
+        {
+
+        }
 
 #if USE_LIBTESSDOTNET
         public void FocusOn(List<Transform> targets)

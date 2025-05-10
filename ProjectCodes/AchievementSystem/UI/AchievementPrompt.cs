@@ -42,6 +42,12 @@ public class AchievementPrompt : UIPanelBase
         ShowAchievement();
     }
 
+    public override void OnLocalize()
+    {
+
+    }
+
+
 
     private void ShowAchievement()
     {

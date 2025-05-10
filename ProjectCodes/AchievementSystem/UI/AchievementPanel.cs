@@ -124,5 +124,8 @@ public class AchievementPanel : UIPanelBase
     }
 
 
+    public override void OnLocalize()
+    {
 
+    }
 }

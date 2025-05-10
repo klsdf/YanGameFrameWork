@@ -103,9 +103,9 @@ namespace YanGameFrameWork.DialogSystem
         /// <param name="dialog">要显示的对话</param>
         /// <param name="typingSpeed">打字速度，字符之间的延迟时间</param>
         /// <param name="targetText">目标文本组件</param>
-        public void StartTypingEffect(Dialog dialog, float typingSpeed, TMP_Text targetText)
+        public void StartTypingEffect(string dialogText, float typingSpeed, TMP_Text targetText)
         {
-            StartCoroutine(TypeText(dialog, typingSpeed, targetText));
+            StartCoroutine(TypeText(dialogText, typingSpeed, targetText));
         }
 
         /// <summary>
@@ -114,13 +114,13 @@ namespace YanGameFrameWork.DialogSystem
         /// <param name="dialog">要显示的对话</param>
         /// <param name="typingSpeed">打字速度，字符之间的延迟时间</param>
         /// <returns>IEnumerator</returns>
-        private IEnumerator TypeText(Dialog dialog, float typingSpeed, TMP_Text targetText)
+        private IEnumerator TypeText(string dialogText, float typingSpeed, TMP_Text targetText)
         {
             targetText.text = "";
             _isTyping = true;
             yield return null;
 
-            foreach (char letter in dialog.dialog.ToCharArray())
+            foreach (char letter in dialogText.ToCharArray())
             {
                 targetText.text += letter;
 
@@ -130,7 +130,7 @@ namespace YanGameFrameWork.DialogSystem
                     if (Input.GetMouseButtonDown(0))
                     {
                         // 如果点击，立即显示完整文本
-                        targetText.text = dialog.dialog;
+                        targetText.text = dialogText;
                         yield return null;
                         _isTyping = false;
                         yield break;

@@ -13,7 +13,14 @@ namespace YanGameFrameWork.UISystem
     public abstract class UIPanelBase : MonoBehaviour
     {
 
-        public virtual void OnInit()
+        void Start()
+        {
+            OnLocalize();
+            ChildStart();
+        }
+
+
+        public virtual void ChildStart()
         {
 
         }
@@ -37,6 +44,9 @@ namespace YanGameFrameWork.UISystem
         {
             Debug.Log("OnResume");
         }
+
+
+        public abstract void OnLocalize();
     }
 
 }

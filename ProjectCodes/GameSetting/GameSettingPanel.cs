@@ -35,22 +35,25 @@ namespace YanGameFrameWork.GameSetting
         public YanSingleToggle fullScreenButton;
 
         [Header("全屏文本")]
-        public TMP_Text fullScreenText;
+        public TMP_Text fullScreenStateText;
 
         [Header("锁帧")]
         public YanSingleToggle lockFrameButton;
 
         [Header("锁帧文本")]
-        public TMP_Text lockFrameText;
+        public TMP_Text lockFrameStateText;
 
         [Header("退出按钮")]
         public Button exitButton;
 
 
-
+        [Header("关闭按钮")]
         public Button closeButton;
 
         GameSettingData _gameSettingData;
+
+
+
 
 
         [SerializeField]
@@ -63,10 +66,25 @@ namespace YanGameFrameWork.GameSetting
         };
 
 
+        [Header("各种按钮的文本")]
+        public TMP_Text masterVolumeText;
+        public TMP_Text musicVolumeText;
+        public TMP_Text effectsVolumeText;
+        public TMP_Text resolutionText;
+        public TMP_Text fullScreenText;
+        public TMP_Text languageText;
+        public TMP_Text lockFrameText;
+        public TMP_Text exitText;
+
+
+
+
+
         const string _saveFileName = "GameSettingData";
 
-        void Start()
+        public override void ChildStart()
         {
+            base.ChildStart();
             InitializeLanguageDropdown();
             InitializeVolumeSliders();
             InitializeResolutionDropdown();
@@ -77,6 +95,17 @@ namespace YanGameFrameWork.GameSetting
             });
         }
 
+        public override void OnLocalize()
+        {
+            masterVolumeText.text = YanGF.Localization.Translate("主音量");
+            musicVolumeText.text = YanGF.Localization.Translate("音乐音量");
+            effectsVolumeText.text = YanGF.Localization.Translate("音效音量");
+            resolutionText.text = YanGF.Localization.Translate("分辨率");
+            fullScreenText.text = YanGF.Localization.Translate("全屏");
+            languageText.text = YanGF.Localization.Translate("语言");
+            lockFrameText.text = YanGF.Localization.Translate("锁60帧");
+            exitText.text = YanGF.Localization.Translate("退出游戏");
+        }
 
         /// <summary>
         /// 初始化语言下拉框
@@ -214,7 +243,7 @@ namespace YanGameFrameWork.GameSetting
         {
             Screen.fullScreen = isFullScreen;
             _gameSettingData.isFullScreen = isFullScreen;
-            fullScreenText.text = isFullScreen ? "开启" : "关闭";
+            fullScreenStateText.text = GetToggleStatText(isFullScreen);
             Debug.Log("全屏模式: " + (Screen.fullScreen ? "开启" : "关闭"));
         }
 
@@ -226,7 +255,7 @@ namespace YanGameFrameWork.GameSetting
             // 假设锁定帧率为60
             Application.targetFrameRate = isFrameLocked ? 60 : -1;
             _gameSettingData.isFrameLocked = isFrameLocked;
-            lockFrameText.text = isFrameLocked ? "开启" : "关闭";
+            lockFrameStateText.text = GetToggleStatText(isFrameLocked);
             Debug.Log("锁帧: " + (isFrameLocked ? "开启" : "关闭"));
         }
 
@@ -264,24 +293,24 @@ namespace YanGameFrameWork.GameSetting
             // 设置全屏和锁帧状态
             if (_gameSettingData.isFullScreen)
             {
-                fullScreenText.text = "开启";
+                fullScreenStateText.text = GetToggleStatText(true);
                 fullScreenButton.TurnOn();
             }
             else
             {
-                fullScreenText.text = "关闭";
+                fullScreenStateText.text = GetToggleStatText(false);
                 fullScreenButton.TurnOff();
             }
 
 
             if (_gameSettingData.isFrameLocked)
             {
-                lockFrameText.text = "开启";
+                lockFrameStateText.text = GetToggleStatText(true);
                 lockFrameButton.TurnOn();
             }
             else
             {
-                lockFrameText.text = "关闭";
+                lockFrameStateText.text = GetToggleStatText(false);
                 lockFrameButton.TurnOff();
             }
         }
@@ -297,5 +326,11 @@ namespace YanGameFrameWork.GameSetting
             }
         }
 
+
+
+        string GetToggleStatText(bool isOn)
+        {
+            return isOn ? YanGF.Localization.Translate("开启") : YanGF.Localization.Translate("关闭");
+        }
     }
 }
