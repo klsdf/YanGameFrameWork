@@ -27,13 +27,14 @@ namespace YanGameFrameWork.TweenSystem
         /// <param name="duration">持续时间</param>
         /// <param name="onComplete">完成回调</param>
         /// <returns>返回TweenController以支持链式调用</returns>
-        public TweenController Tween<T>(
+        public TweenController Tween<T, TValue>(
             T target,
-            Expression<Func<T, float>> propertySelector,
-            float endValue,
+            Expression<Func<T, TValue>> propertySelector,
+            TValue endValue,
             float duration,
             Action onComplete = null)
         {
+            var lerpFunc = TweenLerpSelector<TValue>.LerpFunc;
             var memberExpression = propertySelector.Body as MemberExpression;
             if (memberExpression == null || !(memberExpression.Member is System.Reflection.PropertyInfo))
             {
@@ -41,9 +42,13 @@ namespace YanGameFrameWork.TweenSystem
             }
 
             var propertyInfo = (System.Reflection.PropertyInfo)memberExpression.Member;
-            float startValue = (float)propertyInfo.GetValue(target);
-            Action<float> onUpdate = value => propertyInfo.SetValue(target, value);
-            Tween tween = new Tween(duration, startValue, endValue, onUpdate, onComplete);
+            TValue startValue = (TValue)propertyInfo.GetValue(target);
+            Action<float> onUpdate = t =>
+            {
+                TValue value = lerpFunc(startValue, endValue, t);
+                propertyInfo.SetValue(target, value);
+            };
+            Tween tween = new Tween(duration, 0f, 1f, onUpdate, onComplete);
             tween.Start();
             return this;
         }
@@ -89,7 +94,7 @@ namespace YanGameFrameWork.TweenSystem
         public TweenController MoveUIOutOfCanvas(RectTransform rectTransform, RectTransform canvasRectTransform, float speed, Action onComplete = null)
         {
             Vector2 startPosition = rectTransform.anchoredPosition;
-   
+
             Vector2 halfSize = rectTransform.rect.size * 0.5f;
             Vector2 canvasSize = canvasRectTransform.rect.size;
             Vector2 endPosition = new Vector2(startPosition.x, canvasSize.y + halfSize.y);
@@ -109,5 +114,21 @@ namespace YanGameFrameWork.TweenSystem
 
 
 
+    }
+
+    public static class TweenLerpSelector<T>
+    {
+        public static Func<T, T, float, T> LerpFunc
+        {
+            get
+            {
+                if (typeof(T) == typeof(float))
+                    return (a, b, t) => (T)(object)Mathf.Lerp((float)(object)a, (float)(object)b, t);
+                if (typeof(T) == typeof(Color))
+                    return (a, b, t) => (T)(object)Color.Lerp((Color)(object)a, (Color)(object)b, t);
+                // 继续扩展其他类型
+                throw new NotSupportedException($"不支持类型 {typeof(T)} 的Lerp");
+            }
+        }
     }
 }
