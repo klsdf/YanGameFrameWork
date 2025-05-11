@@ -81,7 +81,7 @@ public class RhythmGenerator : MonoBehaviour
             // 重置时间累加器
             _timer -= _rhythmInterval;
 
-            YanGF.Event.TriggerEvent(rhythmType.ToString());
+            YanGF.Event.TriggerEvent<RhythmType>(RhythmEvent.OnRhythm, rhythmType);
         }
     }
 }

@@ -11,27 +11,30 @@ using UnityEngine;
 public abstract class RhythmItemBase : MonoBehaviour
 {
 
-     public bool checkStrong = true;
+    public bool checkStrong = true;
     public bool checkMiddle = true;
     public bool checkWeak = true;
 
     void Start()
-    {
-        if (checkStrong)
-        {
-            YanGF.Event.AddListener<RhythmType>(RhythmType.Strong.ToString(), OnRhythm);
+    {  
+        YanGF.Event.AddListener<RhythmType>(RhythmEvent.OnRhythm, OnRhythm);
+    }
+
+    private  void OnRhythm(RhythmType rhythmType){
+        if(rhythmType == RhythmType.Strong && checkStrong){
+            OnBeat(RhythmType.Strong);
         }
-        if (checkMiddle)
-        {
-            YanGF.Event.AddListener<RhythmType>(RhythmType.Middle.ToString(), OnRhythm);
+        if(rhythmType == RhythmType.Middle && checkMiddle){
+            OnBeat(RhythmType.Middle);
         }
-        if (checkWeak)
-        {
-            YanGF.Event.AddListener<RhythmType>(RhythmType.Weak.ToString(), OnRhythm);
+        if(rhythmType == RhythmType.Weak && checkWeak){
+            OnBeat(RhythmType.Weak);
         }
     }
 
-    public abstract void OnRhythm(RhythmType rhythmType);
+    public abstract void OnBeat(RhythmType rhythmType);
+
+
 }
 
 
