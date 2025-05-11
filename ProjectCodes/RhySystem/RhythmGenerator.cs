@@ -59,19 +59,15 @@ public class RhythmGenerator : MonoBehaviour
             {
                 case 0:
                     rhythmType = RhythmType.Strong;
-                    Debug.Log("强"); // 强
                     break;
                 case 1:
                     rhythmType = RhythmType.Weak;
-                    Debug.Log("弱"); // 弱
                     break;
                 case 2:
                     rhythmType = RhythmType.Middle;
-                    Debug.Log("次强"); // 次强
                     break;
                 case 3:
                     rhythmType = RhythmType.Weak;
-                    Debug.Log("弱"); // 弱
                     break;
             }
 
