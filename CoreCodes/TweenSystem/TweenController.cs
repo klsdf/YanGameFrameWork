@@ -126,8 +126,16 @@ namespace YanGameFrameWork.TweenSystem
                     return (a, b, t) => (T)(object)Mathf.Lerp((float)(object)a, (float)(object)b, t);
                 if (typeof(T) == typeof(Color))
                     return (a, b, t) => (T)(object)Color.Lerp((Color)(object)a, (Color)(object)b, t);
+                if (typeof(T) == typeof(Vector3))
+                    return (a, b, t) => (T)(object)Vector3.Lerp((Vector3)(object)a, (Vector3)(object)b, t);
+                if (typeof(T) == typeof(Vector2))
+                    return (a, b, t) => (T)(object)Vector2.Lerp((Vector2)(object)a, (Vector2)(object)b, t);
+                if (typeof(T) == typeof(Quaternion))
+                    return (a, b, t) => (T)(object)Quaternion.Lerp((Quaternion)(object)a, (Quaternion)(object)b, t);
                 // 继续扩展其他类型
-                throw new NotSupportedException($"不支持类型 {typeof(T)} 的Lerp");
+
+                YanGF.Debug.LogError(nameof(TweenLerpSelector<T>), $"不支持类型 {typeof(T)} 的Lerp");
+                return null;
             }
         }
     }
