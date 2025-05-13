@@ -6,16 +6,15 @@
  * 这样即便某些库没有安装，也不会报错。
  ****************************************************************************/
 
-using UnityEditor;
-
 #if UNITY_EDITOR
+using UnityEditor;
 [InitializeOnLoad]
-#endif
+
 public static class LibraryChecker
 {
-
     static string defineSymbol = "USE_LIBTESSDOTNET";
     static string libraryPath = "Assets/Packages/LibTessDotNet.1.1.15/lib/netstandard2.0/LibTessDotNet.dll";
+
     static LibraryChecker()
     {
         bool hasLibrary = DoesLibraryExist();
@@ -26,6 +25,7 @@ public static class LibraryChecker
     {
         return System.IO.File.Exists(libraryPath);
     }
+
 
     private static void SetScriptingDefineSymbol(bool enabled)
     {
@@ -44,4 +44,7 @@ public static class LibraryChecker
         PlayerSettings.SetScriptingDefineSymbolsForGroup(
             EditorUserBuildSettings.selectedBuildTargetGroup, defines);
     }
+
 }
+
+#endif
