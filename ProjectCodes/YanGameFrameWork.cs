@@ -210,5 +210,14 @@ public static class YanGF
         }
     }
 
+
+    public static YanGameFrameWork.ObjectPoolSystem.ObjectPoolController ObjectPool
+    {
+        get
+        {
+            return YanGameFrameWork.ObjectPoolSystem.ObjectPoolController.Instance;
+        }
+    }
+
 }
 
