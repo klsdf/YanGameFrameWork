@@ -75,15 +75,25 @@ namespace YanGameFrameWork.DialogSystem
                 yield break;
             }
 
+
+            //先说一句
+            Dialog dialog = dialogBlock.GetNextDialog();
+            if (dialog != null)
+            {
+                onDialog?.Invoke(dialog);
+            }
+
+
+            //然后等待输入
             while (!dialogBlock.IsPlayEnd)
             {
                 // 等待鼠标左键按下
-                while (Input.GetMouseButtonDown(0) == false || _isTyping)
+                while ((Input.GetMouseButtonDown(0) == false && !Input.GetButtonDown("Submit")) || _isTyping)
                 {
                     yield return null;
                 }
 
-                Dialog dialog = dialogBlock.GetNextDialog();
+                dialog = dialogBlock.GetNextDialog();
                 if (dialog != null)
                 {
                     onDialog?.Invoke(dialog);
