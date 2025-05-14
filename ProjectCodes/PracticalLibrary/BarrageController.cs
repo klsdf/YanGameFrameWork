@@ -74,18 +74,8 @@ public class BarrageController : Singleton<BarrageController>
     private void Start()
     {
         _barrageParent = transform;
-        _states = new List<string>(){
-            "Test",
-            "Test2",
-            "Test3",
-            "Test4",
-            "Test5",
-            "Test6",
-            "Test7",
-            "Test8",
-            "Test9",
+        _states = new List<string>(鸣谢名单.鸣谢名单列表);
 
-        };
         StartGeneratingBarrage();
     }
 
