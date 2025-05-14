@@ -30,7 +30,10 @@ namespace YanGameFrameWork.LocalizationSystem
         public bool enable = true;
         public string tableName;
 
-
+        /// <summary>
+        /// 语言切换事件，是给其他人调用的
+        /// </summary>
+        public event Action OnLanguageChanged;
 
         private StringTable _tableStory;
         private StringTable tableStory
@@ -95,6 +98,7 @@ namespace YanGameFrameWork.LocalizationSystem
             LocalizationSettings.SelectedLocale = newLocale;
             //这里临时用一下Card
             GetLocalizationTable(tableName);
+            OnLanguageChanged?.Invoke();
         }
 
 

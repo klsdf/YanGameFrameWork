@@ -315,8 +315,6 @@ namespace YanGameFrameWork.GameSetting
             }
         }
 
-
-
         public override void OnExit()
         {
             base.OnExit();
@@ -331,6 +329,16 @@ namespace YanGameFrameWork.GameSetting
         string GetToggleStatText(bool isOn)
         {
             return isOn ? YanGF.Localization.Translate("开启") : YanGF.Localization.Translate("关闭");
+        }
+
+        void OnEnable()
+        {
+            YanGF.Localization.OnLanguageChanged += OnLocalize;
+        }
+
+        void OnDisable()
+        {
+            YanGF.Localization.OnLanguageChanged -= OnLocalize;
         }
     }
 }
