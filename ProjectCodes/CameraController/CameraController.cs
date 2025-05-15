@@ -288,13 +288,12 @@ namespace YanGameFrameWork.CameraController
         public void MoveToTarget(Transform target, float duration, MoveCurveType curveType, Action onComplete = null)
         {
             EnterCinematicMode();
-            StartCoroutine(MoveToTargetCoroutine(target.position, duration, curveType, onComplete));
+            StartCoroutine(MoveToTargetCoroutine(target, duration, curveType, onComplete));
         }
 
 
 
-
-        private IEnumerator MoveToTargetCoroutine(Vector3 targetPosition, float duration, MoveCurveType curveType, Action onComplete = null)
+        private IEnumerator MoveToTargetCoroutine(Transform targetTransform, float duration, MoveCurveType curveType, Action onComplete = null)
         {
             Vector3 startPosition = controlCamera.transform.position;
             float startZ = startPosition.z; // 保持初始Z轴位置
@@ -315,13 +314,13 @@ namespace YanGameFrameWork.CameraController
                         break;
                 }
 
-                Vector3 newPosition = Vector3.Lerp(startPosition, targetPosition, t);
+                Vector3 newPosition = Vector3.Lerp(startPosition, targetTransform.position, t);
                 newPosition.z = startZ; // 保持Z轴不变
                 controlCamera.transform.position = newPosition;
                 yield return null;
             }
 
-            controlCamera.transform.position = new Vector3(targetPosition.x, targetPosition.y, startZ); // 确保最终位置的Z轴不变
+            controlCamera.transform.position = new Vector3(targetTransform.position.x, targetTransform.position.y, startZ); // 确保最终位置的Z轴不变
             onComplete?.Invoke();
         }
 
@@ -349,46 +348,47 @@ namespace YanGameFrameWork.CameraController
         /// </summary>
         /// <param name="targetSize">目标大小</param>
         /// <param name="duration">缩放时间</param>
-        /// <param name="curveType">缩放曲线类型</param>
         /// <param name="onComplete">缩放完成回调</param>
 
-        public void ZoomToTarget(float targetSize, float duration, MoveCurveType curveType, Action onComplete = null)
+
+        // 兼容老接口
+        public void ZoomToTarget(float targetSize, float duration, Action onComplete = null)
         {
-            StartCoroutine(ZoomToTargetCoroutine(targetSize, duration, curveType, onComplete));
+            StartCoroutine(ZoomToTargetCoroutine(targetSize, duration, onComplete));
         }
 
-        private IEnumerator ZoomToTargetCoroutine(float targetSize, float duration, MoveCurveType curveType, Action onComplete = null)
+        private IEnumerator ZoomToTargetCoroutine(float targetSize, float duration, Action onComplete)
         {
-            float startSize = controlCamera.orthographicSize;
-            float elapsedTime = 0f;
-
-            while (elapsedTime < duration)
+            if (controlCamera == null)
             {
-                elapsedTime += Time.deltaTime;
-                float t = elapsedTime / duration;
+                Debug.LogError("controlCamera未设置！");
+                yield break;
+            }
 
-                switch (curveType)
-                {
-                    case MoveCurveType.Linear:
-                        t = t; // Linear interpolation
-                        break;
-                    case MoveCurveType.SmoothStep:
-                        t = Mathf.SmoothStep(0f, 1f, t);
-                        break;
-                }
+            float startSize = controlCamera.orthographic ? controlCamera.orthographicSize : controlCamera.fieldOfView;
+            float elapsed = 0f;
 
-                controlCamera.orthographicSize = Mathf.Lerp(startSize, targetSize, t);
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+
+                // 可根据curveType自定义插值方式，这里暂用线性插值
+                if (controlCamera.orthographic)
+                    controlCamera.orthographicSize = Mathf.Lerp(startSize, targetSize, t);
+                else
+                    controlCamera.fieldOfView = Mathf.Lerp(startSize, targetSize, t);
+
                 yield return null;
             }
 
-            controlCamera.orthographicSize = targetSize; // Ensure final size is exact
+            if (controlCamera.orthographic)
+                controlCamera.orthographicSize = targetSize;
+            else
+                controlCamera.fieldOfView = targetSize;
+
             onComplete?.Invoke();
         }
-
-
-
-
-
 
 
     }
