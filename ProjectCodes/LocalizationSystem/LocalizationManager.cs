@@ -5,143 +5,93 @@
  *
  * 修改记录:
  * 2025-04-26 闫辰祥 增加了tableName，取消使用枚举来指定本地化表的名称，而是使用字符串来指定
+ * 2025-05-20 闫辰祥 大规模重构代码，让其变为适配器，支持unity 自带的本地化框架和自定义两种本地化方式
+ * 2025-05-21 闫辰祥 增加繁体中文的适配，把语言类型改为enum
  ****************************************************************************/
 using UnityEngine;
-using UnityEngine.Localization.Settings;
-using UnityEngine.Localization.Tables;
-using UnityEngine.Localization;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using System;
 using YanGameFrameWork.Singleton;
 
-
 namespace YanGameFrameWork.LocalizationSystem
 {
-
-    // public enum TableType
-    // {
-    //     Card,
-    // }
-
-
     public class LocalizationController : Singleton<LocalizationController>
     {
+        public enum LocalizationType
+        {
+            Unity,
+            Custom
+        }
+
+
+        /// <summary>
+        /// 本地化适配器
+        /// </summary>
+        private ILocalizationAdapter _adapter;
+
+        public LocalizationType localizationType;
+
+        public string tableName;
+
+        public LanguageType initLanguageType;
 
         public bool enable = true;
-        public string tableName;
+
 
         /// <summary>
         /// 语言切换事件，是给其他人调用的
         /// </summary>
         public event Action OnLanguageChanged;
 
-        private StringTable _tableStory;
-        private StringTable tableStory
+        protected override void Awake()
         {
-            get
+            base.Awake();
+            InitAdapter();
+            ChangeToInitLanguage();
+        }
+
+
+
+        private void ChangeToInitLanguage()
+        {
+            switch (initLanguageType)
             {
-                if (_tableStory == null)
-                {
-                    _tableStory = LocalizationSettings.StringDatabase.GetTable(tableName);
-                }
-                return _tableStory;
-            }
-            set
-            {
-                _tableStory = value;
+                case LanguageType.SimplifiedChinese:
+                    SwitchToSimplifiedChinese();
+                    break;
+                case LanguageType.TraditionalChinese:
+                    SwitchToTraditionalChinese();
+                    break;
+                case LanguageType.Japanese:
+                    SwitchToJapanese();
+                    break;
+                case LanguageType.English:
+                    SwitchToEnglish();
+                    break;
             }
         }
 
-        void Start()
+
+        /// <summary>
+        /// 初始化适配器
+        /// </summary>
+        private void InitAdapter()
         {
-            if (LocalizationSettings.AvailableLocales.Locales.Count > 0)
+            if (localizationType == LocalizationType.Unity)
             {
-                GetLocalizationTable(tableName);
+                _adapter = new UnityLocalizationAdapter(tableName);
             }
             else
             {
-                LocalizationSettings.InitializationOperation.Completed += OnLocalizationInitialized;
+                _adapter = new CustomLocalizationAdapter();
             }
-            LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
-            SwitchToEnglish();
         }
+
+
 
         protected override void OnDestroy()
         {
-            LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+            _adapter.OnDestroy();
             base.OnDestroy();
-        }
-
-        /// <summary>
-        /// 本地化初始化完成
-        /// </summary>
-        private void OnLocalizationInitialized(AsyncOperationHandle<LocalizationSettings> handle)
-        {
-            if (handle.Status == AsyncOperationStatus.Succeeded)
-            {
-                Debug.Log("Localization initialized successfully!");
-                //这里临时用一下Card
-                GetLocalizationTable(tableName);
-            }
-            else
-            {
-                Debug.LogError("Localization initialization failed.");
-            }
-        }
-
-        /// <summary>
-        /// 切换语言
-        /// </summary>
-        private void OnLocaleChanged(Locale newLocale)
-        {
-            print("切换语言：" + newLocale.Identifier.Code);
-            LocalizationSettings.SelectedLocale = newLocale;
-            //这里临时用一下Card
-            GetLocalizationTable(tableName);
-            OnLanguageChanged?.Invoke();
-        }
-
-
-
-
-        /// <summary>
-        /// 获取本地化表
-        /// </summary>
-        private void GetLocalizationTable(string tableName)
-        {
-            try
-            {
-                tableStory = LocalizationSettings.StringDatabase.GetTable(tableName);
-                if (tableStory == null)
-                {
-                    Debug.LogError($"无法获取本地化表: {tableName}");
-                    return;
-                }
-                // Debug.Log($"成功获取本地化表: {tableType}");
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"获取本地化表时发生错误: {e.Message}\n{e.StackTrace}");
-            }
-        }
-
-
-
-
-        /// <summary>
-        /// 根据语言代码切换语言
-        /// </summary>
-        private void SwitchLanguage(string localeCode)
-        {
-            Locale newLocale = LocalizationSettings.AvailableLocales.GetLocale(localeCode);
-            if (newLocale != null)
-            {
-                OnLocaleChanged(newLocale);
-            }
-            else
-            {
-                Debug.LogError($"Locale with code {localeCode} not found.");
-            }
         }
 
 
@@ -149,58 +99,60 @@ namespace YanGameFrameWork.LocalizationSystem
 
         ////////////////////////////////////公共方法//////////////////////////////////////
 
-        /// <summary>
-        /// 获取本地化文本，是主要被外部调用的方法
-        /// 如果文本键值不存在或当前语言没有翻译，会自动添加到本地化表中
-        /// </summary>
-        public string Translate(string key)
+        public string Translate(string key, string chineseText = null)
         {
-            if (!enable)
-            {
-                return key;
-            }
-            try
-            {
-                if (tableStory == null)
-                {
-                    Debug.LogError("本地化表未初始化！");
-                    return key;
-                }
+            // 打印调用者信息（包含行号）
+            var stackTrace = new System.Diagnostics.StackTrace(true); // 传true以获取文件和行号
+            var frame = stackTrace.GetFrame(1);
+            var method = frame.GetMethod();
+            Type declaringType = method.DeclaringType;
+            int lineNumber = frame.GetFileLineNumber();
 
-                var entry = tableStory.GetEntry(key);
-                if (entry == null)
-                {
-                    Debug.LogWarning($"本地化键值 '{key}' 不存在，尝试添加新条目");
-                    // 如果条目不存在，添加新条目
-                    var newEntry = tableStory.AddEntry(key, $"[待翻译为{LocalizationSettings.SelectedLocale.Identifier.Code}]{key}");
-                    Debug.LogWarning($"添加新的本地化键值: {key}");
-                    return Translate(key);
-                }
-
-                string localizedString = entry.GetLocalizedString();
-                if (string.IsNullOrEmpty(localizedString))
-                {
-                    Debug.LogWarning($"键值 '{key}' 在当前语言({LocalizationSettings.SelectedLocale.Identifier.Code})下没有翻译，已添加待翻译标记");
-                    // 如果当前语言没有翻译，也添加待翻译标记
-                    entry.Value = $"[待翻译为{LocalizationSettings.SelectedLocale.Identifier.Code}]{key}";
-                    return Translate(key);
-                }
-                return localizedString;
-            }
-            catch (Exception e)
+            MetaData metaData = new MetaData()
             {
-                Debug.LogError($"本地化键值 '{key}' 处理时发生错误: {e.Message}\n{e.StackTrace}");
-                return key; // 发生错误时返回原始文本
+                className = declaringType.FullName,
+                methodName = method.Name,
+                lineNumber = lineNumber
+            };
+
+            if (enable == false)
+            {
+
+                //如果传入了中文翻译则使用中文翻译，否则使用key
+                return chineseText == null ? key : chineseText;
             }
+            return _adapter.Translate(key.Trim(), metaData, chineseText);
         }
 
 
-        /// <summary>
-        /// 切换到中文
-        /// </summary>
-        public void SwitchToChinese()
+
+
+
+        private void OnLocaleChanged()
         {
-            SwitchLanguage("zh-Hans");
+            OnLanguageChanged?.Invoke();
+        }
+
+
+        ///////////////////////////////////公用API/////////////////////////////////////
+
+
+        /// <summary>
+        /// 切换到简体中文
+        /// </summary>
+        public void SwitchToSimplifiedChinese()
+        {
+            _adapter.SwitchLanguage(LanguageType.SimplifiedChinese);
+            OnLocaleChanged();
+        }
+
+        /// <summary>
+        /// 切换到繁体中文
+        /// </summary>
+        public void SwitchToTraditionalChinese()
+        {
+            _adapter.SwitchLanguage(LanguageType.TraditionalChinese);
+            OnLocaleChanged();
         }
 
         /// <summary>
@@ -208,7 +160,8 @@ namespace YanGameFrameWork.LocalizationSystem
         /// </summary>
         public void SwitchToJapanese()
         {
-            SwitchLanguage("ja");
+            _adapter.SwitchLanguage(LanguageType.Japanese);
+            OnLocaleChanged();
         }
 
         /// <summary>
@@ -216,13 +169,13 @@ namespace YanGameFrameWork.LocalizationSystem
         /// </summary>
         public void SwitchToEnglish()
         {
-            SwitchLanguage("en");
+            _adapter.SwitchLanguage(LanguageType.English);
+            OnLocaleChanged();
         }
 
-
-        public string GetCurrentLanguage()
+        public LanguageType GetCurrentLanguage()
         {
-            return LocalizationSettings.SelectedLocale.Identifier.Code;
+            return _adapter.GetCurrentLanguage();
         }
 
     }
