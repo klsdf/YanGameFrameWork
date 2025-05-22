@@ -13,8 +13,6 @@ trim_trailing_whitespace = true  # 自动删除行尾空白
 # C#文件的特定设置
 [*.cs]
 
-
-
 # usings排序时System.*优先
 dotnet_sort_system_directives_first = true
 
@@ -62,10 +60,6 @@ dotnet_separate_import_directive_groups = false  # 不分组导入指令
 # 文档注释要求
 dotnet_diagnostic.CS1591.severity = warning  # 缺少文档注释将触发警告
 
-
-
-
-
 # 推荐使用is
 csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
 # 推荐使用as
@@ -74,6 +68,14 @@ csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
 csharp_style_throw_expression = true:suggestion
 csharp_style_conditional_delegate_call = true:suggestion
 
-
 # if语句倾向使用大括号
 csharp_prefer_braces = true:suggestion
+
+# 常量命名规范：PascalCase（首字母大写）
+dotnet_naming_symbols.constants.applicable_kinds = field
+dotnet_naming_symbols.constants.applicable_accessibilities = *
+dotnet_naming_symbols.constants.required_modifiers = const
+
+dotnet_naming_rule.constants_should_be_pascal_case.severity = warning
+dotnet_naming_rule.constants_should_be_pascal_case.symbols = constants
+dotnet_naming_rule.constants_should_be_pascal_case.style = pascal_case_style
