@@ -18,22 +18,16 @@ public class BarrageController : Singleton<BarrageController>
 {
     public Barrage _barragePrefab; // 弹幕预制件
     private Transform _barrageParent; // 弹幕的父容器
-    private List<string> _states; // 状态列表
-
 
 
 
     List<Barrage> _barrages = new List<Barrage>();
 
 
-
-    [Range(0.1f, 5f)]
-    public float _updateInterval = 3f; // 每次执行规则的时间间隔
-
     public MoveDirection _moveDirection = MoveDirection.Left;
 
-    public BarrageXPosition _barrageXPosition = BarrageXPosition.Right;
-    public BarrageYPosition _barrageYPosition = BarrageYPosition.Full;
+    // public BarrageXPosition _barrageXPosition = BarrageXPosition.Right;
+    // public BarrageYPosition _barrageYPosition = BarrageYPosition.Full;
 
 
     [Range(60, 150)]
@@ -74,37 +68,36 @@ public class BarrageController : Singleton<BarrageController>
     private void Start()
     {
         _barrageParent = transform;
-        _states = new List<string>(鸣谢名单.鸣谢名单列表);
+        // _states = new List<string>(鸣谢名单.鸣谢名单列表);
 
-        StartGeneratingBarrage();
     }
 
 
     /// <summary>
     /// 开始生成弹幕。
     /// </summary>
-    public void StartGeneratingBarrage()
+    public void StartGeneratingBarrage(List<string> texts, float updateInterval, BarrageXPosition xPos, BarrageYPosition yPos)
     {
-        StartCoroutine(GenerateBarrage());
+        StartCoroutine(GenerateBarrage(texts, updateInterval, xPos, yPos));
     }
 
     /// <summary>
     /// 生成弹幕。
     /// </summary>
-    private IEnumerator GenerateBarrage()
+    private IEnumerator GenerateBarrage(List<string> texts, float updateInterval, BarrageXPosition xPos, BarrageYPosition yPos)
     {
         while (true)
         {
-            if (_states != null && _states.Count > 0)
+            if (texts != null && texts.Count > 0)
             {
 
                 // 从states中随机选择一个状态
-                string randomState = _states[Random.Range(0, _states.Count)];
-                GenerateBarrage(randomState, _barrageXPosition, _barrageYPosition);
+                string randomText = texts[Random.Range(0, texts.Count)];
+                GenerateBarrage(randomText, xPos, yPos);
             }
 
             // 每隔3秒生成一个弹幕
-            yield return new WaitForSeconds(_updateInterval);
+            yield return new WaitForSeconds(updateInterval);
         }
     }
 
