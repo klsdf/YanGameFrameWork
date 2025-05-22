@@ -176,7 +176,7 @@ namespace YanGameFrameWork.GameSetting
             switch (dropdown.options[index].text)
             {
                 case "中文":
-                    YanGF.Localization.SwitchToChinese();
+                    YanGF.Localization.SwitchToSimplifiedChinese();
                     break;
                 case "English":
                     YanGF.Localization.SwitchToEnglish();
