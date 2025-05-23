@@ -7,15 +7,12 @@
 using System.IO;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 
 namespace YanGameFrameWork.LocalizationSystem
 {
     public class CustomLocalizationAdapter : ILocalizationAdapter
     {
-        private LanguageType _currentLanguageType;
-
 
         private string _defaultTableName = "Default";
 
@@ -59,9 +56,6 @@ namespace YanGameFrameWork.LocalizationSystem
         }
 
 
-
-
-
         public string GetFilePath(string tableName)
         {
             return Path.Combine(Application.streamingAssetsPath, $"{tableName}.csv");
@@ -89,8 +83,11 @@ namespace YanGameFrameWork.LocalizationSystem
             string tableName = GetTableNameFromKey(key);
 
 
+            LanguageType currentLanguage = YanGF.Localization.CurrentLanguageType;
+
+
             //先从缓存中获取
-            string translatedText = GetCachedTranslatedText(tableName, key, _currentLanguageType.ToString());
+            string translatedText = GetCachedTranslatedText(tableName, key, currentLanguage.ToString());
             if (translatedText != null)
             {
                 return translatedText;
@@ -101,12 +98,9 @@ namespace YanGameFrameWork.LocalizationSystem
             var record = CSVReader.FindRecordByFieldValue(filePath, "key", key);
             if (record != null)
             {
-                LanguageType currentLanguage = GetCurrentLanguage();
                 translatedText = record[currentLanguage.ToString()];
-
-
                 //缓存翻译结果
-                CacheTranslatedText(tableName, key, _currentLanguageType.ToString(), translatedText);
+                CacheTranslatedText(tableName, key, currentLanguage.ToString(), translatedText);
                 return translatedText;
             }
             else
@@ -158,22 +152,16 @@ namespace YanGameFrameWork.LocalizationSystem
 
         public void SwitchLanguage(LanguageType language)
         {
-            _currentLanguageType = language;
+
         }
 
-        public LanguageType GetCurrentLanguage()
-        {
-            return _currentLanguageType;
-        }
+        // public LanguageType GetCurrentLanguage()
+        // {
+        //     return _currentLanguageType;
+        // }
 
         public CustomLocalizationAdapter()
         {
-        }
-
-
-        public void OnDestroy()
-        {
-
         }
 
         public void OnLocaleChanged()

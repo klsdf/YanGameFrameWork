@@ -97,14 +97,14 @@ namespace YanGameFrameWork.GameSetting
 
         public override void OnLocalize()
         {
-            masterVolumeText.text = YanGF.Localization.Translate("主音量");
-            musicVolumeText.text = YanGF.Localization.Translate("音乐音量");
-            effectsVolumeText.text = YanGF.Localization.Translate("音效音量");
-            resolutionText.text = YanGF.Localization.Translate("分辨率");
-            fullScreenText.text = YanGF.Localization.Translate("全屏");
-            languageText.text = YanGF.Localization.Translate("语言");
-            lockFrameText.text = YanGF.Localization.Translate("锁60帧");
-            exitText.text = YanGF.Localization.Translate("退出游戏");
+            masterVolumeText.text = YanGF.Localization.Translate("UIPanel_SystemSettingPanel_MasterVolumeText","主音量");
+            musicVolumeText.text = YanGF.Localization.Translate("UIPanel_SystemSettingPanel_MusicVolumeText","音乐音量");
+            effectsVolumeText.text = YanGF.Localization.Translate("UIPanel_SystemSettingPanel_EffectsVolumeText","音效音量");
+            resolutionText.text = YanGF.Localization.Translate("UIPanel_SystemSettingPanel_ResolutionText","分辨率");
+            fullScreenText.text = YanGF.Localization.Translate("UIPanel_SystemSettingPanel_FullScreenText","全屏");
+            languageText.text = YanGF.Localization.Translate("UIPanel_SystemSettingPanel_LanguageText","语言");
+            lockFrameText.text = YanGF.Localization.Translate("UIPanel_SystemSettingPanel_LockFrameText","锁60帧");
+            exitText.text = YanGF.Localization.Translate("UIPanel_SystemSettingPanel_ExitText","退出游戏");
         }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace YanGameFrameWork.GameSetting
         void DropdownItemSelected(TMP_Dropdown dropdown)
         {
             int index = dropdown.value;
-            Debug.Log("选择了: " + dropdown.options[index].text);
+           YanGF.Debug.Log(nameof(GameSettingPanel), "选择了: " + dropdown.options[index].text);
 
             switch (dropdown.options[index].text)
             {
@@ -324,21 +324,11 @@ namespace YanGameFrameWork.GameSetting
             }
         }
 
-
-
         string GetToggleStatText(bool isOn)
         {
             return isOn ? YanGF.Localization.Translate("开启") : YanGF.Localization.Translate("关闭");
         }
 
-        void OnEnable()
-        {
-            YanGF.Localization.OnLanguageChanged += OnLocalize;
-        }
 
-        void OnDisable()
-        {
-            YanGF.Localization.OnLanguageChanged -= OnLocalize;
-        }
     }
 }

@@ -102,11 +102,11 @@ namespace YanGameFrameWork.LocalizationSystem
 
 
 
-        protected override void OnDestroy()
-        {
-            _adapter.OnDestroy();
-            base.OnDestroy();
-        }
+        // protected override void OnDestroy()
+        // {
+        //     _adapter.OnDestroy();
+        //     base.OnDestroy();
+        // }
 
 
 
@@ -210,14 +210,15 @@ namespace YanGameFrameWork.LocalizationSystem
 
         public LanguageType GetCurrentLanguage()
         {
-            return _adapter.GetCurrentLanguage();
+            // return _adapter.GetCurrentLanguage();
+            return _currentLanguageType;
         }
 
 #if UNITY_EDITOR
         private void OnValidate()
         {
             if (!Application.isPlaying) return;
-            // 只有在运行时才切换
+            if (_adapter == null) return;
             SwitchLanguageByType(_currentLanguageType);
         }
 #endif

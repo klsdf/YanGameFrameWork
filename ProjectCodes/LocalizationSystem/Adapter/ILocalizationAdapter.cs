@@ -11,8 +11,5 @@ namespace YanGameFrameWork.LocalizationSystem
 
         string Translate(string key, MetaData metaData, string chineseText = null);
         void SwitchLanguage(LanguageType language);
-        LanguageType GetCurrentLanguage();
-        void OnDestroy();
-
     }
 }
