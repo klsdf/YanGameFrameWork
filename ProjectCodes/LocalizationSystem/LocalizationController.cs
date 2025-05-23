@@ -8,9 +8,10 @@
  * 2025-05-20 闫辰祥 大规模重构代码，让其变为适配器，支持unity 自带的本地化框架和自定义两种本地化方式
  * 2025-05-21 闫辰祥 增加繁体中文的适配，把语言类型改为enum
  ****************************************************************************/
-using UnityEngine;
 using System;
 using YanGameFrameWork.Singleton;
+using YanGameFrameWork.Editor;
+using UnityEngine;
 
 namespace YanGameFrameWork.LocalizationSystem
 {
@@ -28,12 +29,25 @@ namespace YanGameFrameWork.LocalizationSystem
         /// </summary>
         private ILocalizationAdapter _adapter;
 
-        public LocalizationType localizationType;
 
+        [Header("本地化方案的类型")]
+        public LocalizationType localizationType = LocalizationType.Custom;
+
+        [Header("本地化表名")]
         public string tableName;
 
+
+        [Header("初始化语言")]
         public LanguageType initLanguageType;
 
+
+        [SerializeField]
+        [Header("当前的语言")]
+        private LanguageType _currentLanguageType;
+        public LanguageType CurrentLanguageType => _currentLanguageType;
+
+
+        [Header("是否启用本地化")]
         public bool enable = true;
 
 
@@ -101,6 +115,13 @@ namespace YanGameFrameWork.LocalizationSystem
 
         public string Translate(string key, string chineseText = null)
         {
+
+            if (key == null)
+            {
+                YanGF.Debug.LogError(nameof(LocalizationController), "key为null！");
+                return null;
+            }
+
             // 打印调用者信息（包含行号）
             var stackTrace = new System.Diagnostics.StackTrace(true); // 传true以获取文件和行号
             var frame = stackTrace.GetFrame(1);
@@ -134,6 +155,16 @@ namespace YanGameFrameWork.LocalizationSystem
         }
 
 
+        ///////////////////////////////////面板上的工具方法/////////////////////////////////////
+
+        [Button("检查未本地化字符串")]
+        public void CheckLocalization(string folderPath = "Assets/Scripts/CardDraw")
+        {
+            print("检查未本地化字符串");
+            // LocalizationChecker.CheckLocalization();
+            LocalizationRoslynChecker.CheckLocalizationWithRoslyn(folderPath);
+        }
+
         ///////////////////////////////////公用API/////////////////////////////////////
 
 
@@ -143,6 +174,7 @@ namespace YanGameFrameWork.LocalizationSystem
         public void SwitchToSimplifiedChinese()
         {
             _adapter.SwitchLanguage(LanguageType.SimplifiedChinese);
+            _currentLanguageType = LanguageType.SimplifiedChinese;
             OnLocaleChanged();
         }
 
@@ -152,6 +184,7 @@ namespace YanGameFrameWork.LocalizationSystem
         public void SwitchToTraditionalChinese()
         {
             _adapter.SwitchLanguage(LanguageType.TraditionalChinese);
+            _currentLanguageType = LanguageType.TraditionalChinese;
             OnLocaleChanged();
         }
 
@@ -161,6 +194,7 @@ namespace YanGameFrameWork.LocalizationSystem
         public void SwitchToJapanese()
         {
             _adapter.SwitchLanguage(LanguageType.Japanese);
+            _currentLanguageType = LanguageType.Japanese;
             OnLocaleChanged();
         }
 
@@ -170,6 +204,7 @@ namespace YanGameFrameWork.LocalizationSystem
         public void SwitchToEnglish()
         {
             _adapter.SwitchLanguage(LanguageType.English);
+            _currentLanguageType = LanguageType.English;
             OnLocaleChanged();
         }
 
@@ -178,5 +213,32 @@ namespace YanGameFrameWork.LocalizationSystem
             return _adapter.GetCurrentLanguage();
         }
 
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (!Application.isPlaying) return;
+            // 只有在运行时才切换
+            SwitchLanguageByType(_currentLanguageType);
+        }
+#endif
+
+        private void SwitchLanguageByType(LanguageType type)
+        {
+            switch (type)
+            {
+                case LanguageType.SimplifiedChinese:
+                    SwitchToSimplifiedChinese();
+                    break;
+                case LanguageType.TraditionalChinese:
+                    SwitchToTraditionalChinese();
+                    break;
+                case LanguageType.Japanese:
+                    SwitchToJapanese();
+                    break;
+                case LanguageType.English:
+                    SwitchToEnglish();
+                    break;
+            }
+        }
     }
 }

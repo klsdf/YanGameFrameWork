@@ -19,6 +19,49 @@ namespace YanGameFrameWork.LocalizationSystem
 
         private string _defaultTableName = "Default";
 
+        /// <summary>
+        /// 缓存表
+        /// 第一个是tableName
+        /// 第二个是key
+        /// 第三个是language
+        /// </summary>
+        private Dictionary<string, Dictionary<string, Dictionary<string, string>>> _tableCache
+            = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
+
+
+
+        private void CacheTranslatedText(string tableName, string key, string language, string translatedText)
+        {
+            if (!_tableCache.TryGetValue(tableName, out var keyDict))
+            {
+                keyDict = new Dictionary<string, Dictionary<string, string>>();
+                _tableCache[tableName] = keyDict;
+            }
+
+            if (!keyDict.TryGetValue(key, out var langDict))
+            {
+                langDict = new Dictionary<string, string>();
+                keyDict[key] = langDict;
+            }
+
+            langDict[language] = translatedText;
+        }
+
+        private string GetCachedTranslatedText(string tableName, string key, string language)
+        {
+            if (_tableCache.TryGetValue(tableName, out var keyDict) &&
+                keyDict.TryGetValue(key, out var langDict) &&
+                langDict.TryGetValue(language, out var translatedText))
+            {
+                return translatedText;
+            }
+            return null;
+        }
+
+
+
+
+
         public string GetFilePath(string tableName)
         {
             return Path.Combine(Application.streamingAssetsPath, $"{tableName}.csv");
@@ -26,17 +69,17 @@ namespace YanGameFrameWork.LocalizationSystem
 
         private bool IsKeyValid(string key)
         {
-            string pattern = @"^[A-Za-z]+_[A-Za-z0-9]+_[A-Za-z0-9]+(Text|Image)$";
+            string pattern = @"^[A-Za-z]+_[A-Za-z0-9_\u4e00-\u9fa5]+_[A-Za-z0-9_\u4e00-\u9fa5]+(Text|Image)$";
             return System.Text.RegularExpressions.Regex.IsMatch(key, pattern);
         }
 
         private string GetTableNameFromKey(string key)
         {
-            if (IsKeyValid(key))
+            // 只判断是否以英文单词+下划线开头
+            var match = System.Text.RegularExpressions.Regex.Match(key, @"^([A-Za-z]+)_");
+            if (match.Success)
             {
-                int idx = key.IndexOf('_');
-                if (idx > 0)
-                    return key.Substring(0, idx);
+                return match.Groups[1].Value;
             }
             return _defaultTableName;
         }
@@ -44,18 +87,27 @@ namespace YanGameFrameWork.LocalizationSystem
         public string Translate(string key, MetaData metaData, string chineseText = null)
         {
             string tableName = GetTableNameFromKey(key);
-            string filePath = GetFilePath(tableName);
 
-            if (!IsKeyValid(key))
+
+            //先从缓存中获取
+            string translatedText = GetCachedTranslatedText(tableName, key, _currentLanguageType.ToString());
+            if (translatedText != null)
             {
-                YanGF.Debug.LogWarning(nameof(CustomLocalizationAdapter), $"{metaData.className}.{metaData.methodName} (行号 {metaData.lineNumber}) key不符合命名规范: {key}，请参考：类型_所属单位_Text|Image的功能");
+                return translatedText;
             }
 
+
+            string filePath = GetFilePath(tableName);
             var record = CSVReader.FindRecordByFieldValue(filePath, "key", key);
             if (record != null)
             {
                 LanguageType currentLanguage = GetCurrentLanguage();
-                return record[currentLanguage.ToString()];
+                translatedText = record[currentLanguage.ToString()];
+
+
+                //缓存翻译结果
+                CacheTranslatedText(tableName, key, _currentLanguageType.ToString(), translatedText);
+                return translatedText;
             }
             else
             {
@@ -72,6 +124,11 @@ namespace YanGameFrameWork.LocalizationSystem
         /// <param name="comment">注释</param>
         public void WriteToBeTranslatedRecord(string key, MetaData metaData, string filePath, string chineseText)
         {
+
+            if (!IsKeyValid(key))
+            {
+                YanGF.Debug.LogWarning(nameof(CustomLocalizationAdapter), $"{metaData.className}.{metaData.methodName} (行号 {metaData.lineNumber}) key不符合命名规范: {key}，请参考：类型_所属单位_Text|Image的功能");
+            }
 
             var fields = new List<string>
             {
@@ -123,6 +180,7 @@ namespace YanGameFrameWork.LocalizationSystem
         {
 
         }
+
     }
 
 }
