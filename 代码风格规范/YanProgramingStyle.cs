@@ -1,6 +1,6 @@
 /****************************************************************************
  * Author: 闫辰祥
- * Date: 2025-03-20
+ * Date: 2025-03-20 12:00
  * Description: 代码风格规范的模板，所有代码前都需要加这个。
  * 代码规范的.editorconfig在YanGameFrameWork文件夹根目录下。
  * 请确保安装了EditorConfig for VS Code或者类似的玩意。
@@ -36,6 +36,22 @@ namespace YanGameFrameWork.Example
         /// </summary>
         public int ExampleProperty { get; set; }
 
+
+        /// <summary>
+        /// 常量使用大写
+        /// </summary>
+        public const string ExampleConstString = "example";
+
+        /// <summary>
+        /// 枚举使用大写
+        /// </summary>
+        public enum ExampleEnum
+        {
+            ExampleEnum1,
+            ExampleEnum2,
+            ExampleEnum3
+        }
+
         /// <summary>
         /// 所有的变量和属性都需要把含义或者数据类型写在开头，例如_buttonStartGame，就需要把button写在前面
         /// 变量的含义尽量不要写缩写，button不要写成btn。background不要写成bg。
@@ -64,7 +80,5 @@ namespace YanGameFrameWork.Example
             int tempInt = 0;
             tempInt++;
         }
-
-
     }
 }
