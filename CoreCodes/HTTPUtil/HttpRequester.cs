@@ -14,18 +14,6 @@ public enum HTTPMethod
     DELETE
 }
 
-public enum ParameterType
-{
-
-    //参数将被添加到URL的查询字符串中，通常用于GET请求。
-    QueryString,
-
-    //参数将被添加到HTTP请求头中，通常用于POST请求。
-    HttpHeader,
-
-    //参数将被添加到请求体中，通常用于POST或PUT请求。
-    RequestBody
-}
 
 /// <summary>
 /// HTTP请求工具类，用于发送GET和POST请求
@@ -65,26 +53,26 @@ public class HttpRequester
     }
 
     /// <summary>
+    /// 添加URL查询参数
+    /// </summary>
+    public HttpRequester AddQueryParameter(string name, string value)
+    {
+        _queryParameters[name] = value;
+        return this;
+    }
+
+
+    /// <summary>
     /// 添加请求参数
     /// </summary>
     /// <param name="name">参数的名称</param>
     /// <param name="value">参数的值</param>
     /// <param name="type">参数的类型</param>
     /// <returns>返回HttpRequester对象</returns>
-    public HttpRequester AddParameter(string name, string value, ParameterType type)
+    public HttpRequester SetRequestBody(string body)
     {
-        switch (type)
-        {
-            case ParameterType.QueryString:
-                _queryParameters[name] = value;
-                break;
-            case ParameterType.HttpHeader:
-                AddHeader(name, value);
-                break;
-            case ParameterType.RequestBody:
-                _requestBody = value;
-                break;
-        }
+
+        _requestBody = body;
         return this;
     }
 

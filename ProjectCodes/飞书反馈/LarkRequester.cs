@@ -132,7 +132,7 @@ namespace YanGameFrameWork.LarkAdapter
                 .SetMethod(HTTPMethod.POST)
                 .AddHeader("Authorization", $"Bearer {await GetBearerTokenAsync()}")
                 .AddHeader("Content-Type", "application/json")
-                .AddParameter("application/json", body, ParameterType.RequestBody);
+                .SetRequestBody(body);
 
             await requester.ExecuteAsync();
             return requester.GetResponseContent();
@@ -212,6 +212,7 @@ namespace YanGameFrameWork.LarkAdapter
             var requester = new HttpRequester(url)
                 .SetMethod(HTTPMethod.POST)
                 .AddHeader("Authorization", $"Bearer {await GetBearerTokenAsync()}")
+                .AddHeader("Content-Type", "multipart/form-data")
                 .SetContent(multipartContent); // 使用 SetContent 设置 multipart 内容
 
             await requester.ExecuteAsync();
@@ -237,7 +238,7 @@ namespace YanGameFrameWork.LarkAdapter
                 .SetMethod(HTTPMethod.POST)
                 .AddHeader("Content-Type", "application/json")
                 .AddHeader("Authorization", $"Bearer {await GetBearerTokenAsync()}")
-                .AddParameter("application/json", JsonConvert.SerializeObject(new { field_name = fieldName, type = type }), ParameterType.RequestBody);
+                .SetRequestBody(JsonConvert.SerializeObject(new { field_name = fieldName, type = type }));
 
             await requester.ExecuteAsync();
             return requester.GetResponseContent();
@@ -404,7 +405,7 @@ namespace YanGameFrameWork.LarkAdapter
                     .SetMethod(HTTPMethod.POST)
                     .AddHeader("Authorization", $"Bearer {await GetBearerTokenAsync()}")
                     .AddHeader("Content-Type", "application/json")
-                    .AddParameter("application/json", "{}", ParameterType.RequestBody);
+                    .SetRequestBody("{}");
 
                 await requester.ExecuteAsync();
                 var json = JObject.Parse(requester.GetResponseContent());
@@ -433,7 +434,7 @@ namespace YanGameFrameWork.LarkAdapter
             var requester = new HttpRequester(url)
                 .SetMethod(HTTPMethod.POST)
                 .AddHeader("Content-Type", "application/json; charset=utf-8")
-                .AddParameter("application/json", JsonConvert.SerializeObject(_appData), ParameterType.RequestBody);
+                .SetRequestBody(JsonConvert.SerializeObject(_appData));
 
             await requester.ExecuteAsync();
             if (requester.IsResponseSuccessful())
