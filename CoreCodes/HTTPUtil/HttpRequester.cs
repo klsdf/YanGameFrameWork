@@ -14,6 +14,11 @@ public enum HTTPMethod
     DELETE
 }
 
+public enum ContentType
+{
+    Application_Json,
+    Multipart_Form_Data,
+}
 
 /// <summary>
 /// HTTP请求工具类，用于发送GET和POST请求
@@ -24,7 +29,7 @@ public class HttpRequester
     private HTTPMethod _method;
     private Dictionary<string, string> _headers = new Dictionary<string, string>();
     private Dictionary<string, string> _queryParameters = new Dictionary<string, string>();
-    private string _requestBody;
+
     private string _responseContent;
     private HttpContent _requestContent;
     private HttpResponseMessage _response; // 用于存储HTTP响应
@@ -52,6 +57,23 @@ public class HttpRequester
         return this;
     }
 
+
+
+
+    public HttpRequester SetContentType(ContentType contentType)
+    {
+        switch (contentType)
+        {
+            case ContentType.Application_Json:
+                _headers["Content-Type"] = "application/json";
+                break;
+            case ContentType.Multipart_Form_Data:
+                _headers["Content-Type"] = "multipart/form-data";
+                break;
+        }
+        return this;
+    }
+
     /// <summary>
     /// 添加URL查询参数
     /// </summary>
@@ -63,69 +85,88 @@ public class HttpRequester
 
 
     /// <summary>
-    /// 添加请求参数
+    /// 设置请求体
     /// </summary>
-    /// <param name="name">参数的名称</param>
-    /// <param name="value">参数的值</param>
-    /// <param name="type">参数的类型</param>
+    /// <param name="body">请求体的json字符串</param>
     /// <returns>返回HttpRequester对象</returns>
-    public HttpRequester SetRequestBody(string body)
+    public HttpRequester SetRequestBodyWithJson(string body)
     {
-
-        _requestBody = body;
+        _requestContent = new StringContent(body, Encoding.UTF8, "application/json");
         return this;
     }
 
-    /// <summary>
-    /// 设置请求的内容
-    /// </summary>
-    /// <param name="content">请求的内容</param>
-    /// <returns>返回HttpRequester对象</returns>
-    public HttpRequester SetContent(HttpContent content)
+
+    public HttpRequester InitMultipartFormData()
     {
-        if (_method == HTTPMethod.POST || _method == HTTPMethod.PUT)
-        {
-            // 设置请求的内容
-            _requestBody = null; // 清除之前的请求体
-            _requestContent = content; // 使用新的请求内容
-        }
+        _requestContent = new MultipartFormDataContent();
         return this;
     }
 
-    /// <summary>
-    /// 添加文件到请求中
-    /// </summary>
-    /// <param name="fileName">文件名称</param>
-    /// <param name="filePath">文件路径</param>
-    /// <returns>返回HttpRequester对象</returns>
-    public HttpRequester AddFile(string fileName, string filePath)
+    public HttpRequester AddString(string name, string value)
     {
-        if (!File.Exists(filePath))
-        {
-            Debug.LogError("文件未找到: " + filePath);
-            throw new FileNotFoundException("文件未找到", filePath);
-        }
+        (_requestContent as MultipartFormDataContent).Add(new StringContent(value), name);
+        return this;
+    }
 
+    public HttpRequester AddFile(string fieldName, string filePath)
+    {
         var fileBytes = File.ReadAllBytes(filePath);
-        if (fileBytes == null || fileBytes.Length == 0)
-        {
-            Debug.LogError("无法读取文件内容");
-            throw new InvalidOperationException("无法读取文件内容");
-        }
-
-        if (_requestContent is MultipartFormDataContent multipartContent)
-        {
-            multipartContent.Add(new ByteArrayContent(fileBytes), "file", fileName);
-        }
-        else
-        {
-            multipartContent = new MultipartFormDataContent();
-            multipartContent.Add(new ByteArrayContent(fileBytes), "file", fileName);
-            SetContent(multipartContent);
-        }
-
+        var fileName = Path.GetFileName(filePath);
+        (_requestContent as MultipartFormDataContent).Add(new ByteArrayContent(fileBytes), fieldName, fileName);
         return this;
     }
+
+
+
+    // /// <summary>
+    // /// 设置请求的内容
+    // /// </summary>
+    // /// <param name="content">请求的内容</param>
+    // /// <returns>返回HttpRequester对象</returns>
+    // public HttpRequester SetContent(HttpContent content)
+    // {
+    //     if (_method == HTTPMethod.POST || _method == HTTPMethod.PUT)
+    //     {
+    //         // 设置请求的内容
+    //         _requestContent = content; // 使用新的请求内容
+    //     }
+    //     return this;
+    // }
+
+    // /// <summary>
+    // /// 添加文件到请求中
+    // /// </summary>
+    // /// <param name="fileName">文件名称</param>
+    // /// <param name="filePath">文件路径</param>
+    // /// <returns>返回HttpRequester对象</returns>
+    // public HttpRequester AddFile(string fileName, string filePath)
+    // {
+    //     if (!File.Exists(filePath))
+    //     {
+    //         Debug.LogError("文件未找到: " + filePath);
+    //         throw new FileNotFoundException("文件未找到", filePath);
+    //     }
+
+    //     var fileBytes = File.ReadAllBytes(filePath);
+    //     if (fileBytes == null || fileBytes.Length == 0)
+    //     {
+    //         Debug.LogError("无法读取文件内容");
+    //         throw new InvalidOperationException("无法读取文件内容");
+    //     }
+
+    //     if (_requestContent is MultipartFormDataContent multipartContent)
+    //     {
+    //         multipartContent.Add(new ByteArrayContent(fileBytes), "file", fileName);
+    //     }
+    //     else
+    //     {
+    //         multipartContent = new MultipartFormDataContent();
+    //         multipartContent.Add(new ByteArrayContent(fileBytes), "file", fileName);
+    //         SetContent(multipartContent);
+    //     }
+
+    //     return this;
+    // }
 
     /// <summary>
     /// 执行HTTP请求并返回HttpRequester对象以支持链式调用
@@ -139,12 +180,6 @@ public class HttpRequester
             foreach (var param in _queryParameters)
             {
                 Debug.Log($"参数名: {param.Key}, 参数值: {param.Value}");
-            }
-
-            // 如果使用了请求体，打印请求体内容
-            if (!string.IsNullOrEmpty(_requestBody))
-            {
-                Debug.Log("请求体内容: " + _requestBody);
             }
 
             // 构建请求URL
@@ -173,10 +208,6 @@ public class HttpRequester
             if ((_method == HTTPMethod.POST || _method == HTTPMethod.PUT) && _requestContent != null)
             {
                 request.Content = _requestContent;
-            }
-            else if ((_method == HTTPMethod.POST || _method == HTTPMethod.PUT) && !string.IsNullOrEmpty(_requestBody))
-            {
-                request.Content = new StringContent(_requestBody, Encoding.UTF8, "application/json");
             }
             else if (_method == HTTPMethod.POST || _method == HTTPMethod.PUT)
             {

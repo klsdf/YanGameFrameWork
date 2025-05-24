@@ -131,8 +131,8 @@ namespace YanGameFrameWork.LarkAdapter
             var requester = new HttpRequester(url)
                 .SetMethod(HTTPMethod.POST)
                 .AddHeader("Authorization", $"Bearer {await GetBearerTokenAsync()}")
-                .AddHeader("Content-Type", "application/json")
-                .SetRequestBody(body);
+                .SetContentType(ContentType.Application_Json)
+                .SetRequestBodyWithJson(body);
 
             await requester.ExecuteAsync();
             return requester.GetResponseContent();
@@ -196,24 +196,29 @@ namespace YanGameFrameWork.LarkAdapter
             long size = new FileInfo(filePath).Length;
             string fileName = Path.GetFileName(filePath);
 
-            // 创建 multipart 内容
-            var multipartContent = new MultipartFormDataContent();
+            // // 创建 multipart 内容
+            // var multipartContent = new MultipartFormDataContent();
 
-            // 添加表单字段
-            multipartContent.Add(new StringContent(fileName), "file_name");
-            multipartContent.Add(new StringContent(parentType), "parent_type");
-            multipartContent.Add(new StringContent(_tableData.app_token), "parent_node");
-            multipartContent.Add(new StringContent(size.ToString()), "size");
+            // // 添加表单字段
+            // multipartContent.Add(new StringContent(fileName), "file_name");
+            // multipartContent.Add(new StringContent(parentType), "parent_type");
+            // multipartContent.Add(new StringContent(_tableData.app_token), "parent_node");
+            // multipartContent.Add(new StringContent(size.ToString()), "size");
 
-            // 添加文件
-            var fileBytes = File.ReadAllBytes(filePath);
-            multipartContent.Add(new ByteArrayContent(fileBytes), "file", fileName);
+            // // 添加文件
+            // var fileBytes = File.ReadAllBytes(filePath);
+            // multipartContent.Add(new ByteArrayContent(fileBytes), "file", fileName);
 
             var requester = new HttpRequester(url)
                 .SetMethod(HTTPMethod.POST)
                 .AddHeader("Authorization", $"Bearer {await GetBearerTokenAsync()}")
-                .AddHeader("Content-Type", "multipart/form-data")
-                .SetContent(multipartContent); // 使用 SetContent 设置 multipart 内容
+                .SetContentType(ContentType.Multipart_Form_Data)
+                .InitMultipartFormData()
+                .AddString("file_name", fileName)
+                .AddString("parent_type", parentType)
+                .AddString("parent_node", _tableData.app_token)
+                .AddString("size", size.ToString())
+                .AddFile("file", filePath);
 
             await requester.ExecuteAsync();
             var json = JObject.Parse(requester.GetResponseContent());
@@ -236,9 +241,9 @@ namespace YanGameFrameWork.LarkAdapter
             var url = $"https://open.feishu.cn/open-apis/bitable/v1/apps/{_tableData.app_token}/tables/{_tableData.table_id}/fields";
             var requester = new HttpRequester(url)
                 .SetMethod(HTTPMethod.POST)
-                .AddHeader("Content-Type", "application/json")
+                .SetContentType(ContentType.Application_Json)
                 .AddHeader("Authorization", $"Bearer {await GetBearerTokenAsync()}")
-                .SetRequestBody(JsonConvert.SerializeObject(new { field_name = fieldName, type = type }));
+                .SetRequestBodyWithJson(JsonConvert.SerializeObject(new { field_name = fieldName, type = type }));
 
             await requester.ExecuteAsync();
             return requester.GetResponseContent();
@@ -404,8 +409,8 @@ namespace YanGameFrameWork.LarkAdapter
                 var requester = new HttpRequester(url)
                     .SetMethod(HTTPMethod.POST)
                     .AddHeader("Authorization", $"Bearer {await GetBearerTokenAsync()}")
-                    .AddHeader("Content-Type", "application/json")
-                    .SetRequestBody("{}");
+                    .SetContentType(ContentType.Application_Json)
+                    .SetRequestBodyWithJson("{}");
 
                 await requester.ExecuteAsync();
                 var json = JObject.Parse(requester.GetResponseContent());
@@ -434,7 +439,7 @@ namespace YanGameFrameWork.LarkAdapter
             var requester = new HttpRequester(url)
                 .SetMethod(HTTPMethod.POST)
                 .AddHeader("Content-Type", "application/json; charset=utf-8")
-                .SetRequestBody(JsonConvert.SerializeObject(_appData));
+                .SetRequestBodyWithJson(JsonConvert.SerializeObject(_appData));
 
             await requester.ExecuteAsync();
             if (requester.IsResponseSuccessful())
