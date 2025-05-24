@@ -1,6 +1,4 @@
 using System;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -34,35 +32,40 @@ public class AIRequest
     /// <returns>返回API的响应。</returns>
     public async Task<string> SendRequestAsync()
     {
-        using (HttpClient client = new HttpClient())
+        // 创建请求体对象
+        var requestBody = new AIRequestBody
         {
-            // 设置请求头
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {ApiKey}");
-
-            // 请求体
-            var requestBody = new
+            model = "deepseek-chat",
+            messages = new[]
             {
-                model = "deepseek-chat",
-                messages = new[]
-                {
-                    new { role = "system", content = "你是一个白发红瞳美少女，你喜欢我。" },
-                    new { role = "user", content = "你好啊（摸摸头）" }
-                },
-                stream = false
-            };
+                new AIRequestBody.Message { role = "system", content = "你是一个白发红瞳美少女，你喜欢我。" },
+                new AIRequestBody.Message { role = "user", content = "你好啊（摸摸头）" }
+            },
+            stream = false
+        };
 
-            // 将请求体序列化为JSON字符串
-            string json = Newtonsoft.Json.JsonConvert.SerializeObject(requestBody);
+        // 将请求体序列化为JSON字符串
+        string json = Newtonsoft.Json.JsonConvert.SerializeObject(requestBody);
 
-            // 发送POST请求，设置Content-Type为application/json
-            HttpResponseMessage response = await client.PostAsync(ApiUrl, new StringContent(json, Encoding.UTF8, "application/json"));
+        // 创建HttpRequester实例
+        var requester = new HttpRequester(ApiUrl)
+            .SetMethod(HTTPMethod.POST)
+            .AddHeader("Authorization", $"Bearer {ApiKey}")
+            .SetContentType(ContentType.Application_Json)
+            .SetRequestBodyWithJson(json);
 
-            // 确保请求成功
-            response.EnsureSuccessStatusCode();
+        // 执行请求
+        await requester.ExecuteAsync();
 
-            // 读取响应内容
-            string responseBody = await response.Content.ReadAsStringAsync();
-            return responseBody;
+        // 检查响应是否成功
+        if (requester.IsResponseSuccessful())
+        {
+            // 获取响应内容
+            return requester.GetResponseContent();
+        }
+        else
+        {
+            throw new Exception("请求失败");
         }
     }
 }
