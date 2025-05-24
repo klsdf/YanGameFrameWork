@@ -1,3 +1,4 @@
+#if USE_ROSLYN
 using System;
 using System.IO;
 using System.Linq;
@@ -122,4 +123,5 @@ public static class LocalizationRoslynChecker
         return _targetTypes.Contains(typeName) ? typeName : "未知类型";
     }
 }
+#endif
 #endif

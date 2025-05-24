@@ -158,11 +158,14 @@ namespace YanGameFrameWork.LocalizationSystem
         ///////////////////////////////////面板上的工具方法/////////////////////////////////////
 
         [Button("检查未本地化字符串")]
-        public void CheckLocalization(string folderPath = "Assets/Scripts/CardDraw")
+        public void CheckLocalization(string folderPath = "Assets/Scripts/UI")
         {
             print("检查未本地化字符串");
-            // LocalizationChecker.CheckLocalization();
+#if USE_ROSLYN
             LocalizationRoslynChecker.CheckLocalizationWithRoslyn(folderPath);
+#else
+            LocalizationChecker.CheckLocalization(folderPath);
+#endif
         }
 
         ///////////////////////////////////公用API/////////////////////////////////////
