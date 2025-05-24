@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System;
 using Sirenix.OdinInspector;
 
-
 namespace YanGameFrameWork.LarkAdapter
 {
 
@@ -37,32 +36,45 @@ namespace YanGameFrameWork.LarkAdapter
     public class LarkTest : MonoBehaviour
     {
         [Button("发送")]
-        public void Send()
+        public async void Send(string feedbackContent)
         {
             string filePath = Application.dataPath + "/StreamingAssets/test.png";
-            string fileToken = LarkRequester.UploadImageAndGetFileToken(filePath);
+            string fileToken = await LarkRequester.UploadImageAndGetFileTokenAsync(filePath);
             var recordBody = new RecordBody(new Fields(
                 记录ID: 123,
-                反馈内容: "好评",
+                反馈内容: feedbackContent,
                 创建时间: DateTimeOffset.Now.ToUnixTimeMilliseconds(),
                 截图: new List<Attachment> { new Attachment(fileToken) }
             ));
-            string result = LarkRequester.AddRecord(recordBody);
+            string result = await LarkRequester.AddRecordAsync(recordBody);
             Debug.Log(result);
         }
 
 
-        [Button("新增字段")]
-        public void AddField()
+
+
+        [Button("发送图片测试")]
+        public async void SendImageTest()
         {
-            string result = LarkRequester.AddField("测试文本", FieldType.Text);
+            string filePath = Application.dataPath + "/StreamingAssets/test.png";
+            string fileToken = await LarkRequester.UploadImageAndGetFileTokenAsync(filePath);
+            Debug.Log(fileToken);
+        }
+
+
+
+
+        [Button("新增字段")]
+        public async void AddField(string fieldName)
+        {
+            string result = await LarkRequester.AddFieldAsync(fieldName, FieldType.Text);
             Debug.Log(result);
         }
 
         [Button("获取所有字段")]
-        public void GetField()
+        public async void GetField()
         {
-            var fields = LarkRequester.GetAllField();
+            var fields = await LarkRequester.GetAllFieldAsync();
             foreach (var field in fields)
             {
                 Debug.Log(field.field_name);
@@ -74,15 +86,15 @@ namespace YanGameFrameWork.LarkAdapter
 
 
         [Button("删除字段")]
-        public void DeleteField()
+        public async void DeleteField(string fieldName)
         {
-            string result = LarkRequester.DeleteFieldByName("测试文本");
+            string result = await LarkRequester.DeleteFieldByNameAsync(fieldName);
             Debug.Log(result);
         }
 
 
         [Button("同步字段")]
-        public void SyncFields()
+        public async void SyncFields()
         {
             var tableStructConfig = new TableStructConfig(new List<TableStructConfigItem> {
                 new TableStructConfigItem("记录ID", FieldType.Text),
@@ -90,13 +102,13 @@ namespace YanGameFrameWork.LarkAdapter
                 new TableStructConfigItem("截图", FieldType.Attachment),
                 new TableStructConfigItem("创建时间", FieldType.Date),
             });
-            LarkRequester.SyncFieldsWithConfig(tableStructConfig);
+            await LarkRequester.SyncFieldsWithConfigAsync(tableStructConfig);
         }
 
         [Button("获取所有记录")]
-        public void GetAllRecordsTest()
+        public async void GetAllRecordsTest()
         {
-            var records = LarkRequester.GetAllRecords();
+            var records = await LarkRequester.GetAllRecordsAsync();
             Debug.Log($"总记录数: {records.Count}");
             foreach (var record in records)
             {
@@ -105,9 +117,9 @@ namespace YanGameFrameWork.LarkAdapter
         }
 
         [Button("获取tenant_access_token")]
-        public void GetTenantAccessTokenTest()
+        public async void GetTenantAccessTokenTest()
         {
-            string tenantAccessToken = LarkRequester.GetTenantAccessToken();
+            string tenantAccessToken = await LarkRequester.GetTenantAccessTokenAsync();
             Debug.Log(tenantAccessToken);
         }
 

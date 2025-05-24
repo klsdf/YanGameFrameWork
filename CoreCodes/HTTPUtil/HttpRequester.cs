@@ -3,6 +3,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using UnityEngine;
+using System.IO;
 
 public enum HTTPMethod
 {
@@ -103,6 +105,41 @@ public class HttpRequester
     }
 
     /// <summary>
+    /// 添加文件到请求中
+    /// </summary>
+    /// <param name="fileName">文件名称</param>
+    /// <param name="filePath">文件路径</param>
+    /// <returns>返回HttpRequester对象</returns>
+    public HttpRequester AddFile(string fileName, string filePath)
+    {
+        if (!File.Exists(filePath))
+        {
+            Debug.LogError("文件未找到: " + filePath);
+            throw new FileNotFoundException("文件未找到", filePath);
+        }
+
+        var fileBytes = File.ReadAllBytes(filePath);
+        if (fileBytes == null || fileBytes.Length == 0)
+        {
+            Debug.LogError("无法读取文件内容");
+            throw new InvalidOperationException("无法读取文件内容");
+        }
+
+        if (_requestContent is MultipartFormDataContent multipartContent)
+        {
+            multipartContent.Add(new ByteArrayContent(fileBytes), "file", fileName);
+        }
+        else
+        {
+            multipartContent = new MultipartFormDataContent();
+            multipartContent.Add(new ByteArrayContent(fileBytes), "file", fileName);
+            SetContent(multipartContent);
+        }
+
+        return this;
+    }
+
+    /// <summary>
     /// 执行HTTP请求并返回HttpRequester对象以支持链式调用
     /// </summary>
     /// <returns>返回HttpRequester对象</returns>
@@ -110,6 +147,18 @@ public class HttpRequester
     {
         using (var client = new HttpClient())
         {
+            // 在发送请求之前，打印出所有请求参数
+            foreach (var param in _queryParameters)
+            {
+                Debug.Log($"参数名: {param.Key}, 参数值: {param.Value}");
+            }
+
+            // 如果使用了请求体，打印请求体内容
+            if (!string.IsNullOrEmpty(_requestBody))
+            {
+                Debug.Log("请求体内容: " + _requestBody);
+            }
+
             // 构建请求URL
             var url = _baseUrl;
             if (_method == HTTPMethod.GET && _queryParameters.Count > 0)
@@ -137,9 +186,14 @@ public class HttpRequester
             {
                 request.Content = _requestContent;
             }
-            else if ((_method == HTTPMethod.POST || _method == HTTPMethod.PUT) && _requestBody != null)
+            else if ((_method == HTTPMethod.POST || _method == HTTPMethod.PUT) && !string.IsNullOrEmpty(_requestBody))
             {
                 request.Content = new StringContent(_requestBody, Encoding.UTF8, "application/json");
+            }
+            else if (_method == HTTPMethod.POST || _method == HTTPMethod.PUT)
+            {
+                Debug.LogError("请求内容未正确初始化: 方法是 " + _method + "，但请求体未设置");
+                throw new InvalidOperationException("请求内容未正确初始化");
             }
 
             // 发送请求并获取响应

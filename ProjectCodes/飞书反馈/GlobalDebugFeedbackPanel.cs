@@ -46,25 +46,25 @@ public class GlobalDebugFeedbackPanel : MonoBehaviour
     }
 
 
-    public void Send()
+    public async void Send()
     {
         // 1. 生成临时文件路径
         string tempPath = Application.temporaryCachePath + "/temp_screenshot.png";
         // 2. 将截图写入临时文件
         File.WriteAllBytes(tempPath, screenshotTexture.EncodeToPNG());
         // 3. 上传临时文件
-        string fileToken = LarkRequester.UploadImageAndGetFileToken(tempPath);
+        string fileToken = await LarkRequester.UploadImageAndGetFileTokenAsync(tempPath);
         // 4. 删除临时文件
         File.Delete(tempPath);
 
         // 5. 其余逻辑不变
         var recordBody = new RecordBody(new Fields(
-            记录ID: LarkRequester.GetAllRecordsCount() + 1,
+            记录ID: 123,
             反馈内容: userInputField.text,
             创建时间: DateTimeOffset.Now.ToUnixTimeMilliseconds(),
             截图: new List<Attachment> { new Attachment(fileToken) }
         ));
-        string result = LarkRequester.AddRecord(recordBody);
+        string result = await LarkRequester.AddRecordAsync(recordBody);
         Debug.Log(result);
         feedbackText.text = YanGF.Localization.Translate("反馈成功！我们会尽快处理！");
         feedbackText.enabled = true;
