@@ -8,14 +8,14 @@ public class CoroutineTest : MonoBehaviour
 
     async void Start()
     {
-        Debug.Log("开始执行任务序列");
+        // Debug.Log("开始执行任务序列");
 
-        await CoroutineTaskRunner.Run(TaskA());
-        await CoroutineTaskRunner.Run(TaskB());
-        await CoroutineTaskRunner.Run(TaskC());
-        await StartAsync();
+        // await CoroutineTaskRunner.Run(TaskA());
+        // await CoroutineTaskRunner.Run(TaskB());
+        // await CoroutineTaskRunner.Run(TaskC());
+        // await StartAsync();
 
-        Debug.Log("所有任务完成了喵~");
+        // Debug.Log("所有任务完成了喵~");
     }
 
 

@@ -15,10 +15,9 @@ namespace YanGameFrameWork.UISystem
     public abstract class UIPanelBase : MonoBehaviour
     {
 
-        void Start()
+        protected virtual void Start()
         {
             OnLocalize();
-            ChildStart();
         }
 
 

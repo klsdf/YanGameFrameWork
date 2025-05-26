@@ -14,7 +14,7 @@
 using System;
 using UnityEngine;
 using YanGameFrameWork.Singleton;
-
+using YanGameFrameWork.Editor;
 namespace YanGameFrameWork.ModelControlSystem
 {
 
@@ -162,6 +162,18 @@ namespace YanGameFrameWork.ModelControlSystem
             _modules.Clear();
             YanGF.Debug.Log(nameof(ModelController), "所有模块已清理");
         }
+
+
+
+        [Button("测试")]
+        public void Test()
+        {
+            Debug.Log("测试");
+        }
+
     }
+
+
+
 
 }
