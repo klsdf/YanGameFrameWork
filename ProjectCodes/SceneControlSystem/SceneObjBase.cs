@@ -10,7 +10,8 @@ namespace YanGameFrameWork.SceneControlSystem
 {
     public abstract class SceneObjBase : MonoBehaviour
     {
-        public abstract System.Type SceneType { get; } // 获取场景类型
+        // 获取场景类型，直接用typeof就行
+        public abstract System.Type SceneType { get; } 
 
         // void Start()
         // {

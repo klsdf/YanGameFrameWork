@@ -90,7 +90,7 @@ namespace YanGameFrameWork.SceneControlSystem
             {
                 if(sceneObj == null)
                 {
-                    YanGF.Debug.LogWarning("SceneController", $"<color=yellow><b>⚠️ 警告</b></color>: Scene对象为空");
+                    YanGF.Debug.LogWarning(nameof(SceneController), $"⚠️ 警告 Scene对象为空");
                     continue;
                 }
                 if (sceneObj.SceneType == typeof(T))

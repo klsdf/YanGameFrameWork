@@ -1,186 +1,210 @@
 # YanGameFrameWork框架
 
-**YanGameFrameWork框架**，主打一个轻量级、实用性。而且没有很多抽象的封装，主打一个我自己用的开心就完事了。
+作者：闫辰祥
+
+**YanGameFrameWork框架**，是一个轻量级、即插即用、全面的游戏开发框架，旨在快速完成一些常见的模块和功能。是一款为Gamejam而生的框架。
+
+
+
+下面是框架的几个核心特征
+
+- 不强依赖任何第三方框架，直接引入就能用
+- 全面的预制系统，覆盖绝大多数常见的需求
+- 无任何侵入性设计，引入前和引入后对项目无任何修改
+
+
+
+
+
+## 快速上手
+
+
+
+### 安装
+
+1. 把YanGameFrameWork的文件夹复制到游戏的Asserts目录下
+2. 好了！框架已经成功引入了！
+
+
+
+### 使用
+
+1. 对于核心功能，可以直接使用YanGF来得到
+
+
+
+
+
+
 
 ## 核心模块
 
-### 音频管理系统（Audio System）
+### Debug系统（Debug System）
 
-音频管理系统提供了统一的音频资源管理和控制接口。
-命名空间：YanGameFrameWork.AudioSystem
+- 提供日志记录、警告和错误信息的输出功能。
+- 支持日志合并和堆栈跟踪显示。
 
-- 支持BGM和音效的统一管理
-- 提供音量控制、淡入淡出等基础功能
-- 使用Template Method实现音频控制
-- 通过Facede统一管理所有音频相关操作
 
 ### 事件系统（Event System）
 
-提供轻量级的事件通信机制，用于解耦游戏系统间的交互。
-命名空间：YanGameFrameWork.EventSystem
+- 提供轻量级的事件通信机制，支持泛型事件参数传递。
+- 支持优先级事件监听和一次性事件订阅。
 
-#### 核心功能
+### 状态机系统（FSM System）
 
-- 支持泛型事件参数传递
-- 提供优先级事件监听
-- 支持一次性事件订阅
-- 自动清理未使用的事件监听器
-- 线程安全的事件派发
+- 提供状态机的基础实现，支持状态的切换和生命周期管理。
 
-#### 基本使用
+### HTTP请求工具（HTTP Util）
 
-```csharp
-// 定义事件数据类型
-public class PlayerData
-{
-    public int Health { get; set; }
-    public Vector3 Position { get; set; }
-}
+- 提供HTTP请求的封装，支持GET、POST、PUT、DELETE等请求方法。
 
-// 订阅事件
-EventManager.Instance.AddListener<PlayerData>("OnPlayerDamaged", OnPlayerDamaged);
+### 单例模式（Singleton）
 
-// 发布事件
-PlayerData data = new PlayerData { Health = 80, Position = transform.position };
-EventManager.Instance.TriggerEvent("OnPlayerDamaged", data);
+- 提供单例模式的实现，支持泛型单例类。
 
-// 取消订阅
-EventManager.Instance.RemoveListener<PlayerData>("OnPlayerDamaged", OnPlayerDamaged);
-```
+### 单元测试(TestAssert)
 
-#### 高级特性
+- 提供单元测试的断言功能，支持多种断言方法。
 
-1. 优先级监听
+### Tween系统（Tween System）
 
-```csharp
-// 添加高优先级监听器
-EventManager.Instance.AddListener<PlayerData>("OnPlayerDamaged", OnPlayerDamaged, 100);
-```
-
-2. 一次性事件
-
-```csharp
-// 订阅只触发一次的事件
-EventManager.Instance.AddOnceListener<PlayerData>("OnPlayerDamaged", OnPlayerDamaged);
-```
-
-#### 最佳实践
-
-1. 事件命名规范
-
-   - 使用动词+名词的形式
-   - 使用OnXXX前缀表示事件
-   - 清晰表达事件的用途
-2. 性能优化
-
-   - 及时移除不需要的事件监听
-   - 避免在Update等频繁调用的方法中触发事件
-   - 合理使用事件缓存池
-3. 调试支持
-
-   - 支持事件触发日志
-   - 提供事件监听器统计
-   - 内存泄漏检测
-
-#### 注意事项
-
-1. 在对象销毁前记得取消事件订阅
-2. 避免事件循环触发
-3. 合理控制事件参数的大小
-4. 注意事件的触发时序
-
-### 多语言系统（Localization System）
-
-用于实现游戏的多语言本地化功能。
-
-命名空间：YanGameFrameWork.LocalizationSystem
-使用方法：
-
-```c#
-LocalizationManager.Instance.GetLocalizedString("一段神秘的文本");
-```
-
-### 对象池系统（Object Pool System）
-
-提供高效的游戏对象重用机制，用于优化频繁创建和销毁对象的性能问题。
-
-**命名空间：YanGameFrameWork.ObjectPoolSystem**
-
-
+- 提供Tween的实现，支持多种Tween类型。
 
 ### UI系统（UI System）
 
-提供一个灵活的UI框架，用于创建和管理游戏内的用户界面。
-
-命名空间：YanGameFrameWork.UISystem
+- 提供灵活的UI框架，支持多种UI控件和事件绑定。
 
 
 
-#### 主要功能
 
-- 支持多种UI控件，如按钮、文本框和滑动条。
-- 提供UI事件的绑定和处理机制。
-- 支持UI皮肤和主题的定制。
 
-#### 基本使用
 
-```csharp
-// 创建一个按钮并设置位置
-UIButton myButton = UIManager.CreateButton("MyButton");
-myButton.SetPosition(new Vector2(100, 200));
-// 绑定点击事件
-myButton.OnClick += OnButtonClick;
-```
 
-#### 注意事项
 
-- 确保UI元素在适当的生命周期内被创建和销毁。
-- 避免在UI事件处理中执行耗时的操作。
+
+
+
+## 项目模块
+
+### 飞书反馈
+
+
+
+
+### 成就系统（Achievement System）
+
+- 提供成就的注册、更新和解锁功能。
+- 支持事件型和进度型成就。
+- 提供成就的UI展示和提示功能。
+
+
+### AI请求
+
+
+### 音频管理系统（Audio System）
+
+- 提供音频资源的统一管理和控制接口。
+- 支持背景音乐和音效的音量控制、淡入淡出等功能。
+
+
+### 可等待协程（AwaitableCoroutine）
+
+### 摄像机控制（CameraController）
+
+
+
+### 本地化系统（Localization System）
+
+- 实现游戏的多语言本地化功能，支持动态文本替换。
+
+### 对象池系统（Object Pool System）
+
+- 提供高效的游戏对象重用机制，优化对象的创建和销毁性能。
+
+
+
+### 对话系统（DialogSystem）
+
+
+
+
+
+
+
+
 
 ### 场景控制系统（Scene Control System）
 
-#### 主要功能
-
-- 支持游戏对象的动态池化管理
-- 自动扩容和收缩池容量
-- 支持预加载对象池
-- 支持对象池分类管理
-- 提供对象生命周期回调
-
-#### 基本使用
-
-```csharp
-// 获取对象池管理器实例
-ObjectPoolManager poolManager = ObjectPoolManager.Instance;
-
-// 创建对象池
-poolManager.CreatePool("EnemyPool", enemyPrefab, 10);
-
-// 从池中获取对象
-GameObject enemy = poolManager.GetObject("EnemyPool");
-
-// 返回对象到池中
-poolManager.ReturnObject("EnemyPool", enemy);
-```
-
-### 事件系统（Event System）
-
-提供全局事件通信机制。
-
-- 事件的订阅与发布
-- 支持带参数的事件传递
-- 事件优先级管理
-- 自动事件垃圾回收
+- 支持游戏对象的动态池化管理和对象生命周期回调。
 
 ### 存档系统（Save System）
 
-处理游戏数据的保存和读取。
-命名空间：YanGameFrameWork.SaveSystem
+- 处理游戏数据的保存和读取，支持多种存档格式。
 
 ### 实用工具库（Practical Library）
 
-我自己常用的一些代码，比如单例类的模板什么的。
+- 包含常用的代码模板和工具类，提升开发效率。
 
 ### 工具箱（Utility Toolkit）
 
-包含各种实用的开发辅助工具。
+- 提供各种实用的开发辅助工具，简化开发流程。
+
+
+
+### 资源管理系统（ResourceControlSystem）
+
+- 提供资源的管理和加载功能，支持多种资源类型。
+
+
+### 数据管理系统 （ModelControlSystem）
+
+- 提供数据的管理和加载功能，支持多种数据类型。
+
+### 教程系统（Tutorial System）
+
+- 提供教程的注册、更新和解锁功能。
+- 支持事件型和进度型教程。
+- 提供教程的UI展示和提示功能。
+
+
+
+
+
+## 编辑器和特性
+
+本部分的设计参考了Odin，让所有的函数都可以加上[Button]特性，从而在面板中出现一个可以点击的按钮。同时按钮会根据当前函数的参数而动态增加输入框。
+
+
+
+
+
+## Shader
+
+这是框架所自带的常用shader
+
+
+
+
+
+## 字体
+
+
+
+
+
+## 代码风格约束
+
+要想使用代码风格约束
+
+
+
+
+
+
+
+
+
+
+
+## 可选第三方框架
+
