@@ -82,9 +82,9 @@ namespace YanGameFrameWork.GameSetting
 
         const string _saveFileName = "GameSettingData";
 
-        public override void ChildStart()
+        protected override void Start()
         {
-            base.ChildStart();
+            base.Start();
             InitializeLanguageDropdown();
             InitializeVolumeSliders();
             InitializeResolutionDropdown();

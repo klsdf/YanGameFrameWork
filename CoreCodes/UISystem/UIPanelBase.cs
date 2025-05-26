@@ -32,11 +32,6 @@ namespace YanGameFrameWork.UISystem
         }
 
 
-        public virtual void ChildStart()
-        {
-
-        }
-
         public virtual void OnEnter()
         {
             gameObject.SetActive(true);
