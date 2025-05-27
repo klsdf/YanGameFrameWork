@@ -10,6 +10,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using YanGameFrameWork.Singleton;
+using System.Collections;
+using System.Threading.Tasks;
 
 
 namespace YanGameFrameWork.SceneControlSystem
@@ -24,6 +26,9 @@ namespace YanGameFrameWork.SceneControlSystem
 
         public SceneObjBase StartScene;
 
+
+
+        [SerializeField]
         private SceneObjBase _activeScene;
         public SceneObjBase ActiveScene
         {
@@ -47,7 +52,7 @@ namespace YanGameFrameWork.SceneControlSystem
             }
 
 
-            print("开始场景：" + StartScene.SceneType);
+            // print("开始场景：" + StartScene.SceneType);
             MoveToStartScene();
         }
 
@@ -75,11 +80,26 @@ namespace YanGameFrameWork.SceneControlSystem
 
             return null;
         }
+        
+
+        private void HideAllScene()
+        {
+            foreach (SceneObjBase sceneObj in sceneObjList)
+            {
+                if (sceneObj == null)
+                {
+                    YanGF.Debug.LogWarning(nameof(SceneController), $"<color=yellow><b>⚠️ 警告</b></color>: Scene对象为空");
+                    continue;
+                }
+                sceneObj.gameObject.SetActive(false);
+            }
+        }
 
 
         public void MoveToStartScene()
         {
-            MoveToScene(StartScene);
+            HideAllScene();
+            StartCoroutine(MoveToSceneCoroutine(StartScene));
         }
 
 
@@ -89,34 +109,12 @@ namespace YanGameFrameWork.SceneControlSystem
         /// <typeparam name="T">一个继承了SceneObjBase的类</typeparam>
         public void MoveToScene<T>() where T : SceneObjBase
         {
-            foreach (SceneObjBase sceneObj in sceneObjList)
-            {
-                if (sceneObj == null)
-                {
-                    YanGF.Debug.LogWarning(nameof(SceneController), $"<color=yellow><b>⚠️ 警告</b></color>: Scene对象为空");
-                    continue;
-                }
-                if (sceneObj.SceneType == typeof(T))
-                {
-                    _activeScene?.OnExit();
-                    _activeScene = sceneObj;
-                    _activeScene?.OnEnter();
-                }
-                else
-                {
-                    print("隐藏场景：" + sceneObj.SceneType);
-                    sceneObj.gameObject.SetActive(false);
-                }
-            }
+            SceneObjBase targetSceneObj = GetSceneObjByType<T>();
+            StartCoroutine(MoveToSceneCoroutine(targetSceneObj));
         }
 
-        /// <summary>
-        /// 移动到指定场景
-        /// </summary>
-        /// <param name="sceneObj">一个继承了SceneObjBase的类</param>
-        public void MoveToScene(SceneObjBase targetSceneObj)
+        private IEnumerator MoveToSceneCoroutine(SceneObjBase targetSceneObj)
         {
-
             foreach (SceneObjBase sceneObj in sceneObjList)
             {
                 if (sceneObj == null)
@@ -124,20 +122,31 @@ namespace YanGameFrameWork.SceneControlSystem
                     YanGF.Debug.LogWarning(nameof(SceneController), $"<color=yellow><b>⚠️ 警告</b></color>: Scene对象为空");
                     continue;
                 }
-                if (sceneObj.SceneType == targetSceneObj.SceneType)
+                if (sceneObj == targetSceneObj)
                 {
-                    _activeScene?.OnExit();
+                    if (_activeScene != null)
+                    {
+                        yield return WaitForTask(_activeScene.TransitionOutEffect());
+                        _activeScene.OnExit();
+                    }
                     _activeScene = sceneObj;
-                    _activeScene?.OnEnter();
-                }
-                else
-                {
-                    print("隐藏场景：" + sceneObj.SceneType);
-                    sceneObj.gameObject.SetActive(false);
+                    _activeScene.OnEnter();
+                    yield return WaitForTask(_activeScene.TransitionInEffect());
                 }
             }
         }
 
+        private IEnumerator WaitForTask(Task task)
+        {
+            while (!task.IsCompleted)
+            {
+                yield return null;
+            }
 
+            if (task.IsFaulted)
+            {
+                throw task.Exception;
+            }
+        }
     }
 }

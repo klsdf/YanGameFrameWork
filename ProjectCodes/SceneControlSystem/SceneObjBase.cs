@@ -6,18 +6,25 @@
  ****************************************************************************/
 
 using UnityEngine;
+using System.Threading.Tasks;
 namespace YanGameFrameWork.SceneControlSystem
 {
     public abstract class SceneObjBase : MonoBehaviour
     {
         // 获取场景类型，直接用typeof就行
-        public abstract System.Type SceneType { get; } 
+        public abstract System.Type SceneType { get; }
 
         // void Start()
         // {
         //     SceneController.Instance.RegisterScene(this);
         // }
         // public GameObject sceneObj;
+        
+        public abstract Task TransitionInEffect();
+      
+        public abstract Task TransitionOutEffect();
+   
+
         public virtual void OnEnter()
         {
             gameObject.SetActive(true);
