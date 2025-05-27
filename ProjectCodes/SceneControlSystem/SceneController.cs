@@ -5,6 +5,7 @@
  * Description: 场景控制器，负责场景的切换和场景对象的管理。
  * 修改记录：
  * 2025-03-28 闫辰祥 重构了代码，使其不再依赖scenetype来索引，而是使用泛型的list来管理，也就是说需要加入新类型的话只需要继承SceneObjBase即可。
+ * 2025-05-27 闫辰祥 增加移动到初始场景
  ****************************************************************************/
 using System.Collections.Generic;
 using UnityEngine;
@@ -40,11 +41,13 @@ namespace YanGameFrameWork.SceneControlSystem
             {
                 if (sceneObj == null)
                 {
-                    YanGF.Debug.LogWarning("SceneController", $"<color=yellow><b>⚠️ 警告</b></color>: Scene对象为空");
+                    YanGF.Debug.LogWarning(nameof(SceneController), $"<color=yellow><b>⚠️ 警告</b></color>: Scene对象为空");
                     continue;
                 }
             }
 
+
+            print("开始场景：" + StartScene.SceneType);
             MoveToStartScene();
         }
 
@@ -88,9 +91,9 @@ namespace YanGameFrameWork.SceneControlSystem
         {
             foreach (SceneObjBase sceneObj in sceneObjList)
             {
-                if(sceneObj == null)
+                if (sceneObj == null)
                 {
-                    YanGF.Debug.LogWarning(nameof(SceneController), $"⚠️ 警告 Scene对象为空");
+                    YanGF.Debug.LogWarning(nameof(SceneController), $"<color=yellow><b>⚠️ 警告</b></color>: Scene对象为空");
                     continue;
                 }
                 if (sceneObj.SceneType == typeof(T))
@@ -101,6 +104,7 @@ namespace YanGameFrameWork.SceneControlSystem
                 }
                 else
                 {
+                    print("隐藏场景：" + sceneObj.SceneType);
                     sceneObj.gameObject.SetActive(false);
                 }
             }
@@ -110,16 +114,28 @@ namespace YanGameFrameWork.SceneControlSystem
         /// 移动到指定场景
         /// </summary>
         /// <param name="sceneObj">一个继承了SceneObjBase的类</param>
-        public void MoveToScene(SceneObjBase sceneObj)
+        public void MoveToScene(SceneObjBase targetSceneObj)
         {
-            // 退出当前活动场景
-            _activeScene?.OnExit();
 
-            // 设置新的活动场景
-            _activeScene = sceneObj;
-            _activeScene?.OnEnter();
-
-
+            foreach (SceneObjBase sceneObj in sceneObjList)
+            {
+                if (sceneObj == null)
+                {
+                    YanGF.Debug.LogWarning(nameof(SceneController), $"<color=yellow><b>⚠️ 警告</b></color>: Scene对象为空");
+                    continue;
+                }
+                if (sceneObj.SceneType == targetSceneObj.SceneType)
+                {
+                    _activeScene?.OnExit();
+                    _activeScene = sceneObj;
+                    _activeScene?.OnEnter();
+                }
+                else
+                {
+                    print("隐藏场景：" + sceneObj.SceneType);
+                    sceneObj.gameObject.SetActive(false);
+                }
+            }
         }
 
 
