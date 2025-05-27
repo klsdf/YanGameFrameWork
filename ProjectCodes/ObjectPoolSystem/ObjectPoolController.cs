@@ -26,7 +26,7 @@ namespace YanGameFrameWork.ObjectPoolSystem
         protected override void Awake()
         {
             base.Awake();
-            YanGF.Debug.Log(nameof(ObjectPoolController), "初始化对象池");
+            // YanGF.Debug.Log(nameof(ObjectPoolController), "初始化对象池");
             _objectPoolsNew = new Dictionary<GameObject, ObjectPoolBase>();
         }
 

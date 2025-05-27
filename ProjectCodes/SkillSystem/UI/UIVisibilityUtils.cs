@@ -70,7 +70,6 @@ public static class UIVisibilityUtils
         Vector3[] corners = new Vector3[4];
         uiElement.GetWorldCorners(corners);
 
-        float visibleArea = 0f;
         float totalArea = Mathf.Abs(Vector3.Cross(corners[1] - corners[0], corners[3] - corners[0]).magnitude) / 2f;
 
         int visibleCorners = 0;
