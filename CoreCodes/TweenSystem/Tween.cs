@@ -23,10 +23,7 @@ namespace YanGameFrameWork.TweenSystem
             this.onComplete = onComplete;
         }
 
-        public void Start()
-        {
-            TweenController.Instance.StartTween(this);
-        }
+
 
         public IEnumerator Tweening(float startValue, float endValue, float duration, Action<float> onUpdate, Action onComplete = null)
         {

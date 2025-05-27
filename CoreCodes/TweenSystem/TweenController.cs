@@ -8,6 +8,7 @@ using System;
 using System.Linq.Expressions;
 using UnityEngine;
 using YanGameFrameWork.Singleton;
+using System.Threading.Tasks;
 
 namespace YanGameFrameWork.TweenSystem
 {
@@ -49,36 +50,60 @@ namespace YanGameFrameWork.TweenSystem
                 propertyInfo.SetValue(target, value);
             };
             Tween tween = new Tween(duration, 0f, 1f, onUpdate, onComplete);
-            tween.Start();
+            StartTween(tween);
             return this;
         }
 
-        /// <summary>
-        /// 创建一个Tween
-        /// </summary>
-        /// <param name="startValue">开始值</param>
-        /// <param name="endValue">结束值</param>
-        /// <param name="duration">持续时间</param>
-        /// <param name="onUpdate">更新回调</param>
-        /// <param name="onComplete">完成回调</param>
-        /// <returns></returns>
-        /// 别忘了创建完start一下
-        public Tween CreateTween(float startValue, float endValue, float duration, Action<float> onUpdate, Action onComplete = null)
-        {
-            Tween tween = new Tween(duration, startValue, endValue, onUpdate, onComplete);
-            return tween;
-        }
-
-        public Tween CreateAndStartTween(float startValue, float endValue, float duration, Action<float> onUpdate, Action onComplete = null)
-        {
-            Tween tween = CreateTween(startValue, endValue, duration, onUpdate, onComplete);
-            tween.Start();
-            return tween;
-        }
 
         public void StartTween(Tween tween)
         {
             StartCoroutine(tween.Tweening(tween.startValue, tween.endValue, tween.duration, tween.onUpdate, tween.onComplete));
+        }
+
+
+
+
+
+        /// <summary>
+        /// 创建并启动一个Tween，支持链式调用。
+        /// </summary>
+        /// <typeparam name="T">目标对象类型</typeparam>
+        /// <param name="target">目标对象</param>
+        /// <param name="propertySelector">属性选择器</param>
+        /// <param name="endValue">结束值</param>
+        /// <param name="duration">持续时间</param>
+        /// <param name="onComplete">完成回调</param>
+        /// <returns>返回TweenController以支持链式调用</returns>
+        public async Task<TweenController> TweenAsync<T, TValue>(
+            T target,
+            Expression<Func<T, TValue>> propertySelector,
+            TValue endValue,
+            float duration,
+            Action onComplete = null)
+        {
+            var lerpFunc = TweenLerpSelector<TValue>.LerpFunc;
+            var memberExpression = propertySelector.Body as MemberExpression;
+            if (memberExpression == null || !(memberExpression.Member is System.Reflection.PropertyInfo))
+            {
+                throw new ArgumentException("属性选择器必须是一个属性访问表达式。");
+            }
+
+            var propertyInfo = (System.Reflection.PropertyInfo)memberExpression.Member;
+            TValue startValue = (TValue)propertyInfo.GetValue(target);
+            Action<float> onUpdate = t =>
+            {
+                TValue value = lerpFunc(startValue, endValue, t);
+                propertyInfo.SetValue(target, value);
+            };
+            Tween tween = new Tween(duration, 0f, 1f, onUpdate, onComplete);
+            await StartTweenAsync(tween);
+            return this;
+        }
+
+
+        public async Task StartTweenAsync(Tween tween)
+        {
+            await CoroutineTaskRunner.Run(tween.Tweening(tween.startValue, tween.endValue, tween.duration, tween.onUpdate, tween.onComplete));
         }
 
 
@@ -108,7 +133,7 @@ namespace YanGameFrameWork.TweenSystem
             };
 
             Tween tween = new Tween(duration, 0f, 1f, onUpdate, onComplete);
-            tween.Start();
+            StartTween(tween);
             return this;
         }
 
