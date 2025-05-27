@@ -15,9 +15,9 @@ public enum FontEffectType
 public class FontEffect : MonoBehaviour
 {
     [Header("TextMeshPro 组件")]
-    private TMP_Text textMesh;
-    private Mesh mesh;
-    private Vector3[] vertices;
+    private TMP_Text _textMesh;
+    private Mesh _mesh;
+    private Vector3[] _vertices;
 
     [Header("效果类型")]
     public FontEffectType fontEffectType = FontEffectType.Bounce;
@@ -52,18 +52,34 @@ public class FontEffect : MonoBehaviour
 
     void Start()
     {
-        textMesh = GetComponent<TMP_Text>();
+        _textMesh = GetComponent<TMP_Text>();
+        _textMesh.RegisterDirtyVerticesCallback(OnTextMeshUpdated);
+    }
+
+    void OnDestroy()
+    {
+        _textMesh.UnregisterDirtyVerticesCallback(OnTextMeshUpdated);
+    }
+
+    private void OnTextMeshUpdated()
+    {
+        ApplyFontEffect();
     }
 
     void Update()
     {
-        textMesh.ForceMeshUpdate();
-        mesh = textMesh.mesh;
-        vertices = mesh.vertices;
+        ApplyFontEffect();
+    }
 
-        for (int i = 0; i < textMesh.textInfo.characterCount; i++)
+    private void ApplyFontEffect()
+    {
+        _textMesh.ForceMeshUpdate();
+        _mesh = _textMesh.mesh;
+        _vertices = _mesh.vertices;
+
+        for (int i = 0; i < _textMesh.textInfo.characterCount; i++)
         {
-            TMP_CharacterInfo c = textMesh.textInfo.characterInfo[i];
+            TMP_CharacterInfo c = _textMesh.textInfo.characterInfo[i];
             int index = c.vertexIndex;
 
             Vector3 offset = Vector3.zero;
@@ -83,12 +99,12 @@ public class FontEffect : MonoBehaviour
             // 应用偏移到字符的 4 个顶点
             for (int j = 0; j < 4; j++)
             {
-                vertices[index + j] += offset;
+                _vertices[index + j] += offset;
             }
         }
 
-        mesh.vertices = vertices;
-        textMesh.canvasRenderer.SetMesh(mesh);
+        _mesh.vertices = _vertices;
+        _textMesh.canvasRenderer.SetMesh(_mesh);
     }
 
     /// <summary>
