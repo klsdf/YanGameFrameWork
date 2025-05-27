@@ -97,14 +97,14 @@ namespace YanGameFrameWork.GameSetting
 
         public override void OnLocalize()
         {
-            masterVolumeText.text = YanGF.Localization.Translate("UIPanel_SystemSettingPanel_MasterVolumeText","主音量");
-            musicVolumeText.text = YanGF.Localization.Translate("UIPanel_SystemSettingPanel_MusicVolumeText","音乐音量");
-            effectsVolumeText.text = YanGF.Localization.Translate("UIPanel_SystemSettingPanel_EffectsVolumeText","音效音量");
-            resolutionText.text = YanGF.Localization.Translate("UIPanel_SystemSettingPanel_ResolutionText","分辨率");
-            fullScreenText.text = YanGF.Localization.Translate("UIPanel_SystemSettingPanel_FullScreenText","全屏");
-            languageText.text = YanGF.Localization.Translate("UIPanel_SystemSettingPanel_LanguageText","语言");
-            lockFrameText.text = YanGF.Localization.Translate("UIPanel_SystemSettingPanel_LockFrameText","锁60帧");
-            exitText.text = YanGF.Localization.Translate("UIPanel_SystemSettingPanel_ExitText","退出游戏");
+            masterVolumeText.text = YanGF.Localization.GetText("UIPanel_SystemSettingPanel_MasterVolumeText","主音量");
+            musicVolumeText.text = YanGF.Localization.GetText("UIPanel_SystemSettingPanel_MusicVolumeText","音乐音量");
+            effectsVolumeText.text = YanGF.Localization.GetText("UIPanel_SystemSettingPanel_EffectsVolumeText","音效音量");
+            resolutionText.text = YanGF.Localization.GetText("UIPanel_SystemSettingPanel_ResolutionText","分辨率");
+            fullScreenText.text = YanGF.Localization.GetText("UIPanel_SystemSettingPanel_FullScreenText","全屏");
+            languageText.text = YanGF.Localization.GetText("UIPanel_SystemSettingPanel_LanguageText","语言");
+            lockFrameText.text = YanGF.Localization.GetText("UIPanel_SystemSettingPanel_LockFrameText","锁60帧");
+            exitText.text = YanGF.Localization.GetText("UIPanel_SystemSettingPanel_ExitText","退出游戏");
         }
 
         /// <summary>
@@ -326,7 +326,7 @@ namespace YanGameFrameWork.GameSetting
 
         string GetToggleStatText(bool isOn)
         {
-            return isOn ? YanGF.Localization.Translate("开启") : YanGF.Localization.Translate("关闭");
+            return isOn ? YanGF.Localization.GetText("开启") : YanGF.Localization.GetText("关闭");
         }
 
 

@@ -113,7 +113,7 @@ namespace YanGameFrameWork.LocalizationSystem
 
         ////////////////////////////////////公共方法//////////////////////////////////////
 
-        public string Translate(string key, string chineseText = null)
+        public string GetText(string key, string chineseText = null)
         {
 
             if (key == null)
@@ -142,7 +142,7 @@ namespace YanGameFrameWork.LocalizationSystem
                 //如果传入了中文翻译则使用中文翻译，否则使用key
                 return chineseText == null ? key : chineseText;
             }
-            return _adapter.Translate(key.Trim(), metaData, chineseText);
+            return _adapter.GetText(key.Trim(), metaData, chineseText);
         }
 
 

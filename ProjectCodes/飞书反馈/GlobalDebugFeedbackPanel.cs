@@ -66,7 +66,7 @@ public class GlobalDebugFeedbackPanel : MonoBehaviour
         ));
         string result = await LarkRequester.AddRecordAsync(recordBody);
         Debug.Log(result);
-        feedbackText.text = YanGF.Localization.Translate("反馈成功！我们会尽快处理！");
+        feedbackText.text = YanGF.Localization.GetText("反馈成功！我们会尽快处理！");
         feedbackText.enabled = true;
     }
 

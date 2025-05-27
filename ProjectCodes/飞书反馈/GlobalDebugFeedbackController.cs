@@ -19,12 +19,12 @@ public class GlobalDebugFeedbackController : MonoBehaviour
 
     public void SetNormalText()
     {
-        permanentText.text = YanGF.Localization.Translate("如果发现bug,请按下F1键反馈");
+        permanentText.text = YanGF.Localization.GetText("如果发现bug,请按下F1键反馈");
     }
 
     public void SetFeedbackingText()
     {
-        permanentText.text = YanGF.Localization.Translate("按f1可以随时返回游戏喵~");
+        permanentText.text = YanGF.Localization.GetText("按f1可以随时返回游戏喵~");
     }
 
     void Update()

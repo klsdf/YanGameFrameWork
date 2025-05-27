@@ -23,8 +23,8 @@ public class AchievementUItem : MonoBehaviour
     public void Init(AchievementBase achievement)
     {
         _achievement = achievement;
-        achievementTitle.text = YanGF.Localization.Translate("未解锁的成就");
-        achievementDescription.text = YanGF.Localization.Translate("仔细想想哦~");
+        achievementTitle.text = YanGF.Localization.GetText("未解锁的成就");
+        achievementDescription.text = YanGF.Localization.GetText("仔细想想哦~");
     }
 
     /// <summary>
@@ -32,8 +32,8 @@ public class AchievementUItem : MonoBehaviour
     /// </summary>
     public void Unlock()
     {
-        achievementTitle.text = YanGF.Localization.Translate(_achievement.title);
-        achievementDescription.text = YanGF.Localization.Translate(_achievement.description);
+        achievementTitle.text = YanGF.Localization.GetText(_achievement.title);
+        achievementDescription.text = YanGF.Localization.GetText(_achievement.description);
     }
 
 

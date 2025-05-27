@@ -58,7 +58,7 @@ namespace YanGameFrameWork.LocalizationSystem
 
         public string GetFilePath(string tableName)
         {
-            return Path.Combine(Application.streamingAssetsPath, $"{tableName}.csv");
+            return Path.Combine(Application.streamingAssetsPath, $"Localization/{tableName}.csv");
         }
 
         private bool IsKeyValid(string key)
@@ -78,7 +78,7 @@ namespace YanGameFrameWork.LocalizationSystem
             return _defaultTableName;
         }
 
-        public string Translate(string key, MetaData metaData, string chineseText = null)
+        public string GetText(string key, MetaData metaData, string chineseText = null)
         {
             string tableName = GetTableNameFromKey(key);
 
@@ -106,7 +106,7 @@ namespace YanGameFrameWork.LocalizationSystem
             else
             {
                 WriteToBeTranslatedRecord(key, metaData, filePath, chineseText);
-                return Translate(key, metaData, chineseText);
+                return GetText(key, metaData, chineseText);
             }
         }
 

@@ -9,7 +9,7 @@ namespace YanGameFrameWork.LocalizationSystem
     public interface ILocalizationAdapter
     {
 
-        string Translate(string key, MetaData metaData, string chineseText = null);
+        string GetText(string key, MetaData metaData, string chineseText = null);
         void SwitchLanguage(LanguageType language);
     }
 }

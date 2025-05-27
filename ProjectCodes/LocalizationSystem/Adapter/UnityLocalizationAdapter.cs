@@ -133,7 +133,7 @@ namespace YanGameFrameWork.LocalizationSystem
         /// 获取本地化文本，是主要被外部调用的方法
         /// 如果文本键值不存在或当前语言没有翻译，会自动添加到本地化表中
         /// </summary>
-        public string Translate(string key, MetaData metaData = null, string chineseText = null)
+        public string GetText(string key, MetaData metaData = null, string chineseText = null)
         {
             try
             {
@@ -150,7 +150,7 @@ namespace YanGameFrameWork.LocalizationSystem
                     // 如果条目不存在，添加新条目
                     var newEntry = Table.AddEntry(key, $"[待翻译为{LocalizationSettings.SelectedLocale.Identifier.Code}]{key}");
                     Debug.LogWarning($"添加新的本地化键值: {key}");
-                    return Translate(key);
+                    return GetText(key);
                 }
 
                 string localizedString = entry.GetLocalizedString();
@@ -159,7 +159,7 @@ namespace YanGameFrameWork.LocalizationSystem
                     Debug.LogWarning($"键值 '{key}' 在当前语言({LocalizationSettings.SelectedLocale.Identifier.Code})下没有翻译，已添加待翻译标记");
                     // 如果当前语言没有翻译，也添加待翻译标记
                     entry.Value = $"[待翻译为{LocalizationSettings.SelectedLocale.Identifier.Code}]{key}";
-                    return Translate(key);
+                    return GetText(key);
                 }
                 return localizedString;
             }
