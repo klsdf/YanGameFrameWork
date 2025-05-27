@@ -7,8 +7,11 @@
  * 注意：
  * 1. 本系统依赖于LibTessDotNet.dll，请确保使用Nuget安装LibTessDotNet.1.1.15。
  * 2. 如果不安装，本系统会使用条件编译采用默认的逻辑，但是不支持多个目标镂空
- ****************************************************************************/
 
+
+* 修改记录:
+ * 2025-05-27 闫辰祥 修复在target有缩放时，padding不准的问题。
+ ****************************************************************************/
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -69,13 +72,19 @@ namespace YanGameFrameWork.TutoriaSystem
                 if (target is RectTransform)
                 {
                     // 处理UI元素
-                    Bounds bounds = RectTransformUtility.CalculateRelativeRectTransformBounds(this.rectTransform, target as RectTransform);
-                    float holeLeft = bounds.min.x - paddingLeft;
-                    float holeRight = bounds.max.x + paddingRight;
-                    float holeBottom = bounds.min.y - paddingBottom;
-                    float holeTop = bounds.max.y + paddingTop;
+                    RectTransform targetRect = target as RectTransform;
+                    Vector3 targetScale = targetRect.lossyScale; // 世界缩放
+                    Bounds bounds = RectTransformUtility.CalculateRelativeRectTransformBounds(this.rectTransform, targetRect);
 
-                    print($"rect的值：holeLeft: {holeLeft}, holeRight: {holeRight}, holeBottom: {holeBottom}, holeTop: {holeTop}");
+
+
+                    //考虑目标对象的缩放，所以padding也要乘以缩放
+                    float holeLeft = bounds.min.x - paddingLeft * targetScale.x;
+                    float holeRight = bounds.max.x + paddingRight * targetScale.x;
+                    float holeBottom = bounds.min.y - paddingBottom * targetScale.y;
+                    float holeTop = bounds.max.y + paddingTop * targetScale.y;
+
+                    // print($"rect的值：holeLeft: {holeLeft}, holeRight: {holeRight}, holeBottom: {holeBottom}, holeTop: {holeTop}");
 
                     tess.AddContour(new ContourVertex[]
                     {
@@ -236,8 +245,9 @@ namespace YanGameFrameWork.TutoriaSystem
         {
             // 获取镂空区域的包围盒坐标，并应用四个方向的 padding
             Bounds bounds = RectTransformUtility.CalculateRelativeRectTransformBounds(this.rectTransform, this._target);
-            _targetBoundsMin = bounds.min - new Vector3(paddingLeft, paddingBottom);
-            _targetBoundsMax = bounds.max + new Vector3(paddingRight, paddingTop);
+            Vector3 targetScale = _target != null ? _target.lossyScale : Vector3.one;
+            _targetBoundsMin = bounds.min - new Vector3(paddingLeft * targetScale.x, paddingBottom * targetScale.y);
+            _targetBoundsMax = bounds.max + new Vector3(paddingRight * targetScale.x, paddingTop * targetScale.y);
 
             if (_targetBoundsMin == Vector3.zero && _targetBoundsMax == Vector3.zero)
             {

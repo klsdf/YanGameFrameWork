@@ -3,6 +3,8 @@
  * Date: 2025-03-24
  * Description: 可拖动面板
  *
+ * 修改记录:
+ * 2025-05-27 闫辰祥 把ui拖动改为了世界坐标，避免被父元素所影响
  ****************************************************************************/
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,8 +21,8 @@ namespace YanGameFrameWork.PracticalLibrary
     {
         private RectTransform _rectTransform;
         private Canvas _canvas;
-        private Vector2 _offset;
-        private Vector2 _initialPosition;  // 记录初始位置
+        private Vector3 _offsetWorld; // 用于记录世界坐标下的偏移
+        private Vector3 _initialWorldPosition; // 记录初始世界坐标
 
         [Header("是否启用回弹防抖功能")]
         public bool enableSnapBack = false;  // 是否启用回弹功能
@@ -44,38 +46,39 @@ namespace YanGameFrameWork.PracticalLibrary
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                _canvas.transform as RectTransform, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
-            _offset = _rectTransform.anchoredPosition - localPoint;
-            _initialPosition = _rectTransform.anchoredPosition;  // 在按下时记录初始位置
+            // 用世界坐标计算偏移
+            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                _rectTransform, eventData.position, eventData.pressEventCamera, out Vector3 worldPoint))
+            {
+                _offsetWorld = _rectTransform.position - worldPoint;
+                _initialWorldPosition = _rectTransform.position; // 记录初始世界坐标
+            }
             onDragStart?.Invoke();  // 触发拖动开始事件
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                _canvas.transform as RectTransform, eventData.position, eventData.pressEventCamera, out Vector2 localPoint))
+            // 用世界坐标拖动
+            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                _rectTransform, eventData.position, eventData.pressEventCamera, out Vector3 worldPoint))
             {
-                _rectTransform.anchoredPosition = localPoint + _offset;
-                onDrag?.Invoke();  // 触发拖动中事件
-
+                _rectTransform.position = worldPoint + _offsetWorld;
+                onDrag?.Invoke();
             }
         }
 
-
-
         public void OnPointerUp(PointerEventData eventData)
         {
-            // 如果启用了回弹功能并且移动距离小于阈值，则重置位置
-            if (enableSnapBack && Vector2.Distance(_rectTransform.anchoredPosition, _initialPosition) < snapBackThreshold)
+            // 用世界坐标判断回弹和重置
+            if (enableSnapBack && Vector3.Distance(_rectTransform.position, _initialWorldPosition) < snapBackThreshold)
             {
-                _rectTransform.anchoredPosition = _initialPosition;
+                _rectTransform.position = _initialWorldPosition;
             }
-            else if (resetPositionAfterDrag)  // 如果启用了拖动结束后重置位置的功能
+            else if (resetPositionAfterDrag)
             {
-                _rectTransform.anchoredPosition = _initialPosition;
+                _rectTransform.position = _initialWorldPosition;
             }
-            onDragEnd?.Invoke();  // 触发拖动结束事件
+            onDragEnd?.Invoke();
             // 可以在这里添加其他逻辑，比如限制拖动范围或其他行为
         }
     }
