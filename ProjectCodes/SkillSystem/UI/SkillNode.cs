@@ -105,7 +105,7 @@ public abstract class SkillNode : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        YanGF.UI.PopElement();
+        YanGF.UI.PopPanel<SkillPromptPop>();
     }
 
 
