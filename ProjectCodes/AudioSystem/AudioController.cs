@@ -220,7 +220,7 @@ namespace YanGameFrameWork.AudioSystem
                 parent: _bgmObject,
                 isLoop: true);
         }
-       /// <summary>
+        /// <summary>
         /// 协程：依次播放背景音乐片段，每个片段播放完毕后暂停5秒。
         /// </summary>
         /// <returns>协程迭代器。</returns>
@@ -230,7 +230,13 @@ namespace YanGameFrameWork.AudioSystem
             {
                 foreach (var clip in clips)
                 {
-                    PlayBGM(clip, 1f); // 使用现有的 PlayBGM 方法播放
+                    Play(
+                    clip: clip,
+                     volume: 1f,
+                     group: bgmGroup,
+                     pool: _bgmSourcePool,
+                     parent: _bgmObject,
+                     isLoop: false);
                     yield return new WaitForSeconds(clip.length); // 等待当前片段播放完毕
                     yield return new WaitForSeconds(waitTime); // 暂停几秒
                 }
@@ -246,7 +252,7 @@ namespace YanGameFrameWork.AudioSystem
         }
 
 
-        
+
 
         public void PlayBGS(AudioClip clip, float volume = 1f)
         {
@@ -282,7 +288,7 @@ namespace YanGameFrameWork.AudioSystem
         }
 
 
-        
+
 
 
 
@@ -367,7 +373,7 @@ namespace YanGameFrameWork.AudioSystem
 
         #endregion
 
- 
+
 
     }
 }
