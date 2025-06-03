@@ -75,6 +75,7 @@ namespace YanGameFrameWork.CameraController
 
 
 
+        [SerializeField]
         private bool isCinematicMode = false;
 
         void Start()

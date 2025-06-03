@@ -21,23 +21,49 @@ public abstract class YanButtonBase : MonoBehaviour, IPointerEnterHandler, IPoin
     public Action<PointerEventData> OnMouseExit;
 
     /// <summary>
+    /// 双击事件，当指针双击时调用。
+    /// </summary>
+    public Action<PointerEventData> OnDoubleClick;
+
+    // 用于检测双击的时间间隔
+    private float _lastClickTime;
+    private const float DoubleClickThreshold = 0.3f; // 双击的时间阈值
+    
+
+
+
+    /// <summary>
     /// 当指针点击时调用。
     /// </summary>
     public void OnPointerClick(PointerEventData eventData)
-    { 
-        if(OnClick != null)
+    {
+        float timeSinceLastClick = Time.time - _lastClickTime;
+
+        if (timeSinceLastClick <= DoubleClickThreshold)
         {
-            OnClick(eventData);
-        }else
-        {
-           YanGF.Debug.LogError(nameof(YanButtonBase), $"{gameObject.name}没有设置点击事件");
+            // 触发双击事件
+            OnDoubleClick?.Invoke(eventData);
         }
+        else
+        {
+            // 触发单击事件
+            if (OnClick != null)
+            {
+                OnClick(eventData);
+            }
+            else
+            {
+                // YanGF.Debug.LogError(nameof(YanButtonBase), $"{gameObject.name}没有设置点击事件");
+            }
+        }
+
+        _lastClickTime = Time.time;
     }
 
     /// <summary>
     /// 当指针进入时调用。
     /// </summary>
-    public void OnPointerEnter(PointerEventData eventData)
+    public void  OnPointerEnter(PointerEventData eventData)
     {
         OnMouseEnter?.Invoke(eventData);
     }
