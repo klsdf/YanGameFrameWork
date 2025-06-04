@@ -124,5 +124,20 @@ namespace YanGameFrameWork.CursorController
             _currentState = newState;
             _currentState.OnEnter();
         }
+
+
+
+#if UNITY_EDITOR
+        void OnGUI()
+        {
+            Vector2 mousePos = Event.current.mousePosition;
+            float size = 10f;
+            Color oldColor = GUI.color;
+            GUI.color = Color.red;
+            GUI.DrawTexture(new Rect(mousePos.x - 1, mousePos.y - size, 2, size * 2), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(mousePos.x - size, mousePos.y - 1, size * 2, 2), Texture2D.whiteTexture);
+            GUI.color = oldColor;
+        }
+#endif
     }
 }
