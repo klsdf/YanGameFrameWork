@@ -9,14 +9,26 @@
  * 2025-04-10 闫辰祥 添加了从Resources中加载UI面板的功能，不用每次都手动注册面板，把面板都放场景中了
  * 2025-04-28 闫辰祥 增加了mainCanvas。在每次pushPanel时，检查根节点是否有Canvas组件，如果没有，则将其加入到_mainCanvas下
  * 2025-04-29 闫辰祥 增加了PushPanel的参数，可以指定父级
+ * 2025-05-26 闫辰祥 大规模重构，移除了Element的概念，所有的UI都是面板，只是父对象不同。增加了自己指定父对象的位置的参数。
+ * 2025-05-30 闫辰祥 添加了IsPanelOpen方法，可以检查指定类型的面板是否打开
  ****************************************************************************/
 
 using UnityEngine;
 using System;
 using System.Collections.Generic;
 using YanGameFrameWork.Singleton;
+
+
 namespace YanGameFrameWork.UISystem
 {
+
+
+    public enum PanelType
+    {
+        Normal,
+        Popup,
+        Custom
+    }
     public class UIController : Singleton<UIController>
     {
         [Header("UI面板的路径")]
@@ -41,22 +53,8 @@ namespace YanGameFrameWork.UISystem
         private List<UIPanelBase> _registerPanels = new List<UIPanelBase>();
 
         [SerializeField]
+        [Header("当前激活的面板")]
         private List<UIPanelBase> _activePanels = new List<UIPanelBase>();
-
-        /// <summary>
-        /// 弹窗的UI面板
-        /// </summary>
-        [SerializeField]
-        private List<UIPanelBase> _activePopupPanels = new List<UIPanelBase>();
-
-
-        [SerializeField]
-        private List<UIElementBase> _registerElements = new List<UIElementBase>();
-
-        [SerializeField]
-        private List<UIElementBase> _activeElements = new List<UIElementBase>();
-
-
 
 
 
@@ -147,7 +145,7 @@ namespace YanGameFrameWork.UISystem
         {
             if (_activePanels.Count == 0)
             {
-                YanGF.Debug.LogWarning(nameof(UIController), "没有面板可以退出");
+                // YanGF.Debug.LogWarning(nameof(UIController), "没有面板可以退出");
                 return;
             }
 
@@ -161,6 +159,40 @@ namespace YanGameFrameWork.UISystem
             }
         }
 
+
+        public void PopPanel(UIPanelBase panel)
+        {
+            if (_activePanels.Count == 0)
+            {
+                YanGF.Debug.LogWarning(nameof(UIController), "没有面板可以退出");
+                return;
+            }
+
+
+            if (!HasPanel(panel))
+            {
+
+                YanGF.Debug.LogWarning(nameof(UIController), "没有面板可以退出");
+                return;
+            }
+
+            foreach (UIPanelBase activePanel in _activePanels)
+            {
+                if (activePanel.GetType() == panel.GetType())
+                {
+                    activePanel.OnExit();
+
+                    _activePanels.Remove(activePanel);
+
+                    if (_activePanels.Count > 0)
+                    {
+                        _activePanels[_activePanels.Count - 1].OnResume();
+                    }
+                    return;
+                }
+            }
+        }
+
         /// <summary>
         /// 退出一个面板
         /// </summary>
@@ -169,7 +201,7 @@ namespace YanGameFrameWork.UISystem
         {
             if (_activePanels.Count == 0)
             {
-                YanGF.Debug.LogWarning(nameof(UIController), "没有面板可以退出");
+                // YanGF.Debug.LogWarning(nameof(UIController), "没有面板可以退出");
                 return;
             }
 
@@ -191,95 +223,141 @@ namespace YanGameFrameWork.UISystem
         }
 
 
+        public T GetPanel<T>() where T : UIPanelBase
+        {
+            return (T)FindPanelByType(typeof(T));
+        }
 
-        /// <summary>
-        /// 推入一个弹窗面板
-        /// </summary>
-        /// <typeparam name="T">面板类型</typeparam>
-        /// <param name="parentTransform">父级</param>
-        /// <returns>推入的弹窗面板</returns>
-        public UIPanelBase PushPopupPanel<T>(Transform parentTransform = null) where T : UIPanelBase
+
+        public T PushPanel<T>(UIPanelBase panel, PanelType panelType = PanelType.Normal) where T : UIPanelBase
+        {
+
+            if (panel == null)
+            {
+                Debug.LogError("无法找到或创建面板：" + typeof(T));
+                return null;
+            }
+
+
+            UIPanelBase tempPanel = PeekPanel();
+            tempPanel?.OnPause();
+
+            UIPanelBase resultPanel = null;
+
+            if (!HasPanel(panel))
+            {
+                resultPanel = Instantiate(panel.gameObject).GetComponent<UIPanelBase>();
+                print("创建了面板：" + resultPanel.name);
+                _registerPanels.Add(resultPanel);
+            }
+            else
+            {
+                resultPanel = FindPanelByType(panel.GetType());
+
+            }
+
+
+
+            SetPanelParent(resultPanel, panelType);
+
+
+
+            _activePanels.Add(resultPanel);
+            resultPanel.OnEnter();
+            // 5. 返回
+            return (T)resultPanel;
+        }
+
+
+        public T PushPanel<T>(PanelType panelType = PanelType.Normal) where T : UIPanelBase
         {
             UIPanelBase tempPanel = PeekPanel();
             tempPanel?.OnPause();
             UIPanelBase panel = FindPanelByType(typeof(T));
 
-            //调整push进来的panel的父级
-            if (parentTransform != null)
-            {
-                panel.transform.SetParent(parentTransform, false);
-            }
-            else
-            {
-                SetPanelParent(panel);
-
-            }
-
-
-            _activePopupPanels.Add(panel);
-            panel.OnEnter();
-            return panel;
-        }
-
-
-        /// <summary>
-        /// 退出弹窗面板
-        /// </summary>
-        /// <typeparam name="T">面板类型</typeparam>
-        public void PopPopupPanel<T>() where T : UIPanelBase
-        {
-            if (_activePopupPanels.Count == 0)
-            {
-                YanGF.Debug.LogWarning(nameof(UIController), "没有面板可以退出");
-                return;
-            }
-
-            foreach (UIPanelBase panel in _activePopupPanels)
-            {
-                if (panel.GetType() == typeof(T))
-                {
-                    panel.OnExit();
-                    _activePopupPanels.Remove(panel);
-                    return;
-                }
-            }
-        }
-
-
-
-        public UIPanelBase PushPanel<T>(Transform parentTransform = null) where T : UIPanelBase
-        {
-            UIPanelBase tempPanel = PeekPanel();
-            tempPanel?.OnPause();
-            UIPanelBase panel = FindPanelByType(typeof(T));
-
-
-
-
-            //调整push进来的panel的父级
-            if (parentTransform != null)
-            {
-                panel.transform.SetParent(parentTransform, false);
-            }
-            else
-            {
-                SetPanelParent(panel);
-            }
+            // //调整push进来的panel的父级
+            // if (parentTransform != null)
+            // {
+            //     panel.transform.SetParent(parentTransform, false);
+            // }
+            // else
+            // {
+            SetPanelParent(panel, panelType);
+            // }
 
 
             _activePanels.Add(panel);
             panel.OnEnter();
-            return panel;
+            return (T)panel;
         }
 
 
-        private void SetPanelParent(UIPanelBase panel)
+        public T PushPanel<T>(Transform parentTransform) where T : UIPanelBase
         {
+            UIPanelBase tempPanel = PeekPanel();
+            tempPanel?.OnPause();
+            UIPanelBase panel = FindPanelByType(typeof(T));
+
+            // //调整push进来的panel的父级
+            // if (parentTransform != null)
+            // {
+            //     panel.transform.SetParent(parentTransform, false);
+            // }
+            // else
+            // {
+            SetPanelParent(panel, PanelType.Custom, parentTransform);
+            // }
+
+
+            _activePanels.Add(panel);
+            panel.OnEnter();
+            return (T)panel;
+        }
+
+
+
+        private bool HasPanel(UIPanelBase panel)
+        {
+            foreach (UIPanelBase registeredElement in _registerPanels)
+            {
+                if (registeredElement.GetType() == panel.GetType())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+
+        public bool IsPanelOpen<T>() where T : UIPanelBase
+        {
+            return _activePanels.Exists(panel => panel.GetType() == typeof(T));
+        }
+
+
+        private void SetPanelParent(UIPanelBase panel, PanelType panelType, Transform parentTransform = null)
+        {
+            if (panelType == PanelType.Custom)
+            {
+                panel.transform.SetParent(parentTransform, false);
+                return;
+            }
+
+
             // 检查根节点是否有Canvas组件
             if (panel.transform.GetComponent<Canvas>() == null)
             {
                 // 如果没有Canvas组件，将其加入到_mainCanvas下
-                panel.transform.SetParent(_mainCanvas, false);
+                if (panelType == PanelType.Normal)
+                {
+                    panel.transform.SetParent(_mainCanvas, false);
+                }
+                else if (panelType == PanelType.Popup)
+                {
+                    panel.transform.SetParent(_popCanvas, false);
+                }
+
             }
             else
             {
@@ -296,148 +374,6 @@ namespace YanGameFrameWork.UISystem
             }
             return _activePanels[_activePanels.Count - 1];
         }
-
-
-        #endregion
-
-
-        #region UI元素的操作
-
-
-
-        /// <summary>
-        /// 根据类型查找已经注册的UI元素,如果找不到，从Resources中加载
-        /// </summary>
-        /// <param name="elementType">UI元素类型</param>
-        /// <returns>找到的UI元素</returns>
-        private UIElementBase FindElementByType(Type elementType)
-        {
-
-            // 先从已经注册的UI元素中查找
-            foreach (UIElementBase element in _registerElements)
-            {
-                if (element.GetType() == elementType)
-                {
-                    return element;
-                }
-            }
-
-            // 如果找不到，从Resources中加载
-            string elementName = elementType.Name;
-            UIElementBase[] loadedElements = Resources.LoadAll<UIElementBase>($"{UIPanelPath}");
-            foreach (UIElementBase element in loadedElements)
-            {
-                if (element.GetType() == elementType)
-                {
-
-                    if (_popCanvas == null)
-                    {
-                        YanGF.Debug.LogError(nameof(UIController), "没有找到元素的容器");
-                        return null;
-                    }
-                    UIElementBase instantiatedElement = Instantiate(element.gameObject, _popCanvas).GetComponent<UIElementBase>();
-                    RegisterElement(instantiatedElement);
-                    return instantiatedElement;
-                }
-            }
-
-
-            YanGF.Debug.LogError(nameof(UIController), "找不到元素：" + elementType);
-            return null;
-        }
-
-        public void RegisterElement(UIElementBase element)
-        {
-            // 检查是否已经存在相同类型的元素
-            if (HasElement(element))
-            {
-                YanGF.Debug.LogWarning(nameof(UIController), "已经存在相同类型的元素：" + element.GetType());
-                return;
-            }
-
-            // 如果没有相同类型的元素，则注册
-            _registerElements.Add(element);
-        }
-
-
-
-        public void PopElement()
-        {
-            if (_activeElements.Count == 0)
-            {
-                YanGF.Debug.LogWarning(nameof(UIController), "没有元素可以退出");
-                return;
-            }
-
-            UIElementBase temp = PeekElement();
-            temp.OnExit();
-            _activeElements.RemoveAt(_activeElements.Count - 1);
-        }
-
-
-
-        /// <summary>
-        /// 推入一个UI元素，默认会从已经注册的UI元素中查找，如果找不到，从Resources中加载
-        /// </summary>
-        /// <typeparam name="T">UI元素类型</typeparam>
-        /// <returns>推入的UI元素</returns>
-        public UIElementBase PushElement<T>() where T : UIElementBase
-        {
-            UIElementBase tempElement = PeekElement();
-            tempElement?.OnPause();
-            UIElementBase element = FindElementByType(typeof(T));
-            _activeElements.Add(element);
-            element.OnEnter();
-            return element;
-        }
-
-
-
-        /// <summary>
-        /// 传入一个UI预制体，并push，并注册这个元素
-        /// </summary>
-        /// <param name="element">UI预制体</param>
-        public UIElementBase PushElement(UIElementBase elementPrefab)
-        {
-
-            UIElementBase element;
-            if (HasElement(elementPrefab))
-            {
-                element = FindElementByType(elementPrefab.GetType());
-            }
-            else
-            {
-                element = Instantiate(elementPrefab.gameObject, _popCanvas).GetComponent<UIElementBase>();
-                RegisterElement(element);
-            }
-            UIElementBase tempElement = PeekElement();
-            tempElement?.OnPause();
-            _activeElements.Add(element);
-            element.OnEnter();
-            return element;
-        }
-
-        private bool HasElement(UIElementBase element)
-        {
-            foreach (UIElementBase registeredElement in _registerElements)
-            {
-                if (registeredElement.GetType() == element.GetType())
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public UIElementBase PeekElement()
-        {
-            if (_activeElements.Count == 0)
-            {
-                return null;
-            }
-            return _activeElements[_activeElements.Count - 1];
-        }
-
 
 
         #endregion
@@ -468,7 +404,7 @@ namespace YanGameFrameWork.UISystem
         {
             while (_activePanels.Count > 0)
             {
-                PopPanel();
+                PopPanel(_activePanels[_activePanels.Count - 1]);
             }
 
 

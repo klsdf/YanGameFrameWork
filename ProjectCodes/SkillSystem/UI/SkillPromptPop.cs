@@ -12,7 +12,7 @@ using UnityEngine;
 /// 技能提示弹窗,也就是hover技能节点时显示的浮窗
 /// 需要子类重写
 /// </summary>
-public abstract class SkillPromptPop : UIElementBase
+public abstract class SkillPromptPop : UIPanelBase
 {
     /// <summary>
     /// 显示技能提示弹窗

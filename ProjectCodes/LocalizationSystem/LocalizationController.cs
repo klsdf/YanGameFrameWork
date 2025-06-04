@@ -19,8 +19,9 @@ namespace YanGameFrameWork.LocalizationSystem
     {
         public enum LocalizationType
         {
-            Unity,
-            Custom
+            Custom,
+            Unity
+
         }
 
 

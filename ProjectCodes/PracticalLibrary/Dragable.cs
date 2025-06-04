@@ -2,14 +2,16 @@
  * Author: 闫辰祥
  * Date: 2025-03-20
  * Description: 可拖动的游戏对象
- *
+ *  
+ 更新记录：
+ 2025-06-04 12:28 添加了OnDragStart、OnDrag、OnDragEnd事件
  ****************************************************************************/
 using UnityEngine;
 
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using UnityEngine.UI;
-
+using System;
 public class Dragable : MonoBehaviour
 {
     private Vector3 _offset;
@@ -32,6 +34,12 @@ public class Dragable : MonoBehaviour
     /// 当这个对象浮在Dragable的对象上时，对象无法被拖动
     /// </summary>
     private GraphicRaycaster _raycaster;
+
+
+
+    public Action OnDragStart;
+    public Action OnDrag;
+    public Action OnDragEnd;
 
     private void Start()
     {
@@ -68,6 +76,7 @@ public class Dragable : MonoBehaviour
 
         _offset = root.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
         _isDragging = true;
+        OnDragStart?.Invoke();
     }
 
     void OnMouseDrag()
@@ -77,6 +86,7 @@ public class Dragable : MonoBehaviour
             Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
             Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint);
             root.position = new Vector3(curPosition.x + _offset.x, curPosition.y + _offset.y, 0);
+            OnDrag?.Invoke();
         }
     }
 
@@ -90,6 +100,7 @@ public class Dragable : MonoBehaviour
         // {
         //     GameController.Instance.DragCost(root.position);
         // }
+        OnDragEnd?.Invoke();
     }
 
 

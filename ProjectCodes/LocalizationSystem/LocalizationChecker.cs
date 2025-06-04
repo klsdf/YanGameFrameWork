@@ -5,7 +5,6 @@ using UnityEngine;
 using JetBrains.Annotations;
 using System.Linq;
 
-[InitializeOnLoad]
 public class LocalizationChecker
 {
     // 新增：本地化方法名（可根据实际项目扩展）

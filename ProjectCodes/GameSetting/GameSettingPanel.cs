@@ -205,11 +205,11 @@ namespace YanGameFrameWork.GameSetting
                     _gameSettingData.masterVolume = value;
                     break;
                 case "music":
-                    YanGF.Audio.SetMusicVolume(mappedValue);
+                    YanGF.Audio.SetBGMVolume(mappedValue);
                     _gameSettingData.musicVolume = value;
                     break;
                 case "effects":
-                    YanGF.Audio.SetEffectsVolume(mappedValue);
+                    YanGF.Audio.SetSEVolume(mappedValue);
                     _gameSettingData.effectsVolume = value;
                     break;
             }
