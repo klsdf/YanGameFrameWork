@@ -30,17 +30,13 @@ public class AIRequest
     /// 发送请求到DeepSeek API。
     /// </summary>
     /// <returns>返回API的响应。</returns>
-    public async Task<string> SendRequestAsync()
+    public async Task<string> SendRequestAsync(AIRequestBody.Message[] message)
     {
         // 创建请求体对象
         var requestBody = new AIRequestBody
         {
             model = "deepseek-chat",
-            messages = new[]
-            {
-                new AIRequestBody.Message { role = "system", content = "你是一个白发红瞳美少女，你喜欢我。" },
-                new AIRequestBody.Message { role = "user", content = "你好啊（摸摸头）" }
-            },
+            messages = message,
             stream = false
         };
 

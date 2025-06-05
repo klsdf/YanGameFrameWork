@@ -126,27 +126,16 @@ namespace YanGameFrameWork.SceneControlSystem
                 {
                     if (_activeScene != null)
                     {
-                        yield return WaitForTask(_activeScene.TransitionOutEffect());
+                        yield return TaskToCoroutine.WaitForTask(_activeScene.TransitionOutEffect());
                         _activeScene.OnExit();
                     }
                     _activeScene = sceneObj;
                     _activeScene.OnEnter();
-                    yield return WaitForTask(_activeScene.TransitionInEffect());
+                    yield return TaskToCoroutine.WaitForTask(_activeScene.TransitionInEffect());
                 }
             }
         }
 
-        private IEnumerator WaitForTask(Task task)
-        {
-            while (!task.IsCompleted)
-            {
-                yield return null;
-            }
-
-            if (task.IsFaulted)
-            {
-                throw task.Exception;
-            }
-        }
+   
     }
 }

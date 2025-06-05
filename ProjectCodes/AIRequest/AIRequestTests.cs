@@ -22,7 +22,12 @@ public class AIRequestExample : MonoBehaviour
         try
         {
             // 调用SendRequestAsync方法并获取响应
-            string response = await aiRequest.SendRequestAsync();
+            string response = await aiRequest.SendRequestAsync(
+                new AIRequestBody.Message[] { 
+                    new AIRequestBody.Message { role = "system", content = "你是一个白发红瞳美少女，你喜欢我。" },
+                    new AIRequestBody.Message { role = "user", content = "你好啊（摸摸头）" } 
+                }
+            );
 
             // 解析响应为AIResponse对象
             AIResponse aiResponse = JsonConvert.DeserializeObject<AIResponse>(response);
