@@ -47,6 +47,7 @@ MonoBehaviour:
   audioMixer: {fileID: 24100000, guid: 36caf33f6dae75f4ca69f2e1c34182d5, type: 2}
   masterGroup: {fileID: 24300002, guid: 36caf33f6dae75f4ca69f2e1c34182d5, type: 2}
   bgmGroup: {fileID: -8640419781191819113, guid: 36caf33f6dae75f4ca69f2e1c34182d5, type: 2}
+  bgsGroup: {fileID: 0}
   seGroup: {fileID: -5368766363599728603, guid: 36caf33f6dae75f4ca69f2e1c34182d5, type: 2}
 --- !u!1 &934622688944269119
 GameObject:
@@ -165,9 +166,6 @@ MonoBehaviour:
   - {fileID: 6773766405950342214, guid: 2928891a55f6c5e4a848559813deaa5c, type: 3}
   _registerPanels: []
   _activePanels: []
-  _activePopupPanels: []
-  _registerElements: []
-  _activeElements: []
 --- !u!1 &1302401670669243615
 GameObject:
   m_ObjectHideFlags: 0
@@ -702,6 +700,7 @@ MonoBehaviour:
   moveFactor: 1
   IsEnableLookAt: 1
   lookAtTarget: {fileID: 0}
+  isCinematicMode: 0
 --- !u!1 &4764954753023883645
 GameObject:
   m_ObjectHideFlags: 0
@@ -1348,10 +1347,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abb07888ba01206468e5ec69c5553d69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneObjList:
-  - {fileID: 0}
-  - {fileID: 0}
+  sceneObjList: []
   StartScene: {fileID: 0}
+  _activeScene: {fileID: 0}
 --- !u!1 &8994248202096352928
 GameObject:
   m_ObjectHideFlags: 0

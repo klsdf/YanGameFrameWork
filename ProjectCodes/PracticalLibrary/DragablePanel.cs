@@ -22,7 +22,7 @@ namespace YanGameFrameWork.PracticalLibrary
         private RectTransform _rectTransform;
         private Vector3 _offsetWorld; // 用于记录世界坐标下的偏移
         private Vector3 _initialWorldPosition; // 记录初始世界坐标
-        private bool isDragging = false;
+        public bool isDragging = false;
 
         [Header("是否启用回弹防抖功能")]
         public bool enableSnapBack = false;  // 是否启用回弹功能
@@ -114,6 +114,7 @@ namespace YanGameFrameWork.PracticalLibrary
                 _rectTransform.position = _initialWorldPosition;
             }
             onDragEnd?.Invoke();
+            isDragging = false;
             // 可以在这里添加其他逻辑，比如限制拖动范围或其他行为
         }
     }
