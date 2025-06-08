@@ -37,7 +37,8 @@ public class AIRequest
         {
             model = "deepseek-chat",
             messages = message,
-            stream = false
+            stream = false,
+            response_format = new { type = "json_object" }
         };
 
         // 将请求体序列化为JSON字符串

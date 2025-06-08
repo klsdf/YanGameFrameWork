@@ -75,8 +75,7 @@ namespace YanGameFrameWork.CameraController
 
 
 
-        [SerializeField]
-        private bool isCinematicMode = false;
+        public bool isCinematicMode = false;
 
         void Start()
         {
@@ -145,6 +144,8 @@ namespace YanGameFrameWork.CameraController
             // 检测鼠标右键按住并拖动
             if (_isDragging)
             {
+
+                // print("IsEnableDarg:" + IsEnableDarg);
                 Vector3 currentPos = controlCamera.ScreenToWorldPoint(Input.mousePosition);
                 Vector3 diff = _dragOrigin - currentPos;
                 Vector3 newPosition = controlCamera.transform.position + diff;
@@ -162,7 +163,6 @@ namespace YanGameFrameWork.CameraController
 
         private void Zoom()
         {
-
             if (!IsEnableZoom || isCinematicMode)
                 return;
 
@@ -170,14 +170,23 @@ namespace YanGameFrameWork.CameraController
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (scroll != 0.0f)
             {
-                // 使用正交相机大小来实现缩放效果
-                float orthographicSize = controlCamera.orthographicSize;
-                orthographicSize -= scroll * zoomSpeed * 5f; // 增大缩放系数使效果更明显
-                orthographicSize = Mathf.Clamp(orthographicSize, 2f, 20f); // 设置合适的缩放范围
-                controlCamera.orthographicSize = orthographicSize;
-                // TextEffectController.Instance.ShouldUpdateTargetPosition = true;
+                if (controlCamera.orthographic)
+                {
+                    // 使用正交相机大小来实现缩放效果
+                    float orthographicSize = controlCamera.orthographicSize;
+                    orthographicSize -= scroll * zoomSpeed * 5f; // 增大缩放系数使效果更明显
+                    orthographicSize = Mathf.Clamp(orthographicSize, 2f, 20f); // 设置合适的缩放范围
+                    controlCamera.orthographicSize = orthographicSize;
+                }
+                else
+                {
+                    // 使用透视相机的视野来实现缩放效果
+                    float fieldOfView = controlCamera.fieldOfView;
+                    fieldOfView -= scroll * zoomSpeed * 5f; // 增大缩放系数使效果更明显
+                    fieldOfView = Mathf.Clamp(fieldOfView, 15f, 90f); // 设置合适的缩放范围
+                    controlCamera.fieldOfView = fieldOfView;
+                }
             }
-
         }
 
         void OnDrawGizmos()

@@ -74,7 +74,10 @@ public class CameraControllerEditor : Editor
             EditorGUI.indentLevel--;
         }
 
-
+        // 禁用编辑功能，使其仅用于调试显示
+        GUI.enabled = false;
+        cameraController.isCinematicMode = EditorGUILayout.Toggle("是否在电影模式中", cameraController.isCinematicMode);
+        GUI.enabled = true;
 
         // 为调试参数和函数添加背景
         GUIStyle debugStyle = new GUIStyle(GUI.skin.box);
