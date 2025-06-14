@@ -4,22 +4,24 @@
  * Description: unity官方的本地化框架的适配器
  ****************************************************************************/
 
-
+#if UNITY_LOCALIZATION
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using UnityEngine.Localization;
+#endif
 using System;
 using UnityEngine;
 using System.Collections.Generic;
 
-
 namespace YanGameFrameWork.LocalizationSystem
 {
     /// <summary>
-    /// unity官方的本地化框架的适配器
+    /// Unity官方的本地化框架的适配器
+    /// 当项目未引入Unity Localization包时，此类将不会编译
     /// </summary>
     [Serializable]
+    #if UNITY_LOCALIZATION
     public class UnityLocalizationAdapter : ILocalizationAdapter
     {
         public string tableName;
@@ -73,10 +75,8 @@ namespace YanGameFrameWork.LocalizationSystem
             Init();
         }
 
-
         public void Init()
         {
-
             if (LocalizationSettings.AvailableLocales.Locales.Count > 0)
             {
                 GetLocalizationTable(tableName);
@@ -87,7 +87,6 @@ namespace YanGameFrameWork.LocalizationSystem
             }
             LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
         }
-
 
         /// <summary>
         /// 本地化初始化完成
@@ -126,8 +125,6 @@ namespace YanGameFrameWork.LocalizationSystem
                 Debug.LogError($"获取本地化表时发生错误: {e.Message}\n{e.StackTrace}");
             }
         }
-
-
 
         /// <summary>
         /// 获取本地化文本，是主要被外部调用的方法
@@ -170,8 +167,6 @@ namespace YanGameFrameWork.LocalizationSystem
             }
         }
 
-
-
         /// <summary>
         /// 根据语言代码切换语言
         /// </summary>
@@ -188,7 +183,6 @@ namespace YanGameFrameWork.LocalizationSystem
             }
         }
 
-
         public LanguageType GetCurrentLanguage()
         {
             return GetLanguageType(LocalizationSettings.SelectedLocale.Identifier.Code);
@@ -198,7 +192,6 @@ namespace YanGameFrameWork.LocalizationSystem
         {
             LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
         }
-
 
         /// <summary>
         /// 切换语言
@@ -210,8 +203,59 @@ namespace YanGameFrameWork.LocalizationSystem
             //这里临时用一下Card
             GetLocalizationTable(tableName);
         }
-
-
-
     }
+    #else
+    public class UnityLocalizationAdapter : ILocalizationAdapter
+    {
+        /// <summary>
+        /// 当未引入Localization包时的构造函数
+        /// </summary>
+        public UnityLocalizationAdapter(string tableName)
+        {
+            Debug.LogWarning("Unity Localization包未引入，UnityLocalizationAdapter将不会工作");
+        }
+
+        /// <summary>
+        /// 初始化方法
+        /// </summary>
+        public void Init()
+        {
+            Debug.LogWarning("Unity Localization包未引入，UnityLocalizationAdapter将不会工作");
+        }
+
+        /// <summary>
+        /// 获取本地化文本
+        /// </summary>
+        public string GetText(string key, MetaData metaData = null, string chineseText = null)
+        {
+            Debug.LogWarning("Unity Localization包未引入，返回原始文本");
+            return key;
+        }
+
+        /// <summary>
+        /// 切换语言
+        /// </summary>
+        public void SwitchLanguage(LanguageType language)
+        {
+            Debug.LogWarning("Unity Localization包未引入，无法切换语言");
+        }
+
+        /// <summary>
+        /// 获取当前语言
+        /// </summary>
+        public LanguageType GetCurrentLanguage()
+        {
+            Debug.LogWarning("Unity Localization包未引入，返回默认语言");
+            return LanguageType.SimplifiedChinese;
+        }
+
+        /// <summary>
+        /// 销毁时的清理
+        /// </summary>
+        public void OnDestroy()
+        {
+            // 无需清理
+        }
+    }
+    #endif
 }

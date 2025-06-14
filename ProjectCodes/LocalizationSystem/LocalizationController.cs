@@ -57,9 +57,8 @@ namespace YanGameFrameWork.LocalizationSystem
         /// </summary>
         public event Action OnLanguageChanged;
 
-        protected override void Awake()
+        protected void Awake()
         {
-            base.Awake();
             InitAdapter();
             ChangeToInitLanguage();
         }

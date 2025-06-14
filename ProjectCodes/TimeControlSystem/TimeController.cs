@@ -139,9 +139,8 @@ namespace YanGameFrameWork.TimeControlSystem
     {
         private CommandExecutor _executor;
 
-        protected override void Awake()
+        protected void Awake()
         {
-            base.Awake();
             _executor = gameObject.AddComponent<CommandExecutor>();
         }
 
