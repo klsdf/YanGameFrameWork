@@ -256,7 +256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13f16207897f9d48bf22ff06eefef21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localizationType: 1
+  localizationType: 0
   tableName: 
   initLanguageType: 0
   _currentLanguageType: 0
@@ -639,7 +639,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdd55ffd369600a41892bb25e40dd10c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  transitionImage: {fileID: 0}
+  transitionImage: {fileID: 1278280274695598792}
 --- !u!1 &4355936025781841625
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,20 +685,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controlCamera: {fileID: 0}
-  IsEnableDarg: 1
+  IsEnableDarg: 0
   dragSpeed: 2
   minX: -10
   maxX: 10
   minY: -10
   maxY: 10
-  IsEnableZoom: 1
+  IsEnableZoom: 0
   zoomSpeed: 2
   minFov: 15
   maxFov: 90
-  IsEnableFollow: 1
+  IsEnableFollow: 0
   followTarget: {fileID: 0}
   moveFactor: 1
-  IsEnableLookAt: 1
+  IsEnableLookAt: 0
   lookAtTarget: {fileID: 0}
   isCinematicMode: 0
 --- !u!1 &4764954753023883645
