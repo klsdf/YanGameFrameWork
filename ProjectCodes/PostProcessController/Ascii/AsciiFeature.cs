@@ -3,31 +3,42 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-
-public class TestFeature : ScriptableRendererFeature
+/// <summary>
+/// 测试后处理效果的渲染特性
+/// </summary>
+public class AsciiFeature : ScriptableRendererFeature
 {
     [SerializeField] private Material material;
-    private TestPass testPass;
+    private AsciiPass asciiPass;
 
+    /// <summary>
+    /// 创建渲染通道
+    /// </summary>
     public override void Create()
     {
-        testPass = new TestPass(material);
-        
-        testPass.renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
+        asciiPass = new AsciiPass(material);
+        asciiPass.renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
     }
 
+    /// <summary>
+    /// 添加渲染通道
+    /// </summary>
     public override void AddRenderPasses(ScriptableRenderer renderer,
         ref RenderingData renderingData)
     {
+        // 只在游戏相机上应用效果
         if (renderingData.cameraData.cameraType == CameraType.Game)
         {
-            renderer.EnqueuePass(testPass);
+            renderer.EnqueuePass(asciiPass);
         }
     }
 
+    /// <summary>
+    /// 清理资源
+    /// </summary>
     protected override void Dispose(bool disposing)
     {
-        testPass.Dispose();
+        asciiPass.Dispose();
         #if UNITY_EDITOR
             if (EditorApplication.isPlaying)
             {
@@ -38,7 +49,7 @@ public class TestFeature : ScriptableRendererFeature
                 DestroyImmediate(material);
             }
         #else
-                Destroy(material);
+            Destroy(material);
         #endif
     }
 }

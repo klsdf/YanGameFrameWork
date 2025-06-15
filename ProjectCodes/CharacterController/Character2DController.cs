@@ -59,11 +59,11 @@ public class Character2DController : MonoBehaviour
         footstepAudioSource = gameObject.AddComponent<AudioSource>();
         footstepAudioSource.loop = true;
         footstepAudioSource.playOnAwake = false;
-        var footstepClip = AudioPlayerController.Instance.GetAudioClip(SoundType.Footstep);
-        if (footstepClip != null)
-        {
-            footstepAudioSource.clip = footstepClip;
-        }
+        // var footstepClip = AudioPlayerController.Instance.GetAudioClip(SoundType.Footstep);
+        // if (footstepClip != null)
+        // {
+        //     footstepAudioSource.clip = footstepClip;
+        // }
     }
 
     /// <summary>
@@ -156,7 +156,7 @@ public class Character2DController : MonoBehaviour
     {
         if (canInteract && Input.GetKeyDown(KeyCode.E))
         {
-            currentInteractable.GetComponent<InteractObjBase>().Interact();
+            // currentInteractable.GetComponent<InteractObjBase>().Interact();
         }
     }
 
