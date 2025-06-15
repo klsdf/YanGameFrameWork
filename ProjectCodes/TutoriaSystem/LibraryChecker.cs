@@ -23,6 +23,7 @@ public static class LibraryChecker
 
     private static bool DoesLibraryExist()
     {
+
         return System.IO.File.Exists(libraryPath);
     }
 

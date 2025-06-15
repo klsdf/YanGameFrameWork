@@ -16,6 +16,10 @@
 
 ## 快速上手
 
+### 找到框架的仓库
+
+1. 访问https://github.com/klsdf/YanGameFrameWork.git
+
 
 
 ### 找到框架的仓库
@@ -82,14 +86,106 @@
 
 ### Debug系统（Debug System）
 
+#### 日志输出
+
 - 提供日志记录、警告和错误信息的输出功能。
-- 支持日志合并和堆栈跟踪显示。
+- 支持全局开关
+
+
+
+具体使用：
+
+```c#
+// 普通日志
+DebugController.Instance.Log(nameof(YourClass), "这是一条普通日志");
+
+// 警告日志
+DebugController.Instance.LogWarning(nameof(YourClass), "这是一条警告日志");
+
+// 错误日志
+DebugController.Instance.LogError(nameof(YourClass), "这是一条错误日志");
+
+// 断言日志
+DebugController.Instance.LogAssert(nameof(YourClass), () => condition, "断言失败信息");
+
+// 异常日志
+DebugController.Instance.LogException(nameof(YourClass), exception);
+```
+
+
+
+
+
+
+
+
+
+#### GM和Debug窗口
+
+本部分参考了[In-game Debug Console](https://assetstore.unity.com/packages/tools/gui/in-game-debug-console-68068?srsltid=AfmBOophIUrqfp-n8jygcExQxlser_sRPSp3HF8dg0kakgiDh7GAJNbk)的设计
+
+- 在游戏内使用~键可以呼出控制台
+- 控制台中会显示游戏内的所有log信息
+- 控制台内集成了gm输入框，开发者可以自由输入设定的质量快速调试
+
+
+
+
+
+
+
 
 
 ### 事件系统（Event System）
 
+YanGameFramework的事件系统是一个基于发布者-订阅者模式的事件管理系统，支持多种类型的事件处理：
+
+- 无参数事件
+
+- 单参数事件
+
+- 双参数事件
+
+- 一次性事件
+
+- 带优先级的事件
+
+
+
+
+
 - 提供轻量级的事件通信机制，支持泛型事件参数传递。
 - 支持优先级事件监听和一次性事件订阅。
+
+
+
+
+
+
+
+```c#
+// 注册无参数事件
+EventSystemController.Instance.AddListener("GameStart", OnGameStart, 1);
+
+// 注册一次性事件
+EventSystemController.Instance.AddOnceListener("LevelComplete", OnLevelComplete);
+
+// 触发事件
+EventSystemController.Instance.TriggerEvent("GameStart");
+
+// 移除事件
+EventSystemController.Instance.RemoveListener("GameStart", OnGameStart);
+```
+
+
+
+
+
+
+
+
+
+
 
 ### 状态机系统（FSM System）
 
@@ -148,29 +244,47 @@
 - 支持背景音乐和音效的音量控制、淡入淡出等功能。
 
 
+
+
+
 ### 可等待协程（AwaitableCoroutine）
 
+
+
+
+
 ### 摄像机控制（CameraController）
+
+摄像机控制提供了4种核心功能和1种摄像机特效
+
+
+
+- 跟随
+- 注视
+- 拖动
+- 缩放
+
+
+
+
 
 
 
 ### 本地化系统（Localization System）
 
-- 实现游戏的多语言本地化功能，支持动态文本替换。
+- 提供了YanGF自己实现的一套基于csv的本地化方案
+- 兼容unity自己的本地化方案
+- 在设计上采用了策略模式，开发者可以轻松切换不同的本地化方案
+
+
 
 ### 对象池系统（Object Pool System）
 
-- 提供高效的游戏对象重用机制，优化对象的创建和销毁性能。
+- 本对象池是对unity内置对象池的二次封装，可以同时管理多个不同种类的对象池
 
 
 
 ### 对话系统（DialogSystem）
-
-
-
-
-
-
 
 
 
@@ -179,8 +293,10 @@
 - 支持游戏对象的动态池化管理和对象生命周期回调。
 
 ### 存档系统（Save System）
+- 本部分的API设计参考了[Easy Save - The Complete Save Data & Serializer System](https://assetstore.unity.com/packages/tools/utilities/easy-save-the-complete-save-game-data-serializer-system-768)‘
+- 开发者只需简单地调用`YanGF.Save.Save<int>("test", 1);`即可轻松存储1这个数值到存档的test字段
 
-- 处理游戏数据的保存和读取，支持多种存档格式。
+
 
 ### 实用工具库（Practical Library）
 
@@ -196,17 +312,27 @@
 
 - 提供资源的管理和加载功能，支持多种资源类型。
 
-
 ### 数据管理系统 （ModelControlSystem）
+
+YanGameFramework的模块控制系统是一个用于管理游戏数据模块的框架，采用单例模式实现。该系统主要用于：
+
+- 管理游戏中的各种数据模块
+
+- 提供模块的注册、更新、获取和移除功能
+
+- 支持模块数据的序列化和Inspector可视化
+
+- 实现模块数据变化的监听机制
+
+
+
+
 
 - 提供数据的管理和加载功能，支持多种数据类型。
 
 ### 教程系统（Tutorial System）
 
-- 提供教程的注册、更新和解锁功能。
-- 支持事件型和进度型教程。
-- 提供教程的UI展示和提示功能。
-
+- 内置了一个非常通用的聚焦UI，可以快速实现游戏中聚焦某一个对象的效果。
 
 
 

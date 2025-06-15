@@ -42,9 +42,8 @@ namespace YanGameFrameWork.CursorController
 
 
 
-        protected override void Awake()
+        protected void Awake()
         {
-            base.Awake();
 
 
             if (cursors == null || cursors.Length == 0)

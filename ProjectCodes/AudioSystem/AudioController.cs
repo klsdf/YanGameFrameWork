@@ -49,9 +49,8 @@ namespace YanGameFrameWork.AudioSystem
 
         private int _initialPoolSize = 5; // 初始音源池大小
 
-        protected override void Awake()
+        protected void Awake()
         {
-            base.Awake();
             CreateAudioSourcePool(AudioType.BGM, _bgmSourcePool);
             CreateAudioSourcePool(AudioType.BGS, _bgsSourcePool);
             CreateAudioSourcePool(AudioType.SE, _seSourcePool);
