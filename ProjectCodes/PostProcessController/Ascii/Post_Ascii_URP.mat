@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Post_Ascii_URP
-  m_Shader: {fileID: 4800000, guid: 3eb5374e94a3e8a46ac3d28af0a44551, type: 3}
+  m_Shader: {fileID: 4800000, guid: 742d253923b5cb244bfdd438a1ede062, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -25,18 +25,17 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _Ascii:
-        m_Texture: {fileID: 2800000, guid: 7089d025fe241804ea888b30f38ba6b8, type: 3}
-        m_Scale: {x: 0.85, y: 0.25}
-        m_Offset: {x: 3.56, y: 0.09}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AsciiSplit: 10
+    - _AsciiSplit: 18
     - _EnableAscii: 1
-    - _Strength: 57
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Strength: 10
+    m_Colors: []
   m_BuildTextureStacks: []

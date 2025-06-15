@@ -14,22 +14,63 @@
 
 
 
-
-
 ## 快速上手
 
 
 
+### 找到框架的仓库
+
+1. 访问https://github.com/klsdf/YanGameFrameWork.git
+
+
+
 ### 安装
+
+#### 直接安装
 
 1. 把YanGameFrameWork的文件夹复制到游戏的Asserts目录下
 2. 好了！框架已经成功引入了！
 
 
 
+
+
+
+
+#### 或者通过submodule来安装
+
+1. 打开项目的git仓库
+2. 添加[YanGameFrameWork](https://github.com/klsdf/YanGameFrameWork)的submodule到Asserts内的任意文件夹下
+
+
+
+
+
+#### 安装成功了吗？
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### 使用
 
+1. 首先需要把框架的核心预制体YanGameFrameWork放到场景内
+
 1. 对于核心功能，可以直接使用YanGF来得到
+
+   ```c#
+   YanGF.Debug.Log("测试", "Hello World!");
+   ```
+
+   
 
 
 
@@ -178,7 +219,7 @@
 
 
 
-## Shader
+## 预制Shader
 
 这是框架所自带的常用shader
 
@@ -186,7 +227,11 @@
 
 
 
-## 字体
+## 预制字体
+
+- 本框架提供了多个免费的预制字体，并已经创建了TMP的assert资产。即开即用。
+
+- 提供了多种语言的字体
 
 
 
@@ -207,4 +252,14 @@
 
 
 ## 可选第三方框架
+
+引入本框架时，无需引入任何第三方框架。但是引入这些第三方框架，会让YanGF拥有更强大的能力。
+
+
+
+### LibTessDotNet
+
+
+
+
 

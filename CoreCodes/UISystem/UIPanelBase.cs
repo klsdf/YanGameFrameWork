@@ -35,6 +35,7 @@ namespace YanGameFrameWork.UISystem
         public virtual void OnEnter()
         {
             gameObject.SetActive(true);
+            OnLocalize();
         }
 
         public virtual void OnExit()
