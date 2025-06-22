@@ -3,21 +3,37 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 /// <summary>
-/// 像素化后处理
+/// 像素化后处理效果的渲染特性
 /// </summary>
 public class PixelRenderFeature : YanRenderFeature
 {
+   /// <summary>
+   /// 像素大小
+   /// </summary>
    [Range(1, 50)]
     public int pixelSize = 8;
 
+    /// <summary>
+    /// 像素渲染通道
+    /// </summary>
     PixelRenderPass pixelPass;
+    
+    /// <summary>
+    /// 渲染通道事件
+    /// </summary>
     public RenderPassEvent renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
+    
+    /// <summary>
+    /// 创建渲染通道
+    /// </summary>
     public override void Create()
     {
         pixelPass = new PixelRenderPass(material, renderPassEvent, pixelSize);
     }
 
-
+    /// <summary>
+    /// 添加渲染通道
+    /// </summary>
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
         if (material != null)
@@ -28,9 +44,27 @@ public class PixelRenderFeature : YanRenderFeature
 
     private class PixelRenderPass : ScriptableRenderPass
     {
+        /// <summary>
+        /// 像素化材质
+        /// </summary>
         public Material pixelationMaterial;
+        
+        /// <summary>
+        /// 临时渲染纹理
+        /// </summary>
         private RTHandle m_TempRT;
+        
+        /// <summary>
+        /// 像素大小
+        /// </summary>
         public int pixelSize = 8;
+        
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="material">渲染材质</param>
+        /// <param name="renderPassEvent">渲染通道事件</param>
+        /// <param name="pixelSize">像素大小</param>
         public PixelRenderPass(Material material, RenderPassEvent renderPassEvent, int pixelSize)
         {
             pixelationMaterial = material;

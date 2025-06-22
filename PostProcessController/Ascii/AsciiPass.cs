@@ -3,19 +3,45 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
+/// <summary>
+/// ASCII渲染通道，负责执行ASCII后处理效果
+/// </summary>
 public class AsciiPass : ScriptableRenderPass
 {
+    /// <summary>
+    /// 渲染材质
+    /// </summary>
     private Material material;
     // private TestVolumeComponent volumeComponent;
 
+    /// <summary>
+    /// 纹理描述符
+    /// </summary>
     private RenderTextureDescriptor textureDescriptor;
+    
+    /// <summary>
+    /// 纹理句柄
+    /// </summary>
     private RTHandle textureHandle;
 
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="material">渲染材质</param>
     public AsciiPass(Material material)
     {
         this.material = material;
         textureDescriptor = new RenderTextureDescriptor(Screen.width,
             Screen.height, RenderTextureFormat.Default, 0);
+    }
+
+    /// <summary>
+    /// 更新材质
+    /// </summary>
+    /// <param name="newMaterial">新的材质</param>
+    public void UpdateMaterial(Material newMaterial)
+    {
+        material = newMaterial;
     }
 
     public override void Configure(CommandBuffer cmd,
