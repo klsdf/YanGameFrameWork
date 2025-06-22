@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PixelationPostProcess
-  m_Shader: {fileID: 4800000, guid: a434d75594c51bd47b11931a85b829b4, type: 3}
+  m_Name: Custom_PixelationPostProcess
+  m_Shader: {fileID: 4800000, guid: 764ccf5ea7f45fa47b80f226cd27c7a2, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -29,6 +29,6 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _PixelSize: 8
+    - _PixelSize: 1
     m_Colors: []
   m_BuildTextureStacks: []

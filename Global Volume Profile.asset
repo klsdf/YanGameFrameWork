@@ -14,27 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   components:
   - {fileID: 9133642934077286770}
-  - {fileID: 3847101505828938007}
---- !u!114 &3847101505828938007
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e7160eeb70257f4bb2c519cafb46578, type: 3}
-  m_Name: AsciiVolumeComponent
-  m_EditorClassIdentifier: 
-  active: 1
-  intensity:
-    m_OverrideState: 1
-    m_Value: 51.42
-  asciiTexture:
-    m_OverrideState: 1
-    m_Value: {fileID: 2800000, guid: 905025525a1622447997e0d32a458dd3, type: 3}
-    dimension: 1
 --- !u!114 &9133642934077286770
 MonoBehaviour:
   m_ObjectHideFlags: 3
