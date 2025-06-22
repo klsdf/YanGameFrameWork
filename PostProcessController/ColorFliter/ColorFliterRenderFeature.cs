@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public class ColorFliterRenderFeature : ScriptableRendererFeature
+public class ColorFliterRenderFeature : YanRenderFeature
 {
     [SerializeField] private RedTintSettings settings;
     [SerializeField] private Shader shader;

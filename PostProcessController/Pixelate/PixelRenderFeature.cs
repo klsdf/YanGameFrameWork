@@ -5,22 +5,22 @@ using UnityEngine.Rendering.Universal;
 /// <summary>
 /// 像素化后处理
 /// </summary>
-public class PixelRenderFeature : ScriptableRendererFeature
+public class PixelRenderFeature : YanRenderFeature
 {
    [Range(1, 50)]
     public int pixelSize = 8;
-    public Material pixelationMaterial;
+
     PixelRenderPass pixelPass;
     public RenderPassEvent renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
     public override void Create()
     {
-        pixelPass = new PixelRenderPass(pixelationMaterial, renderPassEvent, pixelSize);
+        pixelPass = new PixelRenderPass(material, renderPassEvent, pixelSize);
     }
 
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
-        if (pixelationMaterial != null)
+        if (material != null)
         {
             renderer.EnqueuePass(pixelPass);
         }

@@ -3,11 +3,10 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public class BlurRendererFeature : ScriptableRendererFeature
+public class BlurRendererFeature : YanRenderFeature
 {
     [SerializeField] private BlurSettings settings;
     [SerializeField] private Shader shader;
-    private Material material;
     private BlurRenderPass blurRenderPass;
 
     public override void Create()

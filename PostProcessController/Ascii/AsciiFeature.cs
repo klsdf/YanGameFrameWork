@@ -6,16 +6,21 @@ using UnityEngine.Rendering.Universal;
 /// <summary>
 /// 测试后处理效果的渲染特性
 /// </summary>
-public class AsciiFeature : ScriptableRendererFeature
+public class AsciiFeature : YanRenderFeature
 {
-    [SerializeField] private Material material;
+    [SerializeField] private Shader shader;
     private AsciiPass asciiPass;
+
 
     /// <summary>
     /// 创建渲染通道
     /// </summary>
     public override void Create()
     {
+        // if (shader != null)
+        // {
+        //     material = new Material(shader);
+        // }
         asciiPass = new AsciiPass(material);
         asciiPass.renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
     }

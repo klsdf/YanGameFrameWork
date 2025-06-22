@@ -3,6 +3,9 @@ using YanGameFrameWork.Singleton;
 using UnityEngine.Rendering.Universal;
 using Sirenix.OdinInspector;
 using UnityEngine.Rendering;
+using System.Collections.Generic;
+using System;
+
 
 namespace YanGameFrameWork.PostProcess
 {
@@ -10,6 +13,19 @@ namespace YanGameFrameWork.PostProcess
     {
         Ascii,
         ColorFliter,
+        Blur,
+        Pixelate,
+    }
+
+
+
+
+    [Serializable]
+    public class PostProcessData
+    {
+        public PostProcessType postProcessType;
+        public Material material;
+
     }
 
     /// <summary>
@@ -18,6 +34,9 @@ namespace YanGameFrameWork.PostProcess
     /// </summary>
     public class PostProcessController : Singleton<PostProcessController>
     {
+
+
+        [SerializeField] private List<PostProcessData> postProcessDataList;
         /// <summary>
         /// 当前启用的后处理效果
         /// </summary>
@@ -65,6 +84,12 @@ namespace YanGameFrameWork.PostProcess
                 case PostProcessType.ColorFliter:
                     DisableRendererFeature<ColorFliterRenderFeature>();
                     break;
+                case PostProcessType.Blur:
+                    DisableRendererFeature<BlurRendererFeature>();
+                    break;
+                case PostProcessType.Pixelate:
+                    DisableRendererFeature<PixelRenderFeature>();
+                    break;
             }
         }
 
@@ -82,6 +107,12 @@ namespace YanGameFrameWork.PostProcess
                 case PostProcessType.ColorFliter:
                     EnableRendererFeature<ColorFliterRenderFeature>();
                     break;
+                case PostProcessType.Blur:
+                    EnableRendererFeature<BlurRendererFeature>();
+                    break;
+                case PostProcessType.Pixelate:
+                    EnableRendererFeature<PixelRenderFeature>();
+                    break;
             }
         }
 
@@ -89,7 +120,7 @@ namespace YanGameFrameWork.PostProcess
         /// 启用指定类型的Renderer Feature
         /// </summary>
         /// <typeparam name="T">Renderer Feature类型</typeparam>
-        private void EnableRendererFeature<T>() where T : ScriptableRendererFeature
+        private void EnableRendererFeature<T>() where T : YanRenderFeature
         {
             var feature = GetOrCreateRendererFeature<T>();
             if (feature != null)
@@ -102,7 +133,7 @@ namespace YanGameFrameWork.PostProcess
         /// 禁用指定类型的Renderer Feature
         /// </summary>
         /// <typeparam name="T">Renderer Feature类型</typeparam>
-        private void DisableRendererFeature<T>() where T : ScriptableRendererFeature
+        private void DisableRendererFeature<T>() where T : YanRenderFeature
         {
             var feature = GetOrCreateRendererFeature<T>();
             if (feature != null)
@@ -116,7 +147,7 @@ namespace YanGameFrameWork.PostProcess
         /// </summary>
         /// <typeparam name="T">Renderer Feature类型</typeparam>
         /// <returns>Renderer Feature实例</returns>
-        private T GetOrCreateRendererFeature<T>() where T : ScriptableRendererFeature
+        private T GetOrCreateRendererFeature<T>() where T : YanRenderFeature
         {
             // 查找已存在的Feature
             foreach (var feature in rendererData.rendererFeatures)
@@ -129,7 +160,24 @@ namespace YanGameFrameWork.PostProcess
 
             // 如果不存在，创建新的Feature
             var newFeature = ScriptableObject.CreateInstance<T>();
+
+            switch (newFeature)
+            {
+                case AsciiFeature asciiFeature:
+                    asciiFeature.SetMaterial(postProcessDataList.Find(data => data.postProcessType == PostProcessType.Ascii).material);
+                    break;
+                case ColorFliterRenderFeature colorFliterRenderFeature:
+                    colorFliterRenderFeature.SetMaterial(postProcessDataList.Find(data => data.postProcessType == PostProcessType.ColorFliter).material);
+                    break;
+                case BlurRendererFeature blurRendererFeature:
+                    blurRendererFeature.SetMaterial(postProcessDataList.Find(data => data.postProcessType == PostProcessType.Blur).material);
+                    break;
+                case PixelRenderFeature pixelRenderFeature:
+                    pixelRenderFeature.SetMaterial(postProcessDataList.Find(data => data.postProcessType == PostProcessType.Pixelate).material);
+                    break;
+             }
             rendererData.rendererFeatures.Add(newFeature);
+
             return newFeature;
         }
     }

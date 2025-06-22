@@ -29,17 +29,17 @@ public class AsciiPass : ScriptableRenderPass
         RenderingUtils.ReAllocateIfNeeded(ref textureHandle, textureDescriptor);
     }
 
-    private void UpdateBlurSettings()
-    {
-        if (material == null) return;
-        var volumeComponent =
-            VolumeManager.instance.stack.GetComponent<AsciiVolumeComponent>();
-        float intensity = volumeComponent.intensity.overrideState ?
-            volumeComponent.intensity.value : 1f;
+    // private void UpdateBlurSettings()
+    // {
+    //     if (material == null) return;
+    //     var volumeComponent =
+    //         VolumeManager.instance.stack.GetComponent<AsciiVolumeComponent>();
+    //     float intensity = volumeComponent.intensity.overrideState ?
+    //         volumeComponent.intensity.value : 1f;
 
-        material.SetFloat("_Strength", intensity);
-        material.SetTexture("_Ascii", volumeComponent.asciiTexture.value);
-    }
+    //     material.SetFloat("_Strength", intensity);
+    //     material.SetTexture("_Ascii", volumeComponent.asciiTexture.value);
+    // }
 
     public override void Execute(ScriptableRenderContext context,ref RenderingData renderingData)
     {
@@ -48,7 +48,7 @@ public class AsciiPass : ScriptableRenderPass
         RTHandle cameraTargetHandle =
             renderingData.cameraData.renderer.cameraColorTargetHandle;
 
-        UpdateBlurSettings();
+        // UpdateBlurSettings();
 
         Blit(cmd, cameraTargetHandle, textureHandle);
         Blit(cmd, textureHandle, cameraTargetHandle, material, 0);
