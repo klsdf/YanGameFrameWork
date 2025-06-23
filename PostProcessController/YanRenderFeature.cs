@@ -9,7 +9,7 @@ public abstract class YanRenderFeature : ScriptableRendererFeature
     /// <summary>
     /// 渲染材质
     /// </summary>
-    public Material material;
+    protected Material material;
 
     /// <summary>
     /// 设置材质并更新渲染通道

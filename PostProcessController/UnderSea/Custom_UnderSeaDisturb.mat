@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Custom_PixelationPostProcess
-  m_Shader: {fileID: 4800000, guid: 764ccf5ea7f45fa47b80f226cd27c7a2, type: 3}
+  m_Name: Custom_UnderSeaDisturb
+  m_Shader: {fileID: 4800000, guid: abdd47fd9e8308f4caeb638cb4457329, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -24,11 +24,13 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: bc4c49dca9ec60648811f1af600f53ec, type: 3}
+        m_Texture: {fileID: 2800000, guid: f1ba04cfc7519cf408c6d5a979b4eb00, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _PixelSize: 37.1
+    - _DisturbFrequency: 8
+    - _DisturbSpeed: 1
+    - _DisturbStrength: 0.03
     m_Colors: []
   m_BuildTextureStacks: []

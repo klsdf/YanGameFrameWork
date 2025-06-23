@@ -8,17 +8,24 @@ using UnityEngine.Rendering.Universal;
 /// </summary>
 public class AsciiFeature : YanRenderFeature
 {
+
+    [SerializeField] private Shader shader;
     /// <summary>
     /// ASCII渲染通道
     /// </summary>
     private AsciiPass asciiPass;
-
+    [SerializeField] private AsciiSettings settings;
     /// <summary>
     /// 创建渲染通道
     /// </summary>
     public override void Create()
     {
-        asciiPass = new AsciiPass(material);
+        if (shader == null)
+        {
+            return;
+        }
+        material = new Material(shader);
+        asciiPass = new AsciiPass(material, settings);
         asciiPass.renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
     }
 
@@ -54,4 +61,14 @@ public class AsciiFeature : YanRenderFeature
             Destroy(material);
         #endif
     }
+}
+
+[Serializable]
+public class AsciiSettings
+{
+    [Range(5, 100f)] public float strength;
+
+    [SerializeField] public Texture2D asciiTexture;
+    [SerializeField] [Range(1, 30)]
+    public float asciiSplit = 18;
 }

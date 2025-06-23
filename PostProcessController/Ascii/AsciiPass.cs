@@ -12,7 +12,7 @@ public class AsciiPass : ScriptableRenderPass
     /// 渲染材质
     /// </summary>
     private Material material;
-    // private TestVolumeComponent volumeComponent;
+    private AsciiSettings settings;
 
     /// <summary>
     /// 纹理描述符
@@ -28,20 +28,12 @@ public class AsciiPass : ScriptableRenderPass
     /// 构造函数
     /// </summary>
     /// <param name="material">渲染材质</param>
-    public AsciiPass(Material material)
+    public AsciiPass(Material material, AsciiSettings settings)
     {
         this.material = material;
+        this.settings = settings;
         textureDescriptor = new RenderTextureDescriptor(Screen.width,
             Screen.height, RenderTextureFormat.Default, 0);
-    }
-
-    /// <summary>
-    /// 更新材质
-    /// </summary>
-    /// <param name="newMaterial">新的材质</param>
-    public void UpdateMaterial(Material newMaterial)
-    {
-        material = newMaterial;
     }
 
     public override void Configure(CommandBuffer cmd,
@@ -74,7 +66,9 @@ public class AsciiPass : ScriptableRenderPass
         RTHandle cameraTargetHandle =
             renderingData.cameraData.renderer.cameraColorTargetHandle;
 
-        // UpdateBlurSettings();
+        material.SetFloat("_Strength", settings.strength);
+        material.SetFloat("_AsciiSplit", settings.asciiSplit);
+        material.SetTexture("_Ascii", settings.asciiTexture);
 
         Blit(cmd, cameraTargetHandle, textureHandle);
         Blit(cmd, textureHandle, cameraTargetHandle, material, 0);

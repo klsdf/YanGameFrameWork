@@ -7,6 +7,9 @@ using UnityEngine.Rendering.Universal;
 /// </summary>
 public class PixelRenderFeature : YanRenderFeature
 {
+
+
+    [SerializeField] private Shader pixelShader;
    /// <summary>
    /// 像素大小
    /// </summary>
@@ -28,6 +31,10 @@ public class PixelRenderFeature : YanRenderFeature
     /// </summary>
     public override void Create()
     {
+        if (pixelShader != null)
+        {
+            material = new Material(pixelShader);
+        }
         pixelPass = new PixelRenderPass(material, renderPassEvent, pixelSize);
     }
 

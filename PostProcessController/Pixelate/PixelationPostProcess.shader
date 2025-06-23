@@ -13,6 +13,9 @@ Shader "Custom/PixelationPostProcess"
             "RenderType"="Opaque"
             "RenderPipeline" = "UniversalPipeline"
         }
+        LOD 100
+        ZWrite Off
+        Cull Off
 
         Pass
         {

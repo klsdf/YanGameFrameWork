@@ -7,7 +7,6 @@ public class ColorFliterRenderFeature : YanRenderFeature
 {
     [SerializeField] private RedTintSettings settings;
     [SerializeField] private Shader shader;
-    private Material material;
     private ColorFliterRenderPass colorFliterRenderPass;
 
     public override void Create()

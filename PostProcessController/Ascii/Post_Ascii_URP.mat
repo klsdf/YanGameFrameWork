@@ -33,8 +33,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AsciiSplit: 19.8
+    - _AsciiSplit: 11.1
     - _EnableAscii: 0
-    - _Strength: 36.6
+    - _Strength: 1
     m_Colors: []
   m_BuildTextureStacks: []
