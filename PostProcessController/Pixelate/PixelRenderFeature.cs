@@ -1,6 +1,17 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEditor;
+using UnityEngine.UI;
+
+
+[System.Serializable]
+public class PixelSettings
+{    /// <summary>
+     /// 像素大小
+     /// </summary>
+    [Range(1, 50)] public int pixelSize = 8;
+}
 
 /// <summary>
 /// 像素化后处理效果的渲染特性
@@ -10,22 +21,16 @@ public class PixelRenderFeature : YanRenderFeature
 
 
     [SerializeField] private Shader pixelShader;
-   /// <summary>
-   /// 像素大小
-   /// </summary>
-   [Range(1, 50)]
-    public int pixelSize = 8;
+
+    public PixelSettings pixelSettings;
 
     /// <summary>
     /// 像素渲染通道
     /// </summary>
     PixelRenderPass pixelPass;
-    
-    /// <summary>
-    /// 渲染通道事件
-    /// </summary>
-    public RenderPassEvent renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
-    
+
+
+
     /// <summary>
     /// 创建渲染通道
     /// </summary>
@@ -35,7 +40,8 @@ public class PixelRenderFeature : YanRenderFeature
         {
             material = new Material(pixelShader);
         }
-        pixelPass = new PixelRenderPass(material, renderPassEvent, pixelSize);
+        pixelPass = new PixelRenderPass(material, pixelSettings);
+        pixelPass.renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
     }
 
     /// <summary>
@@ -49,70 +55,24 @@ public class PixelRenderFeature : YanRenderFeature
         }
     }
 
-    private class PixelRenderPass : ScriptableRenderPass
+    protected override void Dispose(bool disposing)
     {
-        /// <summary>
-        /// 像素化材质
-        /// </summary>
-        public Material pixelationMaterial;
-        
-        /// <summary>
-        /// 临时渲染纹理
-        /// </summary>
-        private RTHandle m_TempRT;
-        
-        /// <summary>
-        /// 像素大小
-        /// </summary>
-        public int pixelSize = 8;
-        
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="material">渲染材质</param>
-        /// <param name="renderPassEvent">渲染通道事件</param>
-        /// <param name="pixelSize">像素大小</param>
-        public PixelRenderPass(Material material, RenderPassEvent renderPassEvent, int pixelSize)
+        pixelPass.Dispose();
+#if UNITY_EDITOR
+        if (EditorApplication.isPlaying)
         {
-            pixelationMaterial = material;
-            this.renderPassEvent = renderPassEvent;
-            this.pixelSize = pixelSize;
+            Destroy(material);
         }
-
-        public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
+        else
         {
-            if (m_TempRT == null)
-            {
-                m_TempRT = RTHandles.Alloc(renderingData.cameraData.cameraTargetDescriptor, name: "_TempRT");
-            }
+            DestroyImmediate(material);
         }
-
-        public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
-        {
-            CommandBuffer cmd = CommandBufferPool.Get("像素后处理");
-
-            cmd.ClearRenderTarget(true, false, Color.clear);
-
-            RenderTargetIdentifier source = renderingData.cameraData.renderer.cameraColorTargetHandle;
-            pixelationMaterial.SetFloat("_PixelSize", pixelSize);
-
-            // 执行像素化处理
-            cmd.Blit(source, m_TempRT, pixelationMaterial);
-            cmd.Blit(m_TempRT, source);
-            
-
-            context.ExecuteCommandBuffer(cmd);
-            CommandBufferPool.Release(cmd);
-        }
-
-
-        public override void OnCameraCleanup(CommandBuffer cmd)
-        {
-            if (m_TempRT != null)
-            {
-                RTHandles.Release(m_TempRT);
-                m_TempRT = null;
-            }
-        }
+#else
+                Destroy(material);
+#endif
     }
+
+
 }
+
+

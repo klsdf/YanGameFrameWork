@@ -53,4 +53,5 @@ public class RedTintSettings
 {
     [Range(0, 1f)] public float intensity;
     public Color color;
+
 }
