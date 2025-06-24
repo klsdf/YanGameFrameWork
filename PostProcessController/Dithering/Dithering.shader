@@ -7,7 +7,7 @@ Shader "Custom/Dithering"
         _PaletteHeight ("Palette Height", float) = 128
         _PaletteTex ("Palette", 2D) = "black" {}
         _PatternSize ("Pattern Size", float) = 8
-        _PatternTex ("Pattern Texture", 2D) = "black" {}
+        _PatternTex ("Pattern Texture", 2D) = "gray" {}
         _PatternScale("Pattern Scale", float) = 1
     }
 
