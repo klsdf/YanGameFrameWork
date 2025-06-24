@@ -3,47 +3,19 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public class BlurRendererFeature : YanRenderFeature
+/// <summary>
+/// 模糊后处理效果的渲染特性
+/// </summary>
+public class BlurRendererFeature : YanRenderFeature<BlurRenderPass, BlurSettings>
 {
-    [SerializeField] private BlurSettings settings;
-    private BlurRenderPass blurRenderPass;
-
-    public override void Create()
+    /// <summary>
+    /// 创建模糊渲染通道
+    /// </summary>
+    protected override BlurRenderPass CreatePass(Material material, BlurSettings settings)
     {
-        if (shader == null)
-        {
-            return;
-        }
-        material = new Material(shader);
-        blurRenderPass = new BlurRenderPass(material, settings);
-        
-        blurRenderPass.renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
-    }
-
-    public override void AddRenderPasses(ScriptableRenderer renderer,
-        ref RenderingData renderingData)
-    {
-        if (renderingData.cameraData.cameraType == CameraType.Game)
-        {
-            renderer.EnqueuePass(blurRenderPass);
-        }
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        blurRenderPass.Dispose();
-        #if UNITY_EDITOR
-            if (EditorApplication.isPlaying)
-            {
-                Destroy(material);
-            }
-            else
-            {
-                DestroyImmediate(material);
-            }
-        #else
-                Destroy(material);
-        #endif
+        var pass = new BlurRenderPass(material, settings);
+        pass.renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
+        return pass;
     }
 }
 

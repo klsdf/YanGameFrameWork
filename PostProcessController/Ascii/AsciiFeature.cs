@@ -6,59 +6,19 @@ using UnityEngine.Rendering.Universal;
 /// <summary>
 /// ASCII后处理效果的渲染特性
 /// </summary>
-public class AsciiFeature : YanRenderFeature
+public class AsciiFeature : YanRenderFeature<AsciiPass, AsciiSettings>
 {
     /// <summary>
-    /// ASCII渲染通道
+    /// 创建ASCII渲染通道
     /// </summary>
-    private AsciiPass asciiPass;
-    [SerializeField] private AsciiSettings settings;
-    /// <summary>
-    /// 创建渲染通道
-    /// </summary>
-    public override void Create()
+    protected override AsciiPass CreatePass(Material material, AsciiSettings settings)
     {
-        if (shader == null)
-        {
-            return;
-        }
-        material = new Material(shader);
-        asciiPass = new AsciiPass(material, settings);
-        asciiPass.renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
+        var pass = new AsciiPass(material, settings);
+        pass.renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
+        return pass;
     }
 
-    /// <summary>
-    /// 添加渲染通道
-    /// </summary>
-    public override void AddRenderPasses(ScriptableRenderer renderer,
-        ref RenderingData renderingData)
-    {
-        // 只在游戏相机上应用效果
-        if (renderingData.cameraData.cameraType == CameraType.Game)
-        {
-            renderer.EnqueuePass(asciiPass);
-        }
-    }
-
-    /// <summary>
-    /// 清理资源
-    /// </summary>
-    protected override void Dispose(bool disposing)
-    {
-        asciiPass.Dispose();
-        #if UNITY_EDITOR
-            if (EditorApplication.isPlaying)
-            {
-                Destroy(material);
-            }
-            else
-            {
-                DestroyImmediate(material);
-            }
-        #else
-            Destroy(material);
-        #endif
-    }
+  
 }
 
 [Serializable]

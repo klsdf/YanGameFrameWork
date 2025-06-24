@@ -4,72 +4,29 @@ using UnityEngine.Rendering.Universal;
 using UnityEditor;
 using UnityEngine.UI;
 
-
-[System.Serializable]
-public class PixelSettings
-{    /// <summary>
-     /// 像素大小
-     /// </summary>
-    [Range(1, 50)] public int pixelSize = 8;
-}
-
 /// <summary>
 /// 像素化后处理效果的渲染特性
 /// </summary>
-public class PixelRenderFeature : YanRenderFeature
+public class PixelRenderFeature : YanRenderFeature<PixelRenderPass, PixelSettings>
 {
-
-    public PixelSettings pixelSettings;
-
     /// <summary>
-    /// 像素渲染通道
+    /// 创建像素化渲染通道
     /// </summary>
-    PixelRenderPass pixelPass;
+    protected override PixelRenderPass CreatePass(Material material, PixelSettings settings)
+    {
+        var pass = new PixelRenderPass(material, settings);
+        pass.renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
+        return pass;
+    }
+}
 
-
-
+[System.Serializable]
+public class PixelSettings
+{
     /// <summary>
-    /// 创建渲染通道
+    /// 像素大小
     /// </summary>
-    public override void Create()
-    {
-        if (shader != null)
-        {
-            material = new Material(shader);
-        }
-        pixelPass = new PixelRenderPass(material, pixelSettings);
-        pixelPass.renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
-    }
-
-    /// <summary>
-    /// 添加渲染通道
-    /// </summary>
-    public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
-    {
-        if (material != null)
-        {
-            renderer.EnqueuePass(pixelPass);
-        }
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        pixelPass.Dispose();
-#if UNITY_EDITOR
-        if (EditorApplication.isPlaying)
-        {
-            Destroy(material);
-        }
-        else
-        {
-            DestroyImmediate(material);
-        }
-#else
-                Destroy(material);
-#endif
-    }
-
-
+    [Range(1, 50)] public int pixelSize = 8;
 }
 
 

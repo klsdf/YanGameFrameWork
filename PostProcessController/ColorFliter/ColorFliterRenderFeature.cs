@@ -1,57 +1,32 @@
 using System;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public class ColorFliterRenderFeature : YanRenderFeature
+/// <summary>
+/// 颜色滤镜后处理效果的渲染特性
+/// </summary>
+public class ColorFliterRenderFeature : YanRenderFeature<ColorFliterRenderPass, RedTintSettings>
 {
-    [SerializeField] private RedTintSettings settings;
-
-    private ColorFliterRenderPass colorFliterRenderPass;
-
-    public override void Create()
+    /// <summary>
+    /// 创建颜色滤镜渲染通道
+    /// </summary>
+    protected override ColorFliterRenderPass CreatePass(Material material, RedTintSettings settings)
     {
-        if (shader == null)
-        {
-            return;
-        }
-        material = new Material(shader);
-        colorFliterRenderPass = new ColorFliterRenderPass(material, settings);
-        
-        colorFliterRenderPass.renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
-    }
-
-    public override void AddRenderPasses(ScriptableRenderer renderer,
-        ref RenderingData renderingData)
-    {
-        if (renderingData.cameraData.cameraType == CameraType.Game)
-        {
-            renderer.EnqueuePass(colorFliterRenderPass);
-        }
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        colorFliterRenderPass.Dispose();
-        #if UNITY_EDITOR
-            if (EditorApplication.isPlaying)
-            {
-                Destroy(material);
-            }
-            else
-            {
-                DestroyImmediate(material);
-            }
-        #else
-                Destroy(material);
-        #endif
+        var pass = new ColorFliterRenderPass(material, settings);
+        pass.renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
+        return pass;
     }
 }
 
 [Serializable]
 public class RedTintSettings
 {
+    /// <summary>
+    /// 滤镜强度
+    /// </summary>
     [Range(0, 1f)] public float intensity;
+    /// <summary>
+    /// 滤镜颜色
+    /// </summary>
     public Color color;
-
 }

@@ -9,10 +9,7 @@ using UnityEngine.Rendering.Universal;
 public class AsciiPass : YanRenderPass
 {
 
-
     private AsciiSettings settings;
-
-
 
     /// <summary>
     /// 构造函数
