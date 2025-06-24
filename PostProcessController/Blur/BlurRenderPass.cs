@@ -10,16 +10,16 @@ public class BlurRenderPass : ScriptableRenderPass
     private static readonly int verticalBlurId =
         Shader.PropertyToID("_VerticalBlur");
 
-    private BlurSettings defaultSettings;
+    private BlurSettings _settings;
     private Material material;
 
     private RenderTextureDescriptor blurTextureDescriptor;
     private RTHandle blurTextureHandle;
 
-    public BlurRenderPass(Material material, BlurSettings defaultSettings)
+    public BlurRenderPass(Material material, BlurSettings settings)
     {
         this.material = material;
-        this.defaultSettings = defaultSettings;
+        this._settings = settings;
 
         blurTextureDescriptor = new RenderTextureDescriptor(Screen.width,
             Screen.height, RenderTextureFormat.Default, 0);
@@ -41,14 +41,9 @@ public class BlurRenderPass : ScriptableRenderPass
         if (material == null) return;
 
         // Use the Volume settings or the default settings if no Volume is set.
-        var volumeComponent =
-            VolumeManager.instance.stack.GetComponent<CustomVolumeComponent>();
-        float horizontalBlur = volumeComponent.horizontalBlur.overrideState ?
-            volumeComponent.horizontalBlur.value : defaultSettings.horizontalBlur;
-        float verticalBlur = volumeComponent.verticalBlur.overrideState ?
-            volumeComponent.verticalBlur.value : defaultSettings.verticalBlur;
-        material.SetFloat(horizontalBlurId, horizontalBlur);
-        material.SetFloat(verticalBlurId, verticalBlur);
+       
+        material.SetFloat(horizontalBlurId, _settings.horizontalBlur);
+        material.SetFloat(verticalBlurId, _settings.verticalBlur);
     }
 
     public override void Execute(ScriptableRenderContext context,

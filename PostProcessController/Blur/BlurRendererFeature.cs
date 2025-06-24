@@ -6,7 +6,6 @@ using UnityEngine.Rendering.Universal;
 public class BlurRendererFeature : YanRenderFeature
 {
     [SerializeField] private BlurSettings settings;
-    [SerializeField] private Shader shader;
     private BlurRenderPass blurRenderPass;
 
     public override void Create()

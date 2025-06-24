@@ -19,9 +19,6 @@ public class PixelSettings
 public class PixelRenderFeature : YanRenderFeature
 {
 
-
-    [SerializeField] private Shader pixelShader;
-
     public PixelSettings pixelSettings;
 
     /// <summary>
@@ -36,9 +33,9 @@ public class PixelRenderFeature : YanRenderFeature
     /// </summary>
     public override void Create()
     {
-        if (pixelShader != null)
+        if (shader != null)
         {
-            material = new Material(pixelShader);
+            material = new Material(shader);
         }
         pixelPass = new PixelRenderPass(material, pixelSettings);
         pixelPass.renderPassEvent = RenderPassEvent.AfterRenderingSkybox;

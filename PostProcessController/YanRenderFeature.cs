@@ -6,6 +6,8 @@ using UnityEngine;
 /// </summary>
 public abstract class YanRenderFeature : ScriptableRendererFeature
 {
+
+    [SerializeField] protected Shader shader;
     /// <summary>
     /// 渲染材质
     /// </summary>

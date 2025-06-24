@@ -6,7 +6,7 @@ using UnityEngine.Rendering.Universal;
 public class ColorFliterRenderFeature : YanRenderFeature
 {
     [SerializeField] private RedTintSettings settings;
-    [SerializeField] private Shader shader;
+
     private ColorFliterRenderPass colorFliterRenderPass;
 
     public override void Create()

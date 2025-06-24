@@ -6,7 +6,6 @@ using UnityEngine.Rendering.Universal;
 public class MyDitheringRenderFeature : YanRenderFeature
 {
     [SerializeField] private MyDitheringSettings settings;
-    [SerializeField] private Shader shader;
     private MyDitheringRenderPass myDitheringRenderPass;    
 
     public override void Create()

@@ -8,8 +8,6 @@ using UnityEngine.Rendering.Universal;
 /// </summary>
 public class AsciiFeature : YanRenderFeature
 {
-
-    [SerializeField] private Shader shader;
     /// <summary>
     /// ASCII渲染通道
     /// </summary>
