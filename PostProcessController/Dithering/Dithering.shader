@@ -32,6 +32,7 @@ Shader "Custom/Dithering"
                 #pragma vertex vert
                 #pragma fragment frag
                 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+                #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
 
                 TEXTURE2D(_MainTex);
                 SAMPLER(sampler_MainTex);
