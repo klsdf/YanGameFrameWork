@@ -6,14 +6,10 @@ using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
 
-public class LarkConfig
-{
-    public string app_id;
-    public string app_secret;
-    public string app_token;
-    public string table_id;
-}
 
+/// <summary>
+/// 飞书配置的加密工具
+/// </summary>
 public class LarkConfigEncryptor : EditorWindow
 {
     string app_id = "";

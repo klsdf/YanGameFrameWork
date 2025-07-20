@@ -2,6 +2,12 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using YanGameFrameWork.TutoriaSystem;
+
+
+
+/// <summary>
+/// 遮罩UI编辑器，新手引导那个
+/// </summary>
 [CustomEditor(typeof(MaskedUI))]
 public class MaskedUIEditor : Editor
 {
