@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using System.Globalization;
 
 public static class CSVReader
 {
@@ -80,6 +81,13 @@ public static class CSVReader
         return null;
     }
 
+
+
+    /// <summary>
+    /// 读取csv文件
+    /// </summary>
+    /// <param name="csvContent">csv文件内容</param>
+    /// <returns>csv文件内容，每一行为一个字符串数组</returns>
     private static List<string[]> ParseCSV(string csvContent)
     {
         List<string[]> result = new List<string[]>();
@@ -210,5 +218,80 @@ public static class CSVReader
             }
         }
     }
+
+    /// <summary>
+    /// 读取CSV文件，返回每一行的字段字典列表
+    /// </summary>
+    /// <param name="filePath">csv文件路径</param>
+    /// <returns>每一行为一个字符串数组</returns>
+    public static List<string[]> CheckAndRead(string filePath)
+    {
+        if (!File.Exists(filePath))
+        {
+            Debug.LogError($"文件不存在: {filePath}");
+            return null;
+        }
+
+        string fileContent = File.ReadAllText(filePath, Encoding.UTF8);
+        if (fileContent == null)
+        {
+            Debug.LogError($"文件内容为空: {filePath}");
+            return null;
+        }
+        List<string[]> result = ParseCSV(fileContent);
+        if (result.Count < 1)
+        {
+            Debug.LogError("CSV文件为空");
+            return null;
+        }
+        return result;
+    }
+
+
+     public static List<Dictionary<string, object>>  ReadAsDictionaryWithType(string filePath)
+    {
+        var rows = CSVReader.CheckAndRead(filePath);
+
+        if (rows == null || rows.Count < 3) return null;
+
+        var headers = rows[0];
+        var types = rows[1];
+        var result = new List<Dictionary<string, object>>();
+
+        for (int i = 2; i < rows.Count; i++)
+        {
+            var row = rows[i];
+            var dict = new Dictionary<string, object>();
+            for (int j = 0; j < headers.Length && j < row.Length; j++)
+            {
+                string type = types[j].ToLower();
+                string value = row[j];
+                object realValue = value;
+                switch (type)
+                {
+                    case "int":
+                        if (int.TryParse(value, out int intVal)) realValue = intVal;
+                        break;
+                    case "float":
+                        if (float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out float floatVal)) realValue = floatVal;
+                        break;
+                    case "double":
+                        if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double doubleVal)) realValue = doubleVal;
+                        break;
+                    case "bool":
+                        if (bool.TryParse(value, out bool boolVal)) realValue = boolVal;
+                        break;
+                    case "string":
+                    default:
+                        realValue = value;
+                        break;
+                }
+                dict[headers[j]] = realValue;
+            }
+            result.Add(dict);
+        }
+        return result;
+    }
+
 
 }
