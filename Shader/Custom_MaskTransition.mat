@@ -38,7 +38,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _InvertMask: 0
-    - _MaskThreshold: 0
+    - _MaskThreshold: 0.187
     - _Smoothness: 0
     m_Colors: []
   m_BuildTextureStacks: []
