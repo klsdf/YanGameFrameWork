@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
+using YanGameFrameWork.Singleton;
 public class DesktopPetManager : Singleton<DesktopPetManager>
 {
 

@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using UnityEngine;
-using Sirenix.OdinInspector;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 /// <summary>
@@ -12,8 +11,8 @@ public class AIRequestExample : MonoBehaviour
     /// <summary>
     /// 应用程序的入口点。
     /// </summary>
-    /// 
-    [Button("测试")]
+    ///
+    // [Button("测试")]
     public async void Test()
     {
         // 创建AIRequest的实例
@@ -23,9 +22,9 @@ public class AIRequestExample : MonoBehaviour
         {
             // 调用SendRequestAsync方法并获取响应
             string response = await aiRequest.SendRequestAsync(
-                new AIRequestBody.Message[] { 
+                new AIRequestBody.Message[] {
                     new AIRequestBody.Message { role = "system", content = "你是一个白发红瞳美少女，你喜欢我。" },
-                    new AIRequestBody.Message { role = "user", content = "你好啊（摸摸头）" } 
+                    new AIRequestBody.Message { role = "user", content = "你好啊（摸摸头）" }
                 }
             );
 

@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using System.IO;
 
 public class CSVTest : MonoBehaviour
@@ -13,7 +12,7 @@ public class CSVTest : MonoBehaviour
             return Path.Combine(Application.streamingAssetsPath, tableName + ".csv");
         }
     }
-    [Button("测试")]
+    // [Button("测试")]
     public void TestWriteField()
     {
         var fields = new List<string> { "key", "zh", "en", "ja" };
@@ -41,7 +40,7 @@ public class CSVTest : MonoBehaviour
     //     Debug.Log("读取成功");
     // }
 
-    [Button("测试查找记录")]
+    // [Button("测试查找记录")]
     public void TestFindRecord()
     {
         var record = CSVReader.FindRecordByFieldValue(FilePath, "key", "UI_StartPanel_StartGameText");
@@ -58,7 +57,7 @@ public class CSVTest : MonoBehaviour
 
 
 
-    [Button("测试查找记录2")]
+    // [Button("测试查找记录2")]
     public void TestFindRecordByFieldValue()
     {
         var record = CSVReader.FindRecordByFieldValue(FilePath, "key", "123456");
@@ -74,7 +73,7 @@ public class CSVTest : MonoBehaviour
 
 
 
-    [Button("测试读取记录")]
+    // [Button("测试读取记录")]
     public void TestReadRecord()
     {
         string key = "key";
@@ -100,7 +99,7 @@ public class CSVTest : MonoBehaviour
 
 
 
-    [Button("测试读取列")]
+    // [Button("测试读取列")]
     public void TestReadColumn()
     {
         CSVReader.PrintAllValuesOfField(FilePath, "key");

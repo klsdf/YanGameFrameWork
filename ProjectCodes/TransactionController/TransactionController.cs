@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
-using YanGameFrameWork.Singleton;   
-using Sirenix.OdinInspector;
+using YanGameFrameWork.Singleton;
+// using Sirenix.OdinInspector;
 using System.Collections;
 using System;
 
@@ -10,7 +10,7 @@ public class TransactionController : Singleton<TransactionController>
 {
     // 通过Inspector拖拽赋值，或在代码中赋值
     public Image maskImage;
-    
+
     private Material maskMaterial;
 
     // 动画时长（可调整）
@@ -25,7 +25,7 @@ public class TransactionController : Singleton<TransactionController>
     /// <summary>
     /// 触发遮罩阈值动画
     /// </summary>
-    [Button("触发遮罩阈值动画")]
+    // [Button("触发遮罩阈值动画")]
     public void PlayMaskThresholdAnim(Action onMaskComplete,Action onMaskDisappear)
     {
         StopAllCoroutines();

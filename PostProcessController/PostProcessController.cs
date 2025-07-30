@@ -1,7 +1,6 @@
 using UnityEngine;
 using YanGameFrameWork.Singleton;
 using UnityEngine.Rendering.Universal;
-using Sirenix.OdinInspector;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
 using System;
@@ -58,7 +57,7 @@ namespace YanGameFrameWork.PostProcess
         //     if (rendererData == null)
         //     {
         //         Debug.LogError("Renderer Data未初始化，请先调用Initialize()");
-               
+
         //         return;
         //     }
 

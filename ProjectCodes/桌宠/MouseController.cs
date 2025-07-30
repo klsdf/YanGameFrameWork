@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Diagnostics;
+using YanGameFrameWork.Singleton;
 
 
 
@@ -284,9 +285,9 @@ public class MouseController : Singleton<MouseController>
             new MyKeyCode("m"), // 'm'
             new MyKeyCode("l"), // 'l'
             new MyKeyCode("\"",true), // '"'
-            new MyKeyCode("return"), 
-            
-            
+            new MyKeyCode("return"),
+
+
         };
 
         // 使用这个序列来模拟按键
