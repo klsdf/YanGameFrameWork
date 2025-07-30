@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
-using Sirenix.OdinInspector;
+
 
 namespace YanGameFrameWork.LarkAdapter
 {
@@ -35,7 +35,7 @@ namespace YanGameFrameWork.LarkAdapter
 
     public class LarkTest : MonoBehaviour
     {
-        [Button("发送")]
+        // [Button("发送")]
         public async void Send(string feedbackContent)
         {
             string filePath = Application.dataPath + "/StreamingAssets/test.png";
@@ -53,7 +53,7 @@ namespace YanGameFrameWork.LarkAdapter
 
 
 
-        [Button("发送图片测试")]
+        // [Button("发送图片测试")]
         public async void SendImageTest()
         {
             string filePath = Application.dataPath + "/StreamingAssets/test.png";
@@ -64,14 +64,14 @@ namespace YanGameFrameWork.LarkAdapter
 
 
 
-        [Button("新增字段")]
+        // [Button("新增字段")]
         public async void AddField(string fieldName)
         {
             string result = await LarkRequester.AddFieldAsync(fieldName, FieldType.Text);
             Debug.Log(result);
         }
 
-        [Button("获取所有字段")]
+        // [Button("获取所有字段")]
         public async void GetField()
         {
             var fields = await LarkRequester.GetAllFieldAsync();
@@ -85,7 +85,7 @@ namespace YanGameFrameWork.LarkAdapter
 
 
 
-        [Button("删除字段")]
+        // [Button("删除字段")]
         public async void DeleteField(string fieldName)
         {
             string result = await LarkRequester.DeleteFieldByNameAsync(fieldName);
@@ -93,7 +93,7 @@ namespace YanGameFrameWork.LarkAdapter
         }
 
 
-        [Button("同步字段")]
+        // [Button("同步字段")]
         public async void SyncFields()
         {
             var tableStructConfig = new TableStructConfig(new List<TableStructConfigItem> {
@@ -105,7 +105,7 @@ namespace YanGameFrameWork.LarkAdapter
             await LarkRequester.SyncFieldsWithConfigAsync(tableStructConfig);
         }
 
-        [Button("获取所有记录")]
+        // [Button("获取所有记录")]
         public async void GetAllRecordsTest()
         {
             var records = await LarkRequester.GetAllRecordsAsync();
@@ -116,7 +116,7 @@ namespace YanGameFrameWork.LarkAdapter
             }
         }
 
-        [Button("获取tenant_access_token")]
+        // [Button("获取tenant_access_token")]
         public async void GetTenantAccessTokenTest()
         {
             string tenantAccessToken = await LarkRequester.GetTenantAccessTokenAsync();
