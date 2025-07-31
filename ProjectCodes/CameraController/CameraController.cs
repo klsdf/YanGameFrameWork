@@ -2,6 +2,8 @@ using UnityEngine;
 using YanGameFrameWork.Singleton;
 using System.Collections;
 using System;
+using System.Collections.Generic;
+
 namespace YanGameFrameWork.CameraController
 {
 
@@ -19,9 +21,16 @@ namespace YanGameFrameWork.CameraController
         #region 拖拽相关参数
         public bool IsEnableDarg = true;
 
+        [Header("拖动控制按键")]
+        [Tooltip("选择使用左键进行拖动控制")]
+        public bool useLeftMouseButton = false; // 左键拖动
+        [Tooltip("选择使用右键进行拖动控制")]
+        public bool useRightMouseButton = true; // 右键拖动
+
         public float dragSpeed = 2.0f;
         private Vector3 _dragOrigin;
         private bool _isDragging = false;
+
 
         [Header("最小X")]
         public float minX = -10.0f;
@@ -31,6 +40,9 @@ namespace YanGameFrameWork.CameraController
         public float minY = -10.0f;
         [Header("最大Y")]
         public float maxY = 10.0f;
+
+
+        public List<Func<bool>> canDragEvents = new List<Func<bool>>();
 
         #endregion
 
@@ -75,7 +87,7 @@ namespace YanGameFrameWork.CameraController
 
 
 
-        public bool isCinematicMode = false;
+        private bool isCinematicMode = false;
 
         void Start()
         {
@@ -127,42 +139,115 @@ namespace YanGameFrameWork.CameraController
             if (!IsEnableDarg || isCinematicMode)
                 return;
 
-            // 检测鼠标右键按下
-            if (Input.GetMouseButtonDown(1))
+            // 检测左键或右键按下
+            bool leftMouseDown = useLeftMouseButton && Input.GetMouseButtonDown(0);
+            bool rightMouseDown = useRightMouseButton && Input.GetMouseButtonDown(1);
+
+            if (leftMouseDown || rightMouseDown)
             {
+                // 检查是否允许拖拽
+                if (CanDrag() == false)
+                {
+                    return;
+                }
+
                 _dragOrigin = controlCamera.ScreenToWorldPoint(Input.mousePosition);
                 _isDragging = true;
                 return;
             }
 
-            // 检测鼠标右键松开
-            if (Input.GetMouseButtonUp(1))
+            // 检测左键或右键松开
+            bool leftMouseUp = useLeftMouseButton && Input.GetMouseButtonUp(0);
+            bool rightMouseUp = useRightMouseButton && Input.GetMouseButtonUp(1);
+
+            if (leftMouseUp || rightMouseUp)
             {
                 _isDragging = false;
             }
 
-            // 检测鼠标右键按住并拖动
-            if (_isDragging)
-            {
+            // 检测左键或右键按住并拖动
+            bool leftMouseHeld = useLeftMouseButton && Input.GetMouseButton(0);
+            bool rightMouseHeld = useRightMouseButton && Input.GetMouseButton(1);
 
-                // print("IsEnableDarg:" + IsEnableDarg);
+            if (_isDragging && (leftMouseHeld || rightMouseHeld))
+            {
                 Vector3 currentPos = controlCamera.ScreenToWorldPoint(Input.mousePosition);
                 Vector3 diff = _dragOrigin - currentPos;
                 Vector3 newPosition = controlCamera.transform.position + diff;
 
-                // 限制摄像机位置在边界内
-                newPosition.x = Mathf.Clamp(newPosition.x, minX, maxX);
-                newPosition.y = Mathf.Clamp(newPosition.y, minY, maxY);
-
-                controlCamera.transform.position = newPosition;
+                controlCamera.transform.position = ConstrainCameraPosition(newPosition);
                 _dragOrigin = controlCamera.ScreenToWorldPoint(Input.mousePosition);
                 // TextEffectController.Instance.ShouldUpdateTargetPosition = true;
             }
         }
 
 
+        public void RegisterCanDragEvent(Func<bool> canDragEvent)
+        {
+            canDragEvents.Add(canDragEvent);
+        }
+
+
+        /// <summary>
+        /// 只要有一个事件返回false,则不可以拖拽
+        /// </summary>
+        /// <returns></returns>
+        public bool CanDrag()
+        {
+            bool canDrag = true;
+            foreach (var canDragEvent in canDragEvents)
+            {
+                if (canDragEvent() == false)
+                {
+                    canDrag = false;
+                    break;
+                }
+            }
+            return canDrag;
+        }
+
+
+        /// <summary>
+        /// 限制摄像机位置在边界内
+        /// </summary>
+        /// <param name="newPosition">摄像机新位置</param>
+        /// <returns></returns>
+        private Vector3 ConstrainCameraPosition(Vector3 newPosition)
+        {
+
+            // 计算正交相机的视野宽高
+            float camHeight = controlCamera.orthographicSize * 2f;
+            float camWidth = camHeight * controlCamera.aspect;
+
+            float halfCamWidth = camWidth / 2f;
+            float halfCamHeight = camHeight / 2f;
+            // 限制摄像机位置在边界内
+            if ((newPosition.x - halfCamWidth) < minX)
+            {
+                newPosition.x = minX + halfCamWidth;
+            }
+
+            if ((newPosition.x + halfCamWidth) > maxX)
+            {
+                newPosition.x = maxX - halfCamWidth;
+            }
+
+            if ((newPosition.y - halfCamHeight) < minY)
+            {
+                newPosition.y = minY + halfCamHeight;
+            }
+
+            if ((newPosition.y + halfCamHeight) > maxY)
+            {
+                newPosition.y = maxY - halfCamHeight;
+            }
+
+            return newPosition;
+        }
+
         private void Zoom()
         {
+
             if (!IsEnableZoom || isCinematicMode)
                 return;
 
@@ -170,37 +255,23 @@ namespace YanGameFrameWork.CameraController
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (scroll != 0.0f)
             {
-                if (controlCamera.orthographic)
-                {
-                    // 使用正交相机大小来实现缩放效果
-                    float orthographicSize = controlCamera.orthographicSize;
-                    orthographicSize -= scroll * zoomSpeed * 5f; // 增大缩放系数使效果更明显
-                    orthographicSize = Mathf.Clamp(orthographicSize, 2f, 20f); // 设置合适的缩放范围
-                    controlCamera.orthographicSize = orthographicSize;
-                }
-                else
-                {
-                    // 使用透视相机的视野来实现缩放效果
-                    float fieldOfView = controlCamera.fieldOfView;
-                    fieldOfView -= scroll * zoomSpeed * 5f; // 增大缩放系数使效果更明显
-                    fieldOfView = Mathf.Clamp(fieldOfView, 15f, 90f); // 设置合适的缩放范围
-                    controlCamera.fieldOfView = fieldOfView;
-                }
+                // 使用正交相机大小来实现缩放效果
+                float orthographicSize = controlCamera.orthographicSize;
+                orthographicSize -= scroll * zoomSpeed * 5f; // 增大缩放系数使效果更明显
+                orthographicSize = Mathf.Clamp(orthographicSize, 2f, 20f); // 设置合适的缩放范围
+                controlCamera.orthographicSize = orthographicSize;
+                controlCamera.transform.position = ConstrainCameraPosition(controlCamera.transform.position);
+                // TextEffectController.Instance.ShouldUpdateTargetPosition = true;
             }
+
         }
 
         void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
-            float screenX = Screen.width;
-            float screenY = Screen.height;
-
-
-            //把screenX/2,screenY/2转为世界坐标
-            // Vector3 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(screenX/2, screenY/2, 0));
-
-
-            Gizmos.DrawWireCube(new Vector3(0, 0, 0), new Vector3(maxX - minX, maxY - minY, 0));
+            Vector3 center = new Vector3((minX + maxX) / 2f, (minY + maxY) / 2f, 0);
+            Vector3 size = new Vector3(maxX - minX, maxY - minY, 0);
+            Gizmos.DrawWireCube(center, size);
         }
 
         private Camera GetMainCamera()
@@ -303,6 +374,8 @@ namespace YanGameFrameWork.CameraController
 
 
 
+
+
         private IEnumerator MoveToTargetCoroutine(Transform targetTransform, float duration, MoveCurveType curveType, Action onComplete = null)
         {
             Vector3 startPosition = controlCamera.transform.position;
@@ -399,8 +472,6 @@ namespace YanGameFrameWork.CameraController
 
             onComplete?.Invoke();
         }
-
-
     }
 
 }

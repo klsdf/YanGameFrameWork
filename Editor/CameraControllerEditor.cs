@@ -31,6 +31,18 @@ public class CameraControllerEditor : Editor
         {
             EditorGUI.indentLevel++;
             EditorGUILayout.LabelField("拖拽参数", EditorStyles.boldLabel);
+
+            // 添加鼠标按键选择
+            EditorGUILayout.LabelField("拖动控制按键", EditorStyles.boldLabel);
+            cameraController.useLeftMouseButton = EditorGUILayout.Toggle("使用左键拖动", cameraController.useLeftMouseButton);
+            cameraController.useRightMouseButton = EditorGUILayout.Toggle("使用右键拖动", cameraController.useRightMouseButton);
+
+            // 如果没有选择任何按键，显示警告
+            if (!cameraController.useLeftMouseButton && !cameraController.useRightMouseButton)
+            {
+                EditorGUILayout.HelpBox("警告：没有选择任何拖动按键，相机将无法拖动！", MessageType.Warning);
+            }
+
             cameraController.dragSpeed = EditorGUILayout.FloatField("拖拽速度", cameraController.dragSpeed);
             cameraController.minX = EditorGUILayout.FloatField("最小X", cameraController.minX);
             cameraController.maxX = EditorGUILayout.FloatField("最大X", cameraController.maxX);
@@ -74,10 +86,7 @@ public class CameraControllerEditor : Editor
             EditorGUI.indentLevel--;
         }
 
-        // 禁用编辑功能，使其仅用于调试显示
-        GUI.enabled = false;
-        cameraController.isCinematicMode = EditorGUILayout.Toggle("是否在电影模式中", cameraController.isCinematicMode);
-        GUI.enabled = true;
+
 
         // 为调试参数和函数添加背景
         GUIStyle debugStyle = new GUIStyle(GUI.skin.box);
