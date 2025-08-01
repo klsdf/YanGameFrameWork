@@ -19,7 +19,7 @@ public class TweenExample : MonoBehaviour
             () => Debug.Log("Tween完成")
         );
     }
-    
+
     [Button("AlphaTweenTest2")]
     public void AlphaTweenTest2()
     {

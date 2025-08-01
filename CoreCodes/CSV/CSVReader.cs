@@ -220,7 +220,7 @@ public static class CSVReader
     }
 
     /// <summary>
-    /// 读取CSV文件，返回每一行的字段字典列表
+    /// 读取CSV文件的路径，返回每一行的字段字典列表
     /// </summary>
     /// <param name="filePath">csv文件路径</param>
     /// <returns>每一行为一个字符串数组</returns>
@@ -248,7 +248,21 @@ public static class CSVReader
     }
 
 
-     public static List<Dictionary<string, object>>  ReadAsDictionaryWithType(string filePath)
+    public static List<string[]> ReadFile(string fileContent)
+    {
+        List<string[]> result = ParseCSV(fileContent);
+        if (result.Count < 1)
+        {
+            Debug.LogError("CSV文件为空");
+            return null;
+        }
+        return result;
+    }
+
+
+
+
+    public static List<Dictionary<string, object>> ReadAsDictionaryWithType(string filePath)
     {
         var rows = CSVReader.CheckAndRead(filePath);
 

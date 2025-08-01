@@ -6,10 +6,25 @@ using System;
 
 public static class ConfigTableReader
 {
-    public static List<T> ReadConfigTable<T>(string filePath) where T : new()
+
+
+    public static List<T> ReadConfigTableByPath<T>(string filePath) where T : new()
     {
         var rows = CSVReader.CheckAndRead(filePath);
+        return ParseRows<T>(rows);
+    }
 
+    public static List<T> ReadConfigTableByFile<T>(string fileContent) where T : new()
+    {
+        var rows = CSVReader.ReadFile(fileContent);
+        return ParseRows<T>(rows);
+    }
+
+
+
+
+    private static List<T> ParseRows<T>(List<string[]>  rows) where T : new()
+    {
 
         // foreach (var row in rows)
         // {
