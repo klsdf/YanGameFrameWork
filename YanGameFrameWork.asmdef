@@ -10,7 +10,8 @@
         "Unity.Addressables",
         "Unity.Localization",
         "Unity.RenderPipeline.Universal.ShaderLibrary",
-        "Unity.Burst"
+        "Unity.Burst",
+        "UnityEngine.UI"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

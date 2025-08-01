@@ -12,28 +12,28 @@ public interface IExpression
 public class Context
 {
 
-    private CardData _cardData;
+    // private CardData _cardData;
 
-    public Context(CardData cardData)
+    public Context( )
     {
-        _cardData = cardData;
+        // _cardData = cardData;
     }
 
 
 
-    public string GetCardBaseInfo(string fieldName)
-    {
-        object value = GetFieldValue(_cardData, fieldName);
-        if (value != null)
-        {
-            return value.ToString();
-        }
-        else
-        {
-            Debug.LogError("没有找到值：" + fieldName);
-            return "";
-        }
-    }
+    // public string GetCardBaseInfo(string fieldName)
+    // {
+    //     object value = GetFieldValue(_cardData, fieldName);
+    //     if (value != null)
+    //     {
+    //         return value.ToString();
+    //     }
+    //     else
+    //     {
+    //         Debug.LogError("没有找到值：" + fieldName);
+    //         return "";
+    //     }
+    // }
 
 
     private object GetFieldValue(object obj, string fieldName)
@@ -44,11 +44,11 @@ public class Context
             return null;
         }
 
-        if (obj is not CardData)
-        {
-            Debug.LogError("对象不是CardData，无法获取字段值。");
-            return null;
-        }
+        // if (obj is not CardData)
+        // {
+        //     Debug.LogError("对象不是CardData，无法获取字段值。");
+        //     return null;
+        // }
 
         var type = obj.GetType();
         var fieldInfo = type.GetField(fieldName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
@@ -110,7 +110,7 @@ public class StyleExpression : IExpression
 
     public string Interpret(Context context)
     {
-        string color = KeyWordGetter.GetColorString(_text);
+        string color = "bfc";
         _text = context.GetLinkStr(_text);
         return $"<color=#{color}>{_text}</color>";
     }
@@ -130,7 +130,7 @@ public class NumberExpression : IExpression
 
     public string Interpret(Context context)
     {
-        string color = KeyWordGetter.GetColorString("数字");
+        string color = "bfc";
         return $"<color=#{color}>{_text}</color>";
     }
 
@@ -149,10 +149,8 @@ public class IconExpression : IExpression
 
     public string Interpret(Context context)
     {
-        string color = KeyWordGetter.GetColorString(_text);
-        string spriteName = KeyWordGetter.GetKeyWordSpriteName(_text);
-        _text = context.GetLinkStr(_text);
-        return $"<sprite name=\"{spriteName}\"><color=#{color}>{_text}</color>";
+        string color = "afc";
+        return $"<color=#{color}>{_text}</color>";
     }
 }
 
@@ -206,8 +204,8 @@ public class VariableExpression : IExpression
 
     public string Interpret(Context context)
     {
-        string color = KeyWordGetter.GetColorString("数字");
-        return $"<color=#{color}>{context.GetCardBaseInfo(_variableName)}</color>";
+        string color = "bbc";
+        return $"<color=#{color}>{_variableName}</color>";
     }
 }
 
