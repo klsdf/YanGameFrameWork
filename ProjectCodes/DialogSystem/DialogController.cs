@@ -23,7 +23,6 @@ namespace YanGameFrameWork.DialogSystem
         private List<DialogBlock> _dialogBlocks = new List<DialogBlock>();
 
 
-
         [SerializeField]
         private bool _isTyping = false;
 
