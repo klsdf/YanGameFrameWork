@@ -6,6 +6,10 @@ using System;
 /// <summary>
 /// 角色控制器，处理玩家的移动、跳跃和交互等行为
 /// </summary>
+
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(Animator))]
 public class Character2DController : MonoBehaviour
 {
     [Header("Movement Settings")]
@@ -95,7 +99,7 @@ public class Character2DController : MonoBehaviour
 
         // 检测是否在移动
         isMoving = (moveDirection != Vector2.zero) && !isJumping;
-        
+
         // 处理移动
         HandleMovement(moveDirection);
         // 处理动画
@@ -141,7 +145,7 @@ public class Character2DController : MonoBehaviour
     private void UpdateFootstepSound()
     {
         if (!enableFootstepSound) return;
-        
+
         if (isMoving && !footstepAudioSource.isPlaying)
         {
             footstepAudioSource.Play();
