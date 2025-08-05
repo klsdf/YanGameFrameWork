@@ -32,7 +32,24 @@
 1. 打开项目的git仓库
 2. 添加[YanGameFrameWork](https://github.com/klsdf/YanGameFrameWork)的submodule到Asserts内的任意文件夹下
 
+
+
+
+
 #### 安装成功了吗？
+
+
+
+
+### 引入一些unity自带的框架
+
+
+
+1. 引入TMP
+2. 引入Localization
+3. 引入Newton 的json
+
+
 
 ### 使用
 
@@ -42,6 +59,7 @@
    ```c#
    YanGF.Debug.Log("测试", "Hello World!");
    ```
+
 
 ## 核心模块
 
@@ -91,12 +109,23 @@ YanGameFramework的事件系统是一个基于发布者-订阅者模式的事件
 - 提供轻量级的事件通信机制，支持泛型事件参数传递。
 - 支持优先级事件监听和一次性事件订阅。
 
+
+#### 注册事件
+
 ```c#
+
 // 注册无参数事件
 EventSystemController.Instance.AddListener("GameStart", OnGameStart, 1);
 
 // 注册一次性事件
 EventSystemController.Instance.AddOnceListener("LevelComplete", OnLevelComplete);
+
+```
+
+#### 触发事件
+
+
+```c#
 
 // 触发事件
 EventSystemController.Instance.TriggerEvent("GameStart");
@@ -104,6 +133,9 @@ EventSystemController.Instance.TriggerEvent("GameStart");
 // 移除事件
 EventSystemController.Instance.RemoveListener("GameStart", OnGameStart);
 ```
+
+
+
 
 ### 状态机系统（FSM System）
 
@@ -121,9 +153,27 @@ EventSystemController.Instance.RemoveListener("GameStart", OnGameStart);
 
 - 提供单元测试的断言功能，支持多种断言方法。
 
+
+
 ### Tween系统（Tween System）
 
-- 提供Tween的实现，支持多种Tween类型。
+tween用于实现补间动画
+
+
+
+#### 同步函数的Tween
+
+TweenController.Tween方法
+
+| 参数               | 类型                          | 描述                     | 额外信息 |
+| ---------------- | --------------------------- | ---------------------- | ---- |
+| target           | T                           | 需要被Tween的对象            |      |
+| propertySelector | Expression<Func<T, TValue>> | 需要写一个lambda，返回需要被修改的属性 |      |
+| endValue         | TValue                      | 把这个属性的值改为什么            |      |
+| duration         | float                       | 持续时间，也就是花多久把这个值改为目标值   |      |
+| onComplete       | Action                      | 结束时的回调函数               | 可空类型 |
+
+
 
 ```csharp
     public void AlphaTweenTest()
@@ -137,6 +187,14 @@ EventSystemController.Instance.RemoveListener("GameStart", OnGameStart);
         );
     }
 ```
+
+
+
+#### 异步函数的Tween
+
+
+
+
 
 ### UI系统（UI System）
 
@@ -178,20 +236,117 @@ public class StaffPanel : UIPanelBase
 
 ```csharp
 
-        staffButton.onClick.AddListener(() =>
-        {
-            YanGF.UI.PushPanel<StaffPanel>();
-        });
+staffButton.onClick.AddListener(() =>
+{
+	YanGF.UI.PushPanel<StaffPanel>();
+});
 
 ```
 
 
 
+#### 隐藏一个UI
+
+```c#
+closeButton.onClick.AddListener(() =>
+{
+	YanGF.UI.PopPanel<StaffPanel>();
+});
+```
+
 
 
 ## 项目模块
 
-### 飞书反馈
+
+
+### 场景管理
+
+此场景非彼场景
+
+
+
+#### 注册场景
+
+
+
+#### 移动到场景
+
+
+
+
+
+
+
+
+
+### 读表工具（ConfigTableReader）
+
+
+#### 数据表格式
+
+本框架的数据格式形如：
+
+- 第一行：变量名，需要和代码内保持一致
+- 第二行：变量类型
+- 第三行：注释，默认不会进行处理
+
+之后都是数据行
+
+
+
+
+| name   | age   | description        |
+| ------ | ----- | ------------------ |
+| string | int   | string             |
+| 萝莉的姓名  | 小萝莉年龄 | 小萝莉的描述             |
+| 小樱     | 12    | 活泼可爱的粉色头发萝莉，喜欢收集卡片 |
+| 小爱     | 10    | 温柔的金发萝莉，总是带着微笑     |
+| 小美     | 11    | 聪明的蓝发萝莉，擅长解谜游戏     |
+| 小萌     | 9     | 可爱的双马尾萝莉，喜欢吃甜点     |
+| 小雅     | 13    | 优雅的黑发萝莉，喜欢读书和音乐    |
+| 小莉     | 8     | 调皮的红发萝莉，总是充满活力     |
+
+
+
+#### 读取数据表
+
+
+1. 编写数据类
+```c#
+class LoliData
+{
+	public string name;
+	public int age;
+	public string description;
+}
+```
+
+
+2. 创建csv并放到Assets的StreamingAssets中
+3. 使用数据类作为泛型，来读取数据
+
+```c#
+
+[Button("测试读取配置表通过路径")]
+public void TestReadConfigTableByPath()
+{
+	string filePath = Path.Combine(Application.streamingAssetsPath, "LoliData.csv");
+	List<LoliData> data = ConfigTableReader.ReadConfigTableByPath<LoliData>(filePath);
+	foreach (var item in data)
+	{
+		Debug.Log($"name: {item.name}, age: {item.age}, description: {item.description}");
+	}
+}
+```
+
+
+### 飞书反馈（GlobalDebugFeedbackController）
+
+
+
+
+
 
 ### 成就系统（Achievement System）
 
@@ -199,14 +354,171 @@ public class StaffPanel : UIPanelBase
 - 支持事件型和进度型成就。
 - 提供成就的UI展示和提示功能。
 
+
+
+#### 定义成就
+
+
+- EventAchievement：事件型成就，用于在某个事件触发时触发
+- ProgressAchievement：进度型成就，用于达成某个进度时触发
+
+
+
+
+| 参数       | 类型     | 描述                         | 额外信息 |
+| -------- | ------ | -------------------------- | ---- |
+| key      | string | 成就的key                     |      |
+| isHide   | bool   | 是否是需要隐藏的成就，也就是没解锁的时候需不需要隐藏 |      |
+| onUnlock | Action | 当解锁时触发的回调                  | 可空   |
+
+
+
+```c#
+ YanGF.Achievement.RegisterAchievement(new EventAchievement(
+		"Start",
+		false, () =>
+	{
+		print("梦的开始");
+	}));
+	YanGF.Achievement.RegisterAchievement(
+		new ProgressAchievement(
+			"Money1",
+			100, false, () =>
+	{
+		print("靓仔，要来点拼好饭吗？");
+	}));
+
+
+
+```
+
+
+#### 触发成就
+
+事件型成就传入key即可
+
+进度型成就要传入key和**增量**，注意这个是增量捏
+
+
+
+```c#
+YanGF.Achievement.UpdateOrUnlockAchievement("Start");
+
+YanGF.Achievement.UpdateOrUnlockAchievement("Money1", 10);
+
+
+
+
+```
+
+
+
+
+
+
+
 ### AI请求
+
+
+
 
 ### 音频管理系统（Audio System）
 
 - 提供音频资源的统一管理和控制接口。
 - 支持背景音乐和音效的音量控制、淡入淡出等功能。
 
+
+
+#### 播放一个循环的音频（PlayLoop）
+
+
+```c#
+YanGF.Audio.PlayLoop(clip);
+```
+
+
+
+
+#### 播放一个单次循环的音频（PlayOnce）
+
+```c#
+YanGF.Audio.PlayOnce(clip);
+```
+
+
+
+
+#### 设置主音量
+
+音量值（通常在-80到20之间）
+
+```c#
+YanGF.Audio.SetMasterVolume(mappedValue);
+```
+
+
+
+
 ### 可等待协程（AwaitableCoroutine）
+
+
+
+#### 将协程转为Task
+
+
+
+```c#
+
+IEnumerator TaskA()
+{
+	Debug.Log("A 开始");
+	yield return new WaitForSeconds(1);
+	Debug.Log("A 结束");
+}
+
+IEnumerator TaskB()
+{
+	Debug.Log("B 开始");
+	yield return new WaitForSeconds(2);
+	Debug.Log("B 结束");
+}
+
+IEnumerator TaskC()
+{
+	Debug.Log("C 开始");
+	yield return new WaitForSeconds(1);
+	Debug.Log("C 结束");
+}
+
+async void Start()
+{
+	Debug.Log("开始执行任务序列");
+
+	await CoroutineTaskRunner.Run(TaskA());
+	await CoroutineTaskRunner.Run(TaskB());
+	await CoroutineTaskRunner.Run(TaskC());
+	await StartAsync();
+
+	Debug.Log("所有任务完成了喵~");
+}
+
+```
+
+#### 将Task转为协程
+
+
+
+```c#
+
+TaskToCoroutine.WaitForTask(OpenDialogAsync());
+private async Task OpenDialogAsync()
+{
+
+}
+
+```
+
+
 
 ### 摄像机控制（CameraController）
 
@@ -217,17 +529,128 @@ public class StaffPanel : UIPanelBase
 - 拖动
 - 缩放
 
+
+#### 震动摄像机（ShakeCamera）
+
+| 参数        | 类型    | 描述  | 额外信息 |
+| --------- | ----- | --- | ---- |
+| duration  | float |     |      |
+| magnitude | float |     |      |
+
+
+
+```c#
+
+ YanGF.Camera.ShakeCamera(0.3f, 0.1f);
+
+```
+
+
+#### 注册拖拽的条件（RegisterCanDragEvent）
+
+在开启拖拽摄像机的选项后，如果希望手动设置拖拽的条件，可以使用`RegisterCanDragEvent`，返回true时可以被拖拽，false不可以被拖拽
+
+```c#
+   YanGF.Camera.RegisterCanDragEvent(() =>
+       {
+
+           if (Util.IsPointerOverUI(gameObject))
+           {
+               print("现在还不能拖拽哦,因为鼠标在商店卡牌UI上");
+               return false;
+           }
+
+           return true;
+       });
+```
+
+
+
+
+#### 移动摄像机（MoveToTarget）
+
+```c#
+  YanGF.Camera.MoveToTarget(target, 0.3f, YanGameFrameWork.CameraController.MoveCurveType.Linear, () =>
+        {
+            YanGF.Camera.ZoomToTarget(targetSize: 5, duration: 0.1f, onComplete: () =>
+            {
+                YanGF.Tutoria.FocusOn(new List<Transform> { target }, () =>
+                {
+                    //Time.timeScale = 0;
+
+                    if (YanGF.Scene.ActiveScene == YanGF.Scene.GetSceneObjByType<SceneGame>())
+                    {
+                        YanGF.Camera.IsEnableZoom = false;
+                        YanGF.Camera.IsEnableDarg = false;
+                    }
+
+                });
+            });
+
+        });
+```
+
+
+
+
+
+#### 缩放摄像机（ZoomToTarget）
+
+
+```c#
+
+YanGF.Camera.ZoomToTarget(targetSize: 5, duration: 0.1f, onComplete: () =>
+            {
+                YanGF.Tutoria.FocusOn(new List<Transform> { target }, () =>
+                {
+                    //Time.timeScale = 0;
+
+                    if (YanGF.Scene.ActiveScene == YanGF.Scene.GetSceneObjByType<SceneGame>())
+                    {
+                        YanGF.Camera.IsEnableZoom = false;
+                        YanGF.Camera.IsEnableDarg = false;
+                    }
+
+                });
+            });
+```
+
+
 ### 本地化系统（Localization System）
 
 - 提供了YanGF自己实现的一套基于csv的本地化方案
 - 兼容unity自己的本地化方案
 - 在设计上采用了策略模式，开发者可以轻松切换不同的本地化方案
 
+
+
+
+
+#### 翻译文本（Translate）
+
+
+```C#
+ string text1 =YanGF.Localization.Translate("UIPanel_TopBar_StoreHouseText","仓库已有：");
+```
+
+
+#### 订阅翻译变化事件（OnLanguageChanged）
+
+当语言变更时，会调用这个函数。
+
+```c#
+   YanGF.Localization.OnLanguageChanged += UpdateUI;
+```
+
+
 ### 对象池系统（Object Pool System）
 
 - 本对象池是对unity内置对象池的二次封装，可以同时管理多个不同种类的对象池
 
 ### 对话系统（DialogSystem）
+
+
+
 
 ### 场景控制系统（Scene Control System）
 
@@ -238,6 +661,22 @@ public class StaffPanel : UIPanelBase
 - 本部分的API设计参考了[Easy Save - The Complete Save Data &amp; Serializer System](https://assetstore.unity.com/packages/tools/utilities/easy-save-the-complete-save-game-data-serializer-system-768)‘
 - 开发者只需简单地调用 `YanGF.Save.Save<int>("test", 1);`即可轻松存储1这个数值到存档的test字段
 
+
+#### 存储存档（Save）
+
+```c#
+string testString = "测试字符串";
+YanGF.Save.Save("testString", testString, "TestSave");
+```
+
+
+#### 读取存档（Load）
+
+```c#
+string result = YanGF.Save.Load<string>("testString", "默认值", "TestSave");
+```
+
+
 ### 实用工具库（Practical Library）
 
 - 包含常用的代码模板和工具类，提升开发效率。
@@ -246,9 +685,13 @@ public class StaffPanel : UIPanelBase
 
 - 提供各种实用的开发辅助工具，简化开发流程。
 
+
 ### 资源管理系统（ResourceControlSystem）
 
 - 提供资源的管理和加载功能，支持多种资源类型。
+
+
+
 
 ### 数据管理系统 （ModelControlSystem）
 
@@ -260,13 +703,140 @@ YanGameFramework的模块控制系统是一个用于管理游戏数据模块的�
 - 实现模块数据变化的监听机制
 - 提供数据的管理和加载功能，支持多种数据类型。
 
+
+#### 定义数据类
+
+编写数据类，需要继承基类。别忘了在set里面写一下NotifyDataChanged
+
+```c#
+
+[Serializable]
+public class GameRuntimeData : YanModelBase
+{
+	private int _money;
+	public int Money
+	{
+		get => _money;
+		set
+		{
+			_money = value;
+			NotifyDataChanged(this);
+		}
+	}
+
+	public override YanModelBase Clone(YanModelBase model)
+	{
+		GameRuntimeData data = model as GameRuntimeData;
+		this._money = data._money;
+		return this;
+	}
+}
+
+
+```
+
+
+
+#### 读取数据
+
+
+
+ 使用GetModel获得这个model
+ 
+```c#
+public int GetMoney()
+{
+	return YanGF.Model.GetModel<GameRuntimeData>().Money;
+}
+```
+
+
+
+
+
 ### 教程系统（Tutorial System）
 
 - 内置了一个非常通用的聚焦UI，可以快速实现游戏中聚焦某一个对象的效果。
 
+
+
+#### 聚焦对象（FocusOn）
+
+聚焦对象是指，出现一个遮罩画面，将除了需要被聚焦物体的部分全部遮住的效果。
+
+
+| 参数        | 类型               | 描述                                      | 额外信息 |
+| --------- | ---------------- | --------------------------------------- | ---- |
+| targets   | List\<Transform> | 需要被遮罩的物体，注意要传入有大小的transfrom，否则会圈出大小为0的圈 |      |
+| pauseGame | Action           | 当聚焦对象时，往往会暂停游戏，暂停函数的方法需要自行指定            |      |
+
+
+
+```c#
+YanGF.Tutoria.FocusOn(new List<Transform> { _tutoriaTarget }, () =>
+{
+	Time.timeScale = 0;
+	YanGF.Camera.IsEnableZoom = false;
+	YanGF.Camera.IsEnableDarg = false;
+
+});
+```
+
+
+
+
+#### 隐藏引导（Hide）
+
+
+| 参数         | 类型     | 描述                           | 额外信息 |
+| ---------- | ------ | ---------------------------- | ---- |
+| resumeGame | Action | 当引导消失后，往往会继续游戏，继续函数的方法需要自行指定 |      |
+
+
+
+```c#
+
+ YanGF.Tutoria.Hide(() =>
+        {
+            Time.timeScale = 1;
+
+            YanGF.Camera.IsEnableZoom = true;
+            YanGF.Camera.IsEnableDarg = true;
+        });
+```
+
+
+
+
+
+
+
+
+### 技能系统
+
+
+
+### 鼠标状态控制（CursorManager）
+
+
+
+
+
+
+
+
 ## 编辑器和特性
 
 本部分的设计参考了Odin，让所有的函数都可以加上[Button]特性，从而在面板中出现一个可以点击的按钮。同时按钮会根据当前函数的参数而动态增加输入框。
+
+### Button特性
+
+
+
+
+
+
+
 
 ## 预制Shader
 
@@ -275,6 +845,9 @@ YanGameFramework的模块控制系统是一个用于管理游戏数据模块的�
 URP_FlashEffect
 
 MaskTransition
+
+
+
 
 ## 预制字体
 
