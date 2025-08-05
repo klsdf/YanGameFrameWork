@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace YanGameFrameWork.ResourceControlSystem
+namespace YanGameFrameWork
 {
     public class ResourceCache
     {

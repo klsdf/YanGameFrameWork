@@ -13,7 +13,7 @@ using YanGameFrameWork.AudioSystem;
 using YanGameFrameWork.AchievementSystem;
 using YanGameFrameWork.EventSystem;
 using YanGameFrameWork.ModelControlSystem;
-using YanGameFrameWork.ResourceControlSystem;
+using YanGameFrameWork;
 using YanGameFrameWork.CursorController;
 using YanGameFrameWork.CameraController;
 /// <summary>
@@ -131,11 +131,11 @@ public static class YanGF
     /// <summary>
     /// 资源控制器，全称是ResourcesController
     /// </summary>
-    public static YanGameFrameWork.ResourceControlSystem.ResourcesController Resources
+    public static YanGameFrameWork.ResourcesController Resources
     {
         get
         {
-            return YanGameFrameWork.ResourceControlSystem.ResourcesController.Instance;
+            return YanGameFrameWork.ResourcesController.Instance;
         }
     }
 

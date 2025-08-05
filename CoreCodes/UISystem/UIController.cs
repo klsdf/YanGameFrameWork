@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using YanGameFrameWork.Singleton;
 
 
+
 namespace YanGameFrameWork.UISystem
 {
 
@@ -124,6 +125,14 @@ namespace YanGameFrameWork.UISystem
                 }
             }
 
+            // 如果找不到，从Addressable Assets中加载
+            UIPanelBase addressablePanel = YanGF.Resources.LoadFromAddressables<UIPanelBase>(panelType.Name);
+            if (addressablePanel != null)
+            {
+                UIPanelBase instantiatedPanel = Instantiate(addressablePanel.gameObject).GetComponent<UIPanelBase>();
+                RegisterPanel(instantiatedPanel);
+                return instantiatedPanel;
+            }
 
             YanGF.Debug.LogError(nameof(UIController), "找不到面板：" + panelType);
             return null;
