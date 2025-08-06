@@ -22,9 +22,9 @@ public static class Shuffle
         for (int i = tempList.Count - 1; i > 0; i--)
         {
             int j = Random.Range(0, i + 1);
-            T temp = cards[i];
-            cards[i] = cards[j];
-            cards[j] = temp;
+            T temp = tempList[i];
+            tempList[i] = tempList[j];
+            tempList[j] = temp;
         }
 
         return tempList;
