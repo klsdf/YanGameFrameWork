@@ -132,14 +132,14 @@ namespace YanGameFrameWork
 
         #endregion
 
-#region 加载Addressable Assets中的资源  
+#region 加载Addressable Assets中的资源
 
 
 
         /// <summary>
         /// 从Addressable Assets中加载指定类型的资源
         /// </summary>
-        /// <typeparam name="T">资源类型</typeparam>
+        /// <typeparam name="T">资源类型,直接指定需要的就行</typeparam>
         /// <param name="addressableName">资源路径，也就是Addressable Name</param>
         /// <returns>加载的资源，如果找不到则返回null</returns>
         public T LoadFromAddressables<T>(string addressableName) where T : UnityEngine.Object
@@ -159,8 +159,8 @@ namespace YanGameFrameWork
 
                 if (loadOperation.Status == AsyncOperationStatus.Succeeded && loadOperation.Result != null)
                 {
-                   
-                    
+
+
                     T component = loadOperation.Result.GetComponent<T>();
                     if (component == null)
                     {
@@ -182,7 +182,7 @@ namespace YanGameFrameWork
 
             return null;
         }
-        
+
 
 
         /// <summary>
@@ -204,7 +204,7 @@ namespace YanGameFrameWork
 
                 // 从Addressables异步加载资源
                 var loadOperation = Addressables.LoadAssetAsync<T>(assetName);
-                
+
                 while (!loadOperation.IsDone)
                 {
                     await Task.Yield();
