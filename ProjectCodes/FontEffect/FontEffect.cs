@@ -12,8 +12,40 @@ public enum FontEffectType
     Bounce
 }
 
+/// <summary>
+/// 打字机控制接口：用于与具体实现（如 TypewriterText）解耦。
+/// 设计原因：避免在本文件直接依赖具体类，降低编译顺序与耦合风险。
+/// </summary>
+public interface ITypewriterControl
+{
+    /// <summary>
+    /// 立即开始播放打字机效果。
+    /// </summary>
+    void Play();
+
+    /// <summary>
+    /// 停止播放并立刻显示全部字符。
+    /// </summary>
+    void StopAndShowAll();
+
+    /// <summary>
+    /// 设置是否启用打字机效果。
+    /// </summary>
+    /// <param name="enabled">是否启用</param>
+    void SetEnabled(bool enabled);
+
+    /// <summary>
+    /// 设置组件启用时是否自动播放。
+    /// </summary>
+    /// <param name="enabled">是否自动播放</param>
+    void SetPlayOnEnable(bool enabled);
+}
+
 public class FontEffect : MonoBehaviour
 {
+	/// <summary>
+	/// TextMeshPro 组件引用。
+	/// </summary>
     [Header("TextMeshPro 组件")]
     private TMP_Text _textMesh;
     private Mesh _mesh;
@@ -21,6 +53,21 @@ public class FontEffect : MonoBehaviour
 
     [Header("效果类型")]
     public FontEffectType fontEffectType = FontEffectType.Bounce;
+
+	// ===== 打字机初始显示控制 =====
+	[Header("初始显示 - 打字机")]
+	/// <summary>
+	/// 是否在初始化时使用打字机效果显示文本。
+	/// </summary>
+	[SerializeField]
+	private bool _enableTypewriterOnStart = false;
+
+	/// <summary>
+	/// 打字机效果组件引用；未赋值且启用时会在同对象上自动查找/添加。
+	/// 设计原因：将“初始显隐/过渡”从顶点动画中解耦，按需组合。
+	/// </summary>
+	[SerializeField]
+	private MonoBehaviour _typewriterBehaviour; // 以 MonoBehaviour 保存，避免因编译顺序导致找不到类型的报错
 
     // ===== Wave 效果参数 =====
     [Header("Wave 参数 (对应 <wave a=... f=... w=...>)")]
@@ -54,6 +101,19 @@ public class FontEffect : MonoBehaviour
     {
         _textMesh = GetComponent<TMP_Text>();
         _textMesh.RegisterDirtyVerticesCallback(OnTextMeshUpdated);
+
+		// 初始化时按需启动打字机效果
+		if (_enableTypewriterOnStart)
+		{
+			var typewriter = GetTypewriter();
+			if (typewriter != null)
+			{
+				// 由本脚本主动触发，避免 OnEnable 与此处重复；同时确保已启用打字机
+				typewriter.SetEnabled(true);
+				typewriter.SetPlayOnEnable(false);
+				typewriter.Play();
+			}
+		}
     }
 
     void OnDestroy()
@@ -80,6 +140,8 @@ public class FontEffect : MonoBehaviour
         for (int i = 0; i < _textMesh.textInfo.characterCount; i++)
         {
             TMP_CharacterInfo c = _textMesh.textInfo.characterInfo[i];
+			// 跳过不可见字符（与打字机 maxVisibleCharacters 兼容）
+			if (!c.isVisible) continue;
             int index = c.vertexIndex;
 
             Vector3 offset = Vector3.zero;
@@ -106,6 +168,67 @@ public class FontEffect : MonoBehaviour
         _mesh.vertices = _vertices;
         _textMesh.canvasRenderer.SetMesh(_mesh);
     }
+
+	/// <summary>
+	/// 触发一次打字机显示；若无组件则自动添加。
+	/// 适用场景：在运行时脚本化启动初始打字显示。
+	/// </summary>
+	public void PlayTypewriter()
+	{
+		var typewriter = GetOrAddTypewriter();
+		if (typewriter == null) return;
+		typewriter.SetEnabled(true);
+		typewriter.SetPlayOnEnable(false);
+		typewriter.Play();
+	}
+
+	/// <summary>
+	/// 停止打字机并立刻显示全部。
+	/// </summary>
+	public void StopTypewriterAndShowAll()
+	{
+		var typewriter = GetTypewriter();
+		if (typewriter == null) return;
+		typewriter.StopAndShowAll();
+	}
+
+	/// <summary>
+	/// 运行时开关打字机启用状态（不自动开始）。
+	/// </summary>
+	/// <param name="enabled">是否启用</param>
+	public void SetTypewriterEnabled(bool enabled)
+	{
+		var typewriter = GetOrAddTypewriter();
+		if (typewriter != null)
+			typewriter.SetEnabled(enabled);
+	}
+
+	/// <summary>
+	/// 获取打字机组件（若 Inspector 绑定了其它同类脚本也可），找不到则返回 null。
+	/// 使用接口样式的访问，避免在本类顶部直接引用具体类型导致的编译顺序问题。
+	/// </summary>
+	private ITypewriterControl GetTypewriter()
+	{
+		if (_typewriterBehaviour != null && _typewriterBehaviour is ITypewriterControl cached)
+			return cached;
+		return GetComponent<ITypewriterControl>();
+	}
+
+	/// <summary>
+	/// 获取或添加打字机组件，并缓存到 _typewriterBehaviour。
+	/// </summary>
+	private ITypewriterControl GetOrAddTypewriter()
+	{
+		var tw = GetTypewriter();
+		if (tw == null)
+		{
+			// 未找到实现 ITypewriterControl 的组件：交由外部显式添加，避免直接依赖具体实现
+			Debug.LogWarning("未找到打字机组件(ITypewriterControl)。请在对象上添加 TypewriterText 或自定义实现。");
+			return null;
+		}
+		_typewriterBehaviour = tw as MonoBehaviour;
+		return tw;
+	}
 
     /// <summary>
     /// Wave 效果（类似正弦波浪）
