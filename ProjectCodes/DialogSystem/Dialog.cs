@@ -13,8 +13,6 @@ using System;
 namespace YanGameFrameWork.DialogSystem
 {
 
-
-
     public class DialogCharacter
     {
         public string name;
