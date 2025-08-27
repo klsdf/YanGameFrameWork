@@ -16,23 +16,41 @@ public abstract class RhythmItemBase : MonoBehaviour
     public bool checkWeak = true;
 
     void Start()
-    {  
+    {
         YanGF.Event.AddListener<RhythmType>(RhythmEvent.OnRhythm, OnRhythm);
     }
 
-    private  void OnRhythm(RhythmType rhythmType){
-        if(rhythmType == RhythmType.Strong && checkStrong){
-            OnBeat(RhythmType.Strong);
+    /// <summary>
+    /// 当收到节奏信号时
+    /// </summary>
+    /// <param name="rhythmType"></param>
+    private void OnRhythm(RhythmType rhythmType)
+    {
+        if (rhythmType == RhythmType.Strong && checkStrong)
+        {
+
+            OnBeat();
+            OnStrongBeat();
         }
-        if(rhythmType == RhythmType.Middle && checkMiddle){
-            OnBeat(RhythmType.Middle);
+        if (rhythmType == RhythmType.Middle && checkMiddle)
+        {
+            OnMiddleBeat();
         }
-        if(rhythmType == RhythmType.Weak && checkWeak){
-            OnBeat(RhythmType.Weak);
+        if (rhythmType == RhythmType.Weak && checkWeak)
+        {
+            OnWeakBeat();
         }
     }
 
-    public abstract void OnBeat(RhythmType rhythmType);
+    /// <summary>
+    /// 不管节拍的强弱，反正是拍子就触发
+    /// </summary>
+    /// <param name="rhythmType"></param>
+    public abstract void OnBeat();
+    
+    public abstract void OnStrongBeat();
+    public abstract void OnMiddleBeat();
+    public abstract void OnWeakBeat();
 
 
 }
