@@ -26,9 +26,11 @@ public class RhythmGenerator : MonoBehaviour
     [Header("初始暂停时间")]
     public float initialPauseTime = 2f; // 初始暂停时间
 
-    private int _beatCounter = 0; // 节拍计数器
-    private float _timer = 0f; // 时间累加器
-    private float _rhythmInterval; // 节拍间隔
+    private int _beatCounter = 0; // 节拍计数器（0-3 对应 4/4 拍：强-弱-中-弱）
+    private float _timer = 0f; // 时间累加器（用于整拍）
+    private float _halfTimer = 0f; // 半拍计时器
+    private float _rhythmInterval; // 节拍间隔（整拍）
+    private float _halfInterval; // 半拍间隔
 
     private bool _hasStarted = false; // 是否已开始生成节拍信号
 
@@ -36,12 +38,15 @@ public class RhythmGenerator : MonoBehaviour
     {
         // 根据BPM计算节奏间隔时间
         _rhythmInterval = 60f / bpm;
+        _halfInterval = _rhythmInterval * 0.5f;
     }
 
     private void Update()
     {
         // 累加时间
-        _timer += Time.deltaTime;
+        float deltaTime = Time.deltaTime;
+        _timer += deltaTime;
+        _halfTimer += deltaTime;
 
         RhythmType rhythmType = RhythmType.Strong;
         // 检查是否超过初始暂停时间
@@ -49,6 +54,7 @@ public class RhythmGenerator : MonoBehaviour
         {
             _hasStarted = true;
             _timer = 0f; // 重置时间累加器以开始节拍
+            _halfTimer = 0f; // 重置半拍计时器
         }
 
         // 只有在暂停时间结束后才开始生成节拍信号
@@ -78,6 +84,13 @@ public class RhythmGenerator : MonoBehaviour
             _timer -= _rhythmInterval;
 
             YanGF.Event.TriggerEvent<RhythmType>(RhythmEvent.OnRhythm, rhythmType);
+        }
+
+        // 半拍：在整拍之间的中点触发，不区分强弱
+        if (_hasStarted && _halfTimer >= _halfInterval)
+        {
+            _halfTimer -= _halfInterval;
+            YanGF.Event.TriggerEvent(RhythmEvent.OnHalfRhythm);
         }
     }
 }

@@ -11,13 +11,26 @@ using UnityEngine;
 public abstract class RhythmItemBase : MonoBehaviour
 {
 
+    /// <summary>是否响应强拍</summary>
     public bool checkStrong = true;
+    /// <summary>是否响应次强拍</summary>
     public bool checkMiddle = true;
+    /// <summary>是否响应弱拍</summary>
     public bool checkWeak = true;
+    /// <summary>是否响应半拍</summary>
+    public bool checkHalf = false;
 
     void Start()
     {
         YanGF.Event.AddListener<RhythmType>(RhythmEvent.OnRhythm, OnRhythm);
+        YanGF.Event.AddListener(RhythmEvent.OnHalfRhythm, OnHalfRhythm);
+    }
+
+    private void OnDestroy()
+    {
+        // 反注册，避免对象销毁后仍然接收事件导致空引用
+        YanGF.Event.RemoveListener<RhythmType>(RhythmEvent.OnRhythm, OnRhythm);
+        YanGF.Event.RemoveListener(RhythmEvent.OnHalfRhythm, OnHalfRhythm);
     }
 
     /// <summary>
@@ -28,29 +41,32 @@ public abstract class RhythmItemBase : MonoBehaviour
     {
         if (rhythmType == RhythmType.Strong && checkStrong)
         {
-
-            OnBeat();
-            OnStrongBeat();
+            OnRhythmEvent();
         }
         if (rhythmType == RhythmType.Middle && checkMiddle)
         {
-            OnMiddleBeat();
+            OnRhythmEvent();
         }
         if (rhythmType == RhythmType.Weak && checkWeak)
         {
-            OnWeakBeat();
+            OnRhythmEvent();
         }
     }
 
     /// <summary>
-    /// 不管节拍的强弱，反正是拍子就触发
+    /// 收到半拍事件时的回调
     /// </summary>
-    /// <param name="rhythmType"></param>
-    public abstract void OnBeat();
+    private void OnHalfRhythm()
+    {
+        if (checkHalf)
+        {
+            OnRhythmEvent();
+        }
+    }
+
+
     
-    public abstract void OnStrongBeat();
-    public abstract void OnMiddleBeat();
-    public abstract void OnWeakBeat();
+    public abstract void OnRhythmEvent();
 
 
 }
