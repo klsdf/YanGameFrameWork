@@ -57,8 +57,9 @@ namespace YanGameFrameWork.LocalizationSystem
         /// </summary>
         public event Action OnLanguageChanged;
 
-        protected void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             InitAdapter();
             ChangeToInitLanguage();
         }
@@ -113,6 +114,17 @@ namespace YanGameFrameWork.LocalizationSystem
 
         ////////////////////////////////////公共方法//////////////////////////////////////
 
+
+
+        /// <summary>
+        /// 获取本地化文本，传入的key的第一个单词会自动解析为本地化表名,第二个最好传入是哪一个表调用的这个翻译，第三个描述这个翻译是什么
+        /// 比如：UIPanel_SystemSettingPanel_MasterVolumeText
+        /// 第一个单词是本地化表名，第二个单词表明来源于SystemSettingPanel，第三个单词是描述这个翻译的含义，也就是MasterVolume的文本
+        /// </summary>
+        /// <param name="key">本地化键值，形如：UIPanel_SystemSettingPanel_MasterVolumeText</param>
+        /// <param name="chineseText">中文文本</param>
+        /// <returns>本地化文本</returns>
+        /// 
         public string GetText(string key, string chineseText = null)
         {
 
