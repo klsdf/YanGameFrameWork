@@ -12,6 +12,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 using TMPro;
+using UnityEngine.UI;
 
 namespace YanGameFrameWork.DialogSystem
 {
@@ -25,6 +26,14 @@ namespace YanGameFrameWork.DialogSystem
 
         [SerializeField]
         private bool _isTyping = false;
+
+
+		[Header("Skip Settings")]
+		[SerializeField]
+		private Image _skipHoldImage; // 绑定的UI图片，用于显示长按进度
+
+		[SerializeField]
+		private float _skipHoldDuration = 1f; // 长按多久（秒）跳过当前block
 
 
         /// <summary>
@@ -65,7 +74,7 @@ namespace YanGameFrameWork.DialogSystem
         /// <param name="blockName">对话块名称</param>
         /// <param name="onDialog">对话回调</param>
         /// <returns>IEnumerator</returns>
-        private IEnumerator RunDialogCoroutine(string blockName, Action<Dialog> onDialog, Action onDialogEnd)
+		private IEnumerator RunDialogCoroutine(string blockName, Action<Dialog> onDialog, Action onDialogEnd)
         {
             DialogBlock dialogBlock = GetDialogBlockByName(blockName);
             if (dialogBlock == null)
@@ -82,15 +91,70 @@ namespace YanGameFrameWork.DialogSystem
                 onDialog?.Invoke(dialog);
             }
 
+			// 初始化跳过UI
+			if (_skipHoldImage != null)
+			{
+				_skipHoldImage.fillAmount = 0f;
+				_skipHoldImage.gameObject.SetActive(false);
+			}
+			float skipHoldTimer = 0f;
+			bool skippedBlock = false;
 
             //然后等待输入
             while (!dialogBlock.IsPlayEnd)
             {
-                // 等待鼠标左键按下
-                while ((Input.GetMouseButtonDown(0) == false && !Input.GetButtonDown("Submit")) || _isTyping)
-                {
-                    yield return null;
-                }
+				// 等待下一步：点击/提交 或 长按Ctrl跳过
+				while (true)
+				{
+					bool submitPressed = Input.GetMouseButtonDown(0) || Input.GetButtonDown("Submit");
+					bool ctrlHeld = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+
+					// 长按Ctrl：累计时间并显示进度
+					if (ctrlHeld)
+					{
+						skipHoldTimer += Time.deltaTime;
+						if (_skipHoldImage != null)
+						{
+							_skipHoldImage.gameObject.SetActive(true);
+							_skipHoldImage.fillAmount = Mathf.Clamp01(skipHoldTimer / Mathf.Max(0.01f, _skipHoldDuration));
+						}
+
+						if (skipHoldTimer >= _skipHoldDuration)
+						{
+							// 快进到当前block结束
+							while (!dialogBlock.IsPlayEnd)
+							{
+								dialogBlock.GetNextDialog();
+								yield return null;
+							}
+							skippedBlock = true;
+							break;
+						}
+					}
+					else
+					{
+						// 松开Ctrl：重置计时与UI
+						if (_skipHoldImage != null)
+						{
+							_skipHoldImage.fillAmount = 0f;
+							_skipHoldImage.gameObject.SetActive(false);
+						}
+						skipHoldTimer = 0f;
+					}
+
+					// 普通前进（不在打字中才响应）
+					if (submitPressed && !_isTyping)
+					{
+						break;
+					}
+
+					yield return null;
+				}
+
+				if (skippedBlock)
+				{
+					break; // 跳出当前block
+				}
 
                 dialog = dialogBlock.GetNextDialog();
                 if (dialog != null)
@@ -102,7 +166,14 @@ namespace YanGameFrameWork.DialogSystem
                 yield return new WaitForSeconds(0.1f);
             }
 
-            YanGF.Debug.LogWarning(nameof(DialogController), $"对话块 '{blockName}' 已播放完毕");
+			// 结束时隐藏跳过UI
+			if (_skipHoldImage != null)
+			{
+				_skipHoldImage.fillAmount = 0f;
+				_skipHoldImage.gameObject.SetActive(false);
+			}
+
+			YanGF.Debug.LogWarning(nameof(DialogController), $"对话块 '{blockName}' 已播放完毕");
             onDialogEnd?.Invoke();
         }
 
