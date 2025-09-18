@@ -159,18 +159,29 @@ namespace YanGameFrameWork
 
                 if (loadOperation.Status == AsyncOperationStatus.Succeeded && loadOperation.Result != null)
                 {
-
-
-                    T component = loadOperation.Result.GetComponent<T>();
-                    if (component == null)
+                    T result;
+                    
+                    // 如果T是GameObject类型，直接返回加载的GameObject
+                    if (typeof(T) == typeof(GameObject))
                     {
-                        YanGF.Debug.LogError(nameof(ResourcesController), $"从Addressable Assets加载资源时出错: {addressableName} 没有找到组件 {typeof(T).Name}");
-                        return null;
+                        result = loadOperation.Result as T;
                     }
-                     // 缓存资源
-                    _cache.CacheResource(addressableName, component);
+                    else
+                    {
+                        // 否则尝试获取组件
+                        T component = loadOperation.Result.GetComponent<T>();
+                        if (component == null)
+                        {
+                            YanGF.Debug.LogError(nameof(ResourcesController), $"从Addressable Assets加载资源时出错: {addressableName} 没有找到组件 {typeof(T).Name}");
+                            return null;
+                        }
+                        result = component;
+                    }
+                    
+                    // 缓存资源
+                    _cache.CacheResource(addressableName, result);
                     // Addressables.Release(loadOperation);
-                    return component;
+                    return result;
                 }
 
                 Addressables.Release(loadOperation);
