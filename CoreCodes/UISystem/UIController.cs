@@ -69,8 +69,9 @@ namespace YanGameFrameWork.UISystem
         private Transform _popCanvas;
         private Transform _mainCanvas;
 
-        protected void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             _uiRoot = transform;
             _popCanvas = transform.GetChild(0);
             _mainCanvas = transform.GetChild(1);
