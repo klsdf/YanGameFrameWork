@@ -29,8 +29,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _DisturbFrequency: 8
-    - _DisturbSpeed: 1
-    - _DisturbStrength: 0.03
-    m_Colors: []
+    - _RippleFrequency: 8
+    - _RippleSpeed: 1.5
+    - _RippleAmount: 0.02
+    m_Colors:
+    - _BlueTintColor: {r: 0.4, g: 0.6, b: 1, a: 0.15}
   m_BuildTextureStacks: []

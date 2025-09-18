@@ -108,9 +108,11 @@ namespace YanGameFrameWork.DialogSystem
 				{
 					bool submitPressed = Input.GetMouseButtonDown(0) || Input.GetButtonDown("Submit");
 					bool ctrlHeld = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+					bool gamepadBHeld = Input.GetKey(KeyCode.JoystickButton1); // B 按住（Xbox B / PS Circle）
+					bool skipHeld = ctrlHeld || gamepadBHeld;
 
 					// 长按Ctrl：累计时间并显示进度
-					if (ctrlHeld)
+					if (skipHeld)
 					{
 						skipHoldTimer += Time.deltaTime;
 						if (_skipHoldImage != null)

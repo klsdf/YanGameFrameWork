@@ -13,6 +13,7 @@ using UnityEngine;
 using UnityEngine.Audio; // 引入Audio命名空间
 using YanGameFrameWork.Singleton;
 using System.Collections;
+using Sirenix.OdinInspector;
 
 namespace YanGameFrameWork.AudioSystem
 {
@@ -33,6 +34,19 @@ namespace YanGameFrameWork.AudioSystem
         public AudioMixerGroup bgmGroup; // 背景音乐组
         public AudioMixerGroup bgsGroup; // 背景音效组
         public AudioMixerGroup seGroup; // 音效组
+
+        // Mixer 参数名常量（需与 AudioMixer Exposed 参数一致）
+        private const string MasterAttenuationVolume = "MasterAttenuationVolume";
+        private const string BGMAttenuationVolume = "BGMAttenuationVolume";
+        private const string SEAttenuationVolume = "SEAttenuationVolume";
+        private const string BGSAttenuationVolume = "BGSAttenuationVolume";
+
+        // BGM 组效果器参数名（Lowpass / ParamEQ）
+        private const string BGMLowpassCutoff = "BGMLowpassCutoff"; // Hz
+        private const string BGMLowpassResonance = "BGMLowpassResonance"; // Q
+        private const string BGMParamEQCenterFreq = "BGMParamEQCenterFreq"; // Hz
+        private const string BGMParamEQOctaveRange = "BGMParamEQOctaveRange"; // octave
+        private const string BGMParamEQGain = "BGMParamEQGain"; // dB
 
         // 为每种音频类型创建单独的音源池
         private List<AudioSource> _bgmSourcePool = new List<AudioSource>(); // 背景音乐音源池
@@ -329,7 +343,7 @@ namespace YanGameFrameWork.AudioSystem
                 YanGF.Debug.LogWarning(nameof(AudioController), "音量超过了正常大小，但是已经调整到了正常值。");
             }
             volume = Mathf.Clamp(volume, -80f, 20f);
-            audioMixer.SetFloat("MasterVolume", volume);
+            audioMixer.SetFloat(MasterAttenuationVolume, volume);
         }
 
         /// <summary>
@@ -343,7 +357,7 @@ namespace YanGameFrameWork.AudioSystem
                 YanGF.Debug.LogWarning(nameof(AudioController), "音量超过了正常大小，但是已经调整到了正常值。");
             }
             volume = Mathf.Clamp(volume, -80f, 20f);
-            audioMixer.SetFloat("BGMVolume", volume);
+            audioMixer.SetFloat(BGMAttenuationVolume, volume);
         }
 
         /// <summary>
@@ -357,7 +371,7 @@ namespace YanGameFrameWork.AudioSystem
                 YanGF.Debug.LogWarning(nameof(AudioController), "音量超过了正常大小，但是已经调整到了正常值。");
             }
             volume = Mathf.Clamp(volume, -80f, 20f);
-            audioMixer.SetFloat("SEVolume", volume);
+            audioMixer.SetFloat(SEAttenuationVolume, volume);
         }
 
         public void SetBGSVolume(float volume)
@@ -367,12 +381,99 @@ namespace YanGameFrameWork.AudioSystem
                 YanGF.Debug.LogWarning(nameof(AudioController), "音量超过了正常大小，但是已经调整到了正常值。");
             }
             volume = Mathf.Clamp(volume, -80f, 20f);
-            audioMixer.SetFloat("BGSVolume", volume);
+            audioMixer.SetFloat(BGSAttenuationVolume, volume);
         }
 
         #endregion
 
 
+
+
+        #region 效果器
+
+        /// <summary>
+        /// 启用或关闭 BGM Lowpass 滤波器。
+        /// 需要将 Lowpass 的 Cutoff/Resonance 在 AudioMixer 中 Expose 对应参数名。
+        /// 当关闭时，将 Cutoff 调高至全频，保持与打开前可逆。
+        /// </summary>
+        /// <param name="enabled">true=打开，false=关闭</param>
+        /// <param name="cutoffHz">开启时的截止频率（Hz），例如 3000</param>
+        /// <param name="resonance">开启时的共振(Q)值，例如 1.1</param>
+        public void SetBGMLowpass(float cutoffHz = 3000f, float resonance = 1.1f)
+        {
+            if (audioMixer == null)
+                return;
+
+            audioMixer.SetFloat(BGMLowpassCutoff, Mathf.Clamp(cutoffHz, 20f, 22000f));
+            audioMixer.SetFloat(BGMLowpassResonance, Mathf.Clamp(resonance, 0.1f, 10f));
+
+        }
+
+        /// <summary>
+        /// 设置 BGM ParamEQ 峰值均衡参数。
+        /// 需在 AudioMixer 中 Expose CenterFreq/OctaveRange/Gain。
+        /// 若想“关闭”该效果，调用 <see cref="DisableBGMParamEQ"/> 将增益设为 0dB 即可。
+        /// </summary>
+        /// <param name="centerHz">中心频率（Hz）</param>
+        /// <param name="octaveRange">带宽（octave）</param>
+        /// <param name="gainDb">增益（dB），0 表示无增益，等效关闭</param>
+        public void SetBGMParamEQ(float centerHz = 325f, float octaveRange = 1.18f, float gainDb = 1.75f)
+        {
+            if (audioMixer == null)
+                return;
+            audioMixer.SetFloat(BGMParamEQCenterFreq, Mathf.Clamp(centerHz, 20f, 20000f));
+            audioMixer.SetFloat(BGMParamEQOctaveRange, Mathf.Max(0.01f, octaveRange));
+            audioMixer.SetFloat(BGMParamEQGain, Mathf.Clamp(gainDb, -24f, 24f));
+        }
+
+        /// <summary>
+        /// 关闭（听感上移除）BGM ParamEQ：将增益设为 0dB。
+        /// </summary>
+        public void DisableBGMParamEQ()
+        {
+            if (audioMixer == null)
+                return;
+            audioMixer.SetFloat(BGMParamEQGain, 1f);
+        }
+
+        /// <summary>
+        /// 关闭（听感上移除）BGM Lowpass：将截止频率调至全频。
+        /// </summary>
+        public void DisableBGMLowpass()
+        {
+            if (audioMixer == null)
+                return;
+            audioMixer.SetFloat(BGMLowpassCutoff, 22000f);
+        }
+
+        #endregion
+
+
+        #region 预制好的效果器
+
+        [Button("设置水下效果")]
+
+        public void SetUnderWaterEffect()
+        {
+            SetBGMParamEQ(
+                   centerHz: 325f,
+                   octaveRange: 1.18f,
+                   gainDb: 1.75f);
+            SetBGMLowpass(
+                   cutoffHz: 1500f,
+                   resonance: 1.18f);
+        }
+
+        [Button("关闭所有效果")]
+        public void CloseAllEffect()
+        {
+            // 关闭 BGM 低通与参数均衡效果
+            DisableBGMLowpass();
+            DisableBGMParamEQ();
+        }
+
+
+        #endregion
 
     }
 }

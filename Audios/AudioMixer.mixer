@@ -15,6 +15,8 @@ AudioMixerGroupController:
   m_Send: 00000000000000000000000000000000
   m_Effects:
   - {fileID: -8175337649557097530}
+  - {fileID: -7662958041635906254}
+  - {fileID: -2517727086813624313}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0
@@ -30,6 +32,24 @@ AudioMixerEffectController:
   m_EffectName: Attenuation
   m_MixLevel: efdebd43b3e48e44fb29ece25a93ecbd
   m_Parameters: []
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
+--- !u!244 &-7662958041635906254
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: b61865366cffc2c4e83d80639ad7835b
+  m_EffectName: Lowpass
+  m_MixLevel: d6676c8d09726ce458a4000ae4c1e369
+  m_Parameters:
+  - m_ParameterName: Cutoff freq
+    m_GUID: d8c80464c8186224592776c1386f8119
+  - m_ParameterName: Resonance
+    m_GUID: 9ed4a493bf1e3f24984f524bd29532a8
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0
@@ -52,6 +72,26 @@ AudioMixerGroupController:
   m_Mute: 0
   m_Solo: 0
   m_BypassEffects: 0
+--- !u!244 &-2517727086813624313
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: 1dc325cbdd59eea43a354431902acf1c
+  m_EffectName: ParamEQ
+  m_MixLevel: e29c407760229254db66e10e47c16786
+  m_Parameters:
+  - m_ParameterName: Center freq
+    m_GUID: 40ba3a2aa05db434cbad46f071904b8b
+  - m_ParameterName: Octave range
+    m_GUID: 2a9fd1c5b4bcaf744a12065db26c8588
+  - m_ParameterName: Frequency gain
+    m_GUID: c69f66d751aa59a4aa14ff3c554a3a4f
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
 --- !u!241 &24100000
 AudioMixerController:
   m_ObjectHideFlags: 0
@@ -69,13 +109,23 @@ AudioMixerController:
   m_UpdateMode: 0
   m_ExposedParameters:
   - guid: 94426d56d10c1834f9edc2e21ff1f0e4
-    name: BGMVolume
+    name: BGMAttenuationVolume
+  - guid: d8c80464c8186224592776c1386f8119
+    name: BGMLowpassCutoff
+  - guid: 9ed4a493bf1e3f24984f524bd29532a8
+    name: BGMLowpassResonance
+  - guid: 40ba3a2aa05db434cbad46f071904b8b
+    name: BGMParamEQCenterFreq
+  - guid: 2a9fd1c5b4bcaf744a12065db26c8588
+    name: BGMParamEQOctaveRange
+  - guid: c69f66d751aa59a4aa14ff3c554a3a4f
+    name: BGMParamEQGain
   - guid: 5f65df7dc913e6c499b3049a17ad07f1
-    name: BGSVolume
+    name: BGSAttenuationVolume
   - guid: b66c269c603363d4d82420d49c6c903f
-    name: MasterVolume
+    name: MasterAttenuationVolume
   - guid: 34c798b9dc4cef2418897e063e53bc73
-    name: SEVolume
+    name: SEAttenuationVolume
   m_AudioMixerGroupViews:
   - guids:
     - 89784d51cce1a9946b5998223cc32151
@@ -131,8 +181,18 @@ AudioMixerSnapshotController:
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: df41736d54aad1b47a05277bfdabb647
   m_FloatValues:
+    5cc9fde028726e04d8f9fc9355abb12a: 0.168
+    5cc653713091f634d9c104c6a40020f0: 0.1
+    9ed4a493bf1e3f24984f524bd29532a8: 1.18
+    1bc3e854a948b754db09052335772a4b: 0.149
+    d8c80464c8186224592776c1386f8119: 1327
+    38d4f2a5d21e9a6429315abdcf094375: 0.667
+    2a9fd1c5b4bcaf744a12065db26c8588: 1.18
     94426d56d10c1834f9edc2e21ff1f0e4: -0.16685188
+    c69f66d751aa59a4aa14ff3c554a3a4f: 1.75
+    40ba3a2aa05db434cbad46f071904b8b: 325
     b66c269c603363d4d82420d49c6c903f: -0.025776558
+    aa42c76e915eaf24b8571b88f269d1f6: 0.208
   m_TransitionOverrides: {}
 --- !u!244 &3972435018098242756
 AudioMixerEffectController:

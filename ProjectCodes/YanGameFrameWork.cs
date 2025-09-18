@@ -16,6 +16,7 @@ using YanGameFrameWork.ModelControlSystem;
 using YanGameFrameWork;
 using YanGameFrameWork.CursorController;
 using YanGameFrameWork.CameraController;
+using YanGameFrameWork.PostProcess;
 /// <summary>
 /// 游戏框架的静态类，用于简化代码，使其可以快速访问常见的控制类，可以直接使用
 /// </summary>
@@ -216,6 +217,15 @@ public static class YanGF
         get
         {
             return YanGameFrameWork.ObjectPoolSystem.ObjectPoolController.Instance;
+        }
+    }
+
+
+    public static YanGameFrameWork.PostProcess.PostProcessController PostProcess
+    {
+        get
+        {
+            return YanGameFrameWork.PostProcess.PostProcessController.Instance;
         }
     }
 

@@ -179,5 +179,34 @@ namespace YanGameFrameWork.PostProcess
 
         //     return newFeature;
         // }
+
+		/// <summary>
+		/// 启用或禁用 UnderSeaDisturbRenderFeature
+		/// </summary>
+		/// <param name="enabled">true 启用，false 禁用</param>
+		public void SetUnderSeaDisturbEnabled(bool enabled)
+		{
+			if (rendererData == null)
+			{
+				Debug.LogError("Renderer Data 未设置，无法切换 UnderSeaDisturbRenderFeature");
+				return;
+			}
+
+			bool found = false;
+			foreach (var feature in rendererData.rendererFeatures)
+			{
+				if (feature is UnderSeaDisturbRenderFeature target)
+				{
+					target.SetActive(enabled);
+					found = true;
+					break;
+				}
+			}
+
+			if (!found)
+			{
+				Debug.LogWarning("未在 RendererData 中找到 UnderSeaDisturbRenderFeature");
+			}
+		}
     }
 }
