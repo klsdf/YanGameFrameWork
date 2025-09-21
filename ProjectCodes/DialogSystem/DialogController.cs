@@ -18,15 +18,11 @@ namespace YanGameFrameWork.DialogSystem
 {
     public class DialogController : Singleton<DialogController>
     {
-
-
         [SerializeField]
         private List<DialogBlock> _dialogBlocks = new List<DialogBlock>();
 
-
         [SerializeField]
         private bool _isTyping = false;
-
 
 		[Header("Skip Settings")]
 		[SerializeField]
@@ -53,6 +49,33 @@ namespace YanGameFrameWork.DialogSystem
         public void RegisterDialogBlock(DialogBlock dialogBlock)
         {
             _dialogBlocks.Add(dialogBlock);
+        }
+
+        /// <summary>
+        /// 检测确定键是否被按下（鼠标左键或手柄A键）
+        /// </summary>
+        /// <returns>如果确定键被按下则返回true</returns>
+        private bool IsConfirmKeyPressed()
+        {
+            // 检测鼠标左键
+            if (Input.GetMouseButtonDown(0))
+            {
+                return true;
+            }
+
+            // 检测手柄A键（按钮0）
+            if (Input.GetKeyDown(KeyCode.JoystickButton0))
+            {
+                return true;
+            }
+
+            // 检测Unity Input Manager中的Submit按钮
+            if (Input.GetButtonDown("Submit"))
+            {
+                return true;
+            }
+
+            return false;
         }
 
 
@@ -106,7 +129,7 @@ namespace YanGameFrameWork.DialogSystem
 				// 等待下一步：点击/提交 或 长按Ctrl跳过
 				while (true)
 				{
-					bool submitPressed = Input.GetMouseButtonDown(0) || Input.GetButtonDown("Submit");
+					bool submitPressed = IsConfirmKeyPressed();
 					bool ctrlHeld = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
 					bool gamepadBHeld = Input.GetKey(KeyCode.JoystickButton1); // B 按住（Xbox B / PS Circle）
 					bool skipHeld = ctrlHeld || gamepadBHeld;
@@ -206,12 +229,12 @@ namespace YanGameFrameWork.DialogSystem
             {
                 targetText.text += letter;
 
-                // 在每次等待之前检查鼠标左键点击
+                // 在每次等待之前检查确定键按下
                 for (float timer = 0; timer < typingSpeed; timer += Time.deltaTime)
                 {
-                    if (Input.GetMouseButtonDown(0))
+                    if (IsConfirmKeyPressed())
                     {
-                        // 如果点击，立即显示完整文本
+                        // 如果按下确定键，立即显示完整文本
                         targetText.text = dialogText;
                         yield return null;
                         _isTyping = false;
