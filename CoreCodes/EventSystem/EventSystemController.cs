@@ -253,8 +253,20 @@ namespace YanGameFrameWork.EventSystem
 
         #endregion
 
-
-
+        #region 生命周期管理
+        /// <summary>
+        /// 重写 OnDestroy 方法，确保在对象销毁时清理所有事件数据
+        /// </summary>
+        protected override void OnDestroy()
+        {
+            // 调用基类的 OnDestroy 方法
+            base.OnDestroy();
+            // 清理所有事件数据
+            ClearAllEvents();
+            
+            
+        }
+        #endregion
 
         #region 调试和维护方法
         /// <summary>

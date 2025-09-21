@@ -20,7 +20,7 @@ public abstract class RhythmItemBase : MonoBehaviour
     /// <summary>是否响应半拍</summary>
     public bool checkHalf = false;
 
-    void Start()
+    protected virtual void Start()
     {
         YanGF.Event.AddListener<RhythmType>(RhythmEvent.OnRhythm, OnRhythm);
         YanGF.Event.AddListener(RhythmEvent.OnHalfRhythm, OnHalfRhythm);
