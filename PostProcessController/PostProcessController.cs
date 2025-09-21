@@ -14,6 +14,7 @@ namespace YanGameFrameWork.PostProcess
         ColorFliter,
         Blur,
         Pixelate,
+        RedBorder,
     }
 
 
@@ -208,5 +209,102 @@ namespace YanGameFrameWork.PostProcess
 				Debug.LogWarning("未在 RendererData 中找到 UnderSeaDisturbRenderFeature");
 			}
 		}
+
+		/// <summary>
+		/// 启用或禁用红色边框效果
+		/// </summary>
+		/// <param name="enabled">true 启用，false 禁用</param>
+		public void SetRedBorderEnabled(bool enabled)
+		{
+			if (rendererData == null)
+			{
+				Debug.LogError("Renderer Data 未设置，无法切换 RedBorderRenderFeature");
+				return;
+			}
+
+			bool found = false;
+			foreach (var feature in rendererData.rendererFeatures)
+			{
+				if (feature is RedBorderRenderFeature target)
+				{
+					target.SetActive(enabled);
+					found = true;
+					break;
+				}
+			}
+
+			if (!found)
+			{
+				Debug.LogWarning("未在 RendererData 中找到 RedBorderRenderFeature");
+			}
+		}
+
+		/// <summary>
+		/// 设置红色边框的颜色
+		/// </summary>
+		/// <param name="color">边框颜色</param>
+		public void SetRedBorderColor(Color color)
+		{
+			if (rendererData == null)
+			{
+				Debug.LogError("Renderer Data 未设置，无法设置红色边框颜色");
+				return;
+			}
+
+			foreach (var feature in rendererData.rendererFeatures)
+			{
+				if (feature is RedBorderRenderFeature target)
+				{
+					target.SetBorderColor(color);
+					break;
+				}
+			}
+		}
+
+		/// <summary>
+		/// 设置红色边框的宽度
+		/// </summary>
+		/// <param name="width">边框宽度 (0-0.5)</param>
+		public void SetRedBorderWidth(float width)
+		{
+			if (rendererData == null)
+			{
+				Debug.LogError("Renderer Data 未设置，无法设置红色边框宽度");
+				return;
+			}
+
+			foreach (var feature in rendererData.rendererFeatures)
+			{
+				if (feature is RedBorderRenderFeature target)
+				{
+					target.SetBorderWidth(width);
+					break;
+				}
+			}
+		}
+
+		/// <summary>
+		/// 设置红色边框的强度
+		/// </summary>
+		/// <param name="intensity">边框强度 (0-1)</param>
+		public void SetRedBorderIntensity(float intensity)
+		{
+			if (rendererData == null)
+			{
+				Debug.LogError("Renderer Data 未设置，无法设置红色边框强度");
+				return;
+			}
+
+			foreach (var feature in rendererData.rendererFeatures)
+			{
+				if (feature is RedBorderRenderFeature target)
+				{
+					target.SetBorderIntensity(intensity);
+					break;
+				}
+			}
+		}
+
+
     }
 }
