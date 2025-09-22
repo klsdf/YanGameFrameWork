@@ -5,6 +5,8 @@
  *
  * 修改记录：
  * 2025-04-17 闫辰祥 添加TryLoadResource方法，并且删除了加载资产时要传入path和name的复杂逻辑，现在只接受一个path
+ * 2025-09-22 闫辰祥 修复LoadFromAddressables方法的类型匹配问题，支持直接加载指定类型的资源，并添加智能回退机制
+ 
  ****************************************************************************/
 
 using UnityEngine;
@@ -154,37 +156,55 @@ namespace YanGameFrameWork
                 }
 
                 // 从Addressables加载资源
-                var loadOperation = Addressables.LoadAssetAsync<GameObject>(addressableName);
-                loadOperation.WaitForCompletion();
-
-                if (loadOperation.Status == AsyncOperationStatus.Succeeded && loadOperation.Result != null)
+                T result = null;
+                
+                // 如果请求的是GameObject类型，直接加载GameObject
+                if (typeof(T) == typeof(GameObject))
                 {
-                    T result;
+                    var loadOperation = Addressables.LoadAssetAsync<GameObject>(addressableName);
+                    loadOperation.WaitForCompletion();
                     
-                    // 如果T是GameObject类型，直接返回加载的GameObject
-                    if (typeof(T) == typeof(GameObject))
+                    if (loadOperation.Status == AsyncOperationStatus.Succeeded && loadOperation.Result != null)
                     {
                         result = loadOperation.Result as T;
                     }
+                    Addressables.Release(loadOperation);
+                }
+                else
+                {
+                    // 对于其他类型，先尝试直接加载
+                    var loadOperation = Addressables.LoadAssetAsync<T>(addressableName);
+                    loadOperation.WaitForCompletion();
+                    
+                    if (loadOperation.Status == AsyncOperationStatus.Succeeded && loadOperation.Result != null)
+                    {
+                        result = loadOperation.Result;
+                    }
                     else
                     {
-                        // 否则尝试获取组件
-                        T component = loadOperation.Result.GetComponent<T>();
-                        if (component == null)
+                        // 如果直接加载失败，尝试从GameObject中获取组件
+                        var gameObjectOperation = Addressables.LoadAssetAsync<GameObject>(addressableName);
+                        gameObjectOperation.WaitForCompletion();
+                        
+                        if (gameObjectOperation.Status == AsyncOperationStatus.Succeeded && gameObjectOperation.Result != null)
                         {
-                            YanGF.Debug.LogError(nameof(ResourcesController), $"从Addressable Assets加载资源时出错: {addressableName} 没有找到组件 {typeof(T).Name}");
-                            return null;
+                            T component = gameObjectOperation.Result.GetComponent<T>();
+                            if (component != null)
+                            {
+                                result = component;
+                            }
                         }
-                        result = component;
+                        Addressables.Release(gameObjectOperation);
                     }
-                    
-                    // 缓存资源
-                    _cache.CacheResource(addressableName, result);
-                    // Addressables.Release(loadOperation);
-                    return result;
+                    Addressables.Release(loadOperation);
                 }
 
-                Addressables.Release(loadOperation);
+                if (result != null)
+                {
+                    // 缓存资源
+                    _cache.CacheResource(addressableName, result);
+                    return result;
+                }
             }
             catch (System.Exception e)
             {

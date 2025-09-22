@@ -7,6 +7,7 @@
  * 修改记录:
 * 2025-04-22 闫辰祥 增加了音频系统的混音器，并增加了总音量，音乐音量，音效音量的调节
 * 2025-05-29 闫辰祥 增加了多个音源池，并删除了playonce和playloop，使用了更加表层的播放方法，可以直接playbgm，playbgs，playse
+* 2025-09-21 闫辰祥 增加了效果器和海底的预设效果
  ****************************************************************************/
 using System.Collections.Generic;
 using UnityEngine;
@@ -63,8 +64,9 @@ namespace YanGameFrameWork.AudioSystem
 
         private int _initialPoolSize = 5; // 初始音源池大小
 
-        protected void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             CreateAudioSourcePool(AudioType.BGM, _bgmSourcePool);
             CreateAudioSourcePool(AudioType.BGS, _bgsSourcePool);
             CreateAudioSourcePool(AudioType.SE, _seSourcePool);
@@ -223,6 +225,11 @@ namespace YanGameFrameWork.AudioSystem
         #region 音频播放
 
 
+        /// <summary>
+        /// 播放背景音乐
+        /// </summary>
+        /// <param name="clip">音频剪辑</param>
+        /// <param name="volume">音量</param>
         public void PlayBGM(AudioClip clip, float volume = 1f)
         {
             Play(
@@ -259,7 +266,7 @@ namespace YanGameFrameWork.AudioSystem
         /// <summary>
         /// 开始播放背景音乐序列。
         /// </summary>
-        public void StartBGMSequence(AudioClip[] clips, float waitTime = 5f)
+        public void PlayBGMSequence(AudioClip[] clips, float waitTime = 5f)
         {
             StartCoroutine(PlayBGMClipsSequentially(clips, waitTime));
         }
