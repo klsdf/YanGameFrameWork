@@ -71,6 +71,13 @@ namespace YanGameFrameWork.CameraController
         /// </summary>
         public float moveFactor = 1.0f;
 
+        /// <summary>
+        /// 跟随偏移量（XYZ）。
+        /// 启动跟随时会将相机一次性移动到 目标位置 + 偏移量。
+        /// 后续跟随使用目标的位移增量，从而自然保持该偏移（包括Z）。
+        /// </summary>
+        public Vector3 followOffset = Vector3.zero;
+
 
         /// <summary>
         /// 玩家上次已知的位置。
@@ -87,7 +94,11 @@ namespace YanGameFrameWork.CameraController
 
 
 
-        private bool isCinematicMode = false;
+        private bool _isCinematicMode = false;
+        /// <summary>
+        /// 记录上一帧是否开启了跟随，用于检测“启动跟随”的瞬间。
+        /// </summary>
+        private bool _wasFollowEnabled = false;
 
         void Start()
         {
@@ -98,6 +109,13 @@ namespace YanGameFrameWork.CameraController
             {
                 /// 初始化摄像头的偏移量和玩家的初始位置。
                 _lastPlayerPosition = followTarget.position;
+                _wasFollowEnabled = IsEnableFollow;
+
+                // 如果一开始就启用跟随，则立刻应用一次偏移
+                if (IsEnableFollow)
+                {
+                    ApplyFollowOffsetOnce();
+                }
             }
         }
 
@@ -107,8 +125,17 @@ namespace YanGameFrameWork.CameraController
 
             Drag();
             Zoom();
+            // 当从未开启 -> 开启 跟随时，应用一次偏移
+            if (IsEnableFollow && !_wasFollowEnabled && followTarget != null && !_isCinematicMode)
+            {
+                ApplyFollowOffsetOnce();
+            }
+
             Follow();
             LookAt();
+
+            // 更新跟随开关的历史记录
+            _wasFollowEnabled = IsEnableFollow;
         }
 
         private void LookAt()
@@ -121,22 +148,51 @@ namespace YanGameFrameWork.CameraController
 
         private void Follow()
         {
-            if (!IsEnableFollow || isCinematicMode)
+            if (!IsEnableFollow || _isCinematicMode)
                 return;
 
             // print("player.position:" + player.position);
             // 计算玩家的移动距离
             Vector3 playerMovement = followTarget.position - _lastPlayerPosition;
 
+            // 基于移动比例的基础位移
+            Vector3 currentCamPos = controlCamera.transform.position;
+            Vector3 basePosition = currentCamPos + playerMovement * moveFactor;
 
-            Vector3 newCameraPosition = controlCamera.transform.position + playerMovement * moveFactor;
+            // 计算当前相机与目标的相对偏移（XYZ），以及期望的相对偏移 followOffset
+            Vector3 currentRelative = currentCamPos - followTarget.position;
+            Vector3 desiredRelative = followOffset;
+
+            // 校正量 = 期望相对偏移 - 当前相对偏移
+            Vector3 correction = desiredRelative - currentRelative;
+
+            // 应用校正（XYZ都参与）
+            Vector3 newCameraPosition = basePosition + correction;
+
             controlCamera.transform.position = newCameraPosition;
+            _lastPlayerPosition = followTarget.position;
+        }
+
+        /// <summary>
+        /// 启动跟随时应用一次偏移：设置相机到 目标位置 + 偏移量（保持Z）。
+        /// 同时重置 _lastPlayerPosition，确保后续按位移增量平滑跟随并保持偏移。
+        /// 设计原因：仅在启动一刻对齐偏移，避免每帧重复叠加导致漂移。
+        /// </summary>
+        private void ApplyFollowOffsetOnce()
+        {
+            if (controlCamera == null || followTarget == null)
+                return;
+
+            Vector3 targetWithOffset = followTarget.position + followOffset;
+            controlCamera.transform.position = targetWithOffset;
+
+            // 将上次玩家位置重置为当前，后续仅按位移增量推动相机，保持偏移恒定
             _lastPlayerPosition = followTarget.position;
         }
 
         private void Drag()
         {
-            if (!IsEnableDarg || isCinematicMode)
+            if (!IsEnableDarg || _isCinematicMode)
                 return;
 
             // 检测左键或右键按下
@@ -248,7 +304,7 @@ namespace YanGameFrameWork.CameraController
         private void Zoom()
         {
 
-            if (!IsEnableZoom || isCinematicMode)
+            if (!IsEnableZoom || _isCinematicMode)
                 return;
 
             // 检测鼠标滚轮滚动
@@ -390,7 +446,7 @@ namespace YanGameFrameWork.CameraController
                 switch (curveType)
                 {
                     case MoveCurveType.Linear:
-                        t = t; // Linear interpolation
+                        // Linear: 保持 t 不变
                         break;
                     case MoveCurveType.SmoothStep:
                         t = Mathf.SmoothStep(0f, 1f, t);
@@ -413,7 +469,7 @@ namespace YanGameFrameWork.CameraController
         /// </summary>
         public void EnterCinematicMode()
         {
-            isCinematicMode = true;
+            _isCinematicMode = true;
         }
 
 
@@ -422,7 +478,7 @@ namespace YanGameFrameWork.CameraController
         /// </summary>
         public void ExitCinematicMode()
         {
-            isCinematicMode = false;
+            _isCinematicMode = false;
         }
 
 

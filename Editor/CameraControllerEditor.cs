@@ -73,6 +73,7 @@ public class CameraControllerEditor : Editor
             EditorGUILayout.LabelField("跟随参数", EditorStyles.boldLabel);
             cameraController.followTarget = (Transform)EditorGUILayout.ObjectField("跟随目标", cameraController.followTarget, typeof(Transform), true);
             cameraController.moveFactor = EditorGUILayout.FloatField("移动比例", cameraController.moveFactor);
+            cameraController.followOffset = EditorGUILayout.Vector3Field("跟随偏移", cameraController.followOffset);
             EditorGUI.indentLevel--;
         }
 
